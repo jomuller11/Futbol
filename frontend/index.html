@@ -201,12 +201,8 @@
       const defaultApiKey = "da2-d3ntxmjqvbc3tcgglmkpe5wrcy";
 
       function App() {
-        const [endpoint, setEndpoint] = useState(
-          localStorage.getItem("endpoint") || defaultEndpoint
-        );
-        const [apiKey, setApiKey] = useState(
-          localStorage.getItem("apiKey") || defaultApiKey
-        );
+        const endpoint = defaultEndpoint;
+        const apiKey = defaultApiKey;
         const [status, setStatus] = useState("");
         const [loading, setLoading] = useState(false);
         const [tournaments, setTournaments] = useState([]);
@@ -311,14 +307,6 @@
           } catch (err) {
             setStatus(err.message);
           }
-        }
-
-        async function handleConnect() {
-          localStorage.setItem("endpoint", endpoint.trim());
-          localStorage.setItem("apiKey", apiKey.trim());
-          setStatus("Connected. Loading tournaments...");
-          await refreshTournaments();
-          setStatus("");
         }
 
         async function createTournament() {
@@ -446,6 +434,12 @@
           refreshGroups(selectedPhaseId);
         }, [selectedPhaseId]);
 
+        useEffect(() => {
+          if (canQuery) {
+            refreshTournaments();
+          }
+        }, [canQuery]);
+
         return html`
           <div className="app">
             <header>
@@ -459,28 +453,6 @@
             </header>
 
             <section className="grid">
-              <div className="card stack">
-                <h2>Connection</h2>
-                <div>
-                  <label>GraphQL Endpoint</label>
-                  <input
-                    value=${endpoint}
-                    onInput=${e => setEndpoint(e.target.value)}
-                    placeholder="https://..."
-                  />
-                </div>
-                <div>
-                  <label>API Key</label>
-                  <input
-                    value=${apiKey}
-                    onInput=${e => setApiKey(e.target.value)}
-                    placeholder="da2-..."
-                  />
-                </div>
-                <button onClick=${handleConnect}>Save & load</button>
-                ${status ? html`<div className="status">${status}</div>` : ""}
-              </div>
-
               <div className="card stack">
                 <h2>New tournament</h2>
                 <div>
@@ -689,6 +661,8 @@
                 </button>
               </div>
             </section>
+
+            ${status ? html`<div className="status">${status}</div>` : ""}
 
             <section className="grid" style=${{ marginTop: "28px" }}>
               <div className="card">
