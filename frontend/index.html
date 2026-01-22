@@ -237,6 +237,16 @@
           [endpoint, apiKey]
         );
 
+        function cleanInput(input) {
+          return Object.fromEntries(
+            Object.entries(input).filter(([, value]) => {
+              if (value === undefined || value === null) return false;
+              if (typeof value === "string" && value.trim() === "") return false;
+              return true;
+            })
+          );
+        }
+
         async function request(query, variables) {
           if (!canQuery) {
             throw new Error("Add endpoint and API key first.");
@@ -315,7 +325,7 @@
           try {
             const data = await request(
               "mutation ($input: CreateTournamentInput!) { createTournament(input: $input) { id name season startDate endDate } }",
-              { input: tournamentForm }
+              { input: cleanInput(tournamentForm) }
             );
             setTournaments([data.createTournament, ...tournaments]);
             setTournamentForm({
@@ -324,6 +334,7 @@
               startDate: "",
               endDate: ""
             });
+            setStatus("Tournament created.");
           } catch (err) {
             setStatus(err.message);
           } finally {
@@ -355,6 +366,7 @@
               phaseType: "ZONES",
               phaseOrder: 1
             });
+            setStatus("Phase created.");
           } catch (err) {
             setStatus(err.message);
           } finally {
@@ -382,6 +394,7 @@
             );
             setGroups([data.createGroup, ...groups]);
             setGroupForm({ name: "", groupOrder: 1 });
+            setStatus("Group created.");
           } catch (err) {
             setStatus(err.message);
           } finally {
@@ -400,14 +413,15 @@
             const data = await request(
               "mutation ($input: CreateTeamInput!) { createTeam(input: $input) { id name shortName tournamentId } }",
               {
-                input: {
+                input: cleanInput({
                   ...teamForm,
                   tournamentId: selectedTournamentId
-                }
+                })
               }
             );
             setTeams([data.createTeam, ...teams]);
             setTeamForm({ name: "", shortName: "" });
+            setStatus("Team created.");
           } catch (err) {
             setStatus(err.message);
           } finally {
