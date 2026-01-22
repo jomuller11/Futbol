@@ -338,6 +338,7 @@ Resources:
       DataSourceName: TournamentsSource
       RequestMappingTemplate: |
         #set($tournamentId = $util.defaultIfNull($ctx.args.input.id, $util.autoId()))
+        $util.qr($ctx.stash.put("tournamentId", $tournamentId))
         {
           "version": "2018-05-29",
           "operation": "PutItem",
@@ -349,11 +350,16 @@ Resources:
             "season": $util.dynamodb.toDynamoDBJson($ctx.args.input.season),
             "startDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.startDate),
             "endDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.endDate)
-          },
-          "returnValues": "ALL_NEW"
+          }
         }
       ResponseMappingTemplate: |
-        $util.toJson($ctx.result)
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.tournamentId))
+        $util.qr($result.put("name", $ctx.args.input.name))
+        $util.qr($result.put("season", $ctx.args.input.season))
+        $util.qr($result.put("startDate", $ctx.args.input.startDate))
+        $util.qr($result.put("endDate", $ctx.args.input.endDate))
+        $util.toJson($result)
 
   ListPhasesByTournamentResolver:
     Type: AWS::AppSync::Resolver
@@ -392,6 +398,7 @@ Resources:
       DataSourceName: PhasesSource
       RequestMappingTemplate: |
         #set($phaseId = $util.defaultIfNull($ctx.args.input.id, $util.autoId()))
+        $util.qr($ctx.stash.put("phaseId", $phaseId))
         {
           "version": "2018-05-29",
           "operation": "PutItem",
@@ -403,11 +410,16 @@ Resources:
             "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
             "phaseType": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseType),
             "phaseOrder": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseOrder)
-          },
-          "returnValues": "ALL_NEW"
+          }
         }
       ResponseMappingTemplate: |
-        $util.toJson($ctx.result)
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.phaseId))
+        $util.qr($result.put("tournamentId", $ctx.args.input.tournamentId))
+        $util.qr($result.put("name", $ctx.args.input.name))
+        $util.qr($result.put("phaseType", $ctx.args.input.phaseType))
+        $util.qr($result.put("phaseOrder", $ctx.args.input.phaseOrder))
+        $util.toJson($result)
 
   ListGroupsByPhaseResolver:
     Type: AWS::AppSync::Resolver
@@ -446,6 +458,7 @@ Resources:
       DataSourceName: GroupsSource
       RequestMappingTemplate: |
         #set($groupId = $util.defaultIfNull($ctx.args.input.id, $util.autoId()))
+        $util.qr($ctx.stash.put("groupId", $groupId))
         {
           "version": "2018-05-29",
           "operation": "PutItem",
@@ -456,11 +469,15 @@ Resources:
             "phaseId": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseId),
             "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
             "groupOrder": $util.dynamodb.toDynamoDBJson($ctx.args.input.groupOrder)
-          },
-          "returnValues": "ALL_NEW"
+          }
         }
       ResponseMappingTemplate: |
-        $util.toJson($ctx.result)
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.groupId))
+        $util.qr($result.put("phaseId", $ctx.args.input.phaseId))
+        $util.qr($result.put("name", $ctx.args.input.name))
+        $util.qr($result.put("groupOrder", $ctx.args.input.groupOrder))
+        $util.toJson($result)
 
   ListTeamsByTournamentResolver:
     Type: AWS::AppSync::Resolver
@@ -499,6 +516,7 @@ Resources:
       DataSourceName: TeamsSource
       RequestMappingTemplate: |
         #set($teamId = $util.defaultIfNull($ctx.args.input.id, $util.autoId()))
+        $util.qr($ctx.stash.put("teamId", $teamId))
         {
           "version": "2018-05-29",
           "operation": "PutItem",
@@ -509,11 +527,15 @@ Resources:
             "tournamentId": $util.dynamodb.toDynamoDBJson($ctx.args.input.tournamentId),
             "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
             "shortName": $util.dynamodb.toDynamoDBJson($ctx.args.input.shortName)
-          },
-          "returnValues": "ALL_NEW"
+          }
         }
       ResponseMappingTemplate: |
-        $util.toJson($ctx.result)
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.teamId))
+        $util.qr($result.put("tournamentId", $ctx.args.input.tournamentId))
+        $util.qr($result.put("name", $ctx.args.input.name))
+        $util.qr($result.put("shortName", $ctx.args.input.shortName))
+        $util.toJson($result)
 
 Outputs:
   GraphQLApiUrl:
