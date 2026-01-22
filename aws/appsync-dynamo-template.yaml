@@ -187,6 +187,7 @@ Resources:
           season: String
           startDate: String
           endDate: String
+          isActive: Boolean
         }
 
         type Phase {
@@ -233,6 +234,7 @@ Resources:
           season: String
           startDate: String
           endDate: String
+          isActive: Boolean
         }
 
         input UpdateTournamentInput {
@@ -241,6 +243,7 @@ Resources:
           season: String
           startDate: String
           endDate: String
+          isActive: Boolean
         }
 
         input CreatePhaseInput {
@@ -534,7 +537,8 @@ Resources:
             "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
             "season": $util.dynamodb.toDynamoDBJson($ctx.args.input.season),
             "startDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.startDate),
-            "endDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.endDate)
+            "endDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.endDate),
+            "isActive": $util.dynamodb.toDynamoDBJson($util.defaultIfNull($ctx.args.input.isActive, false))
           }
         }
       ResponseMappingTemplate: |
@@ -544,6 +548,7 @@ Resources:
         $util.qr($result.put("season", $ctx.args.input.season))
         $util.qr($result.put("startDate", $ctx.args.input.startDate))
         $util.qr($result.put("endDate", $ctx.args.input.endDate))
+        $util.qr($result.put("isActive", $util.defaultIfNull($ctx.args.input.isActive, false)))
         $util.toJson($result)
 
   ListPhasesByTournamentResolver:
@@ -745,7 +750,8 @@ Resources:
             "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
             "season": $util.dynamodb.toDynamoDBJson($ctx.args.input.season),
             "startDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.startDate),
-            "endDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.endDate)
+            "endDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.endDate),
+            "isActive": $util.dynamodb.toDynamoDBJson($ctx.args.input.isActive)
           }
         }
       ResponseMappingTemplate: |
@@ -755,6 +761,7 @@ Resources:
         $util.qr($result.put("season", $ctx.args.input.season))
         $util.qr($result.put("startDate", $ctx.args.input.startDate))
         $util.qr($result.put("endDate", $ctx.args.input.endDate))
+        $util.qr($result.put("isActive", $ctx.args.input.isActive))
         $util.toJson($result)
 
   UpdatePhaseResolver:

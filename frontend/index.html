@@ -41,7 +41,7 @@
 
       .shell {
         display: grid;
-        grid-template-columns: 84px 1fr;
+        grid-template-columns: 240px 1fr;
         min-height: 100vh;
         padding: 24px;
         gap: 20px;
@@ -50,11 +50,11 @@
       .sidebar {
         background: var(--sidebar);
         border-radius: 28px;
-        padding: 22px 16px;
+        padding: 22px 18px;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 18px;
+        align-items: stretch;
+        gap: 14px;
         color: #fff;
       }
 
@@ -69,18 +69,56 @@
       }
 
       .nav-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
-        background: #1b1f2a;
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.12);
         display: grid;
         place-items: center;
         font-size: 0.75rem;
       }
 
-      .nav-icon.active {
+      .nav-item {
+        border: 1px solid transparent;
+        background: transparent;
+        color: inherit;
+        padding: 10px 12px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-align: left;
+        cursor: pointer;
+        font: inherit;
+      }
+
+      .nav-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .nav-item.active {
         background: #fff;
         color: #11131b;
+        box-shadow: 0 12px 20px rgba(15, 23, 42, 0.2);
+      }
+
+      .nav-item.active .nav-icon {
+        background: #11131b;
+        color: #fff;
+      }
+
+      .nav-title {
+        font-weight: 600;
+      }
+
+      .nav-sub {
+        font-size: 0.72rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .nav-item.active .nav-sub {
+        color: #4b5563;
+      }
       }
 
       .main {
@@ -202,6 +240,10 @@
         margin-top: 24px;
       }
 
+      .layout.single {
+        grid-template-columns: 1fr;
+      }
+
       .panel {
         background: var(--surface-alt);
         border: 1px solid var(--border);
@@ -238,6 +280,11 @@
         background: #fff;
         color: var(--ink);
         box-shadow: 0 10px 16px rgba(20, 20, 40, 0.08);
+      }
+
+      .tab:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
       }
 
       .table {
@@ -329,6 +376,132 @@
         text-align: center;
       }
 
+      .stack {
+        display: grid;
+        gap: 18px;
+      }
+
+      .section-tree {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .tree-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+      }
+
+      .tree-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--blue);
+      }
+
+      .tree-branch {
+        margin-left: 18px;
+        display: grid;
+        gap: 6px;
+      }
+
+      .tree-leaf {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .tree-leaf.active {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .split {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .subpanel {
+        border-radius: 16px;
+        padding: 16px;
+        background: #f7faff;
+        border: 1px solid var(--border);
+      }
+
+      .subpanel.players-panel {
+        position: relative;
+      }
+
+      .fab {
+        position: absolute;
+        right: 16px;
+        bottom: 16px;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: none;
+        background: var(--orange);
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 12px 24px rgba(249, 115, 22, 0.3);
+      }
+
+      .fab:hover {
+        background: var(--orange-strong);
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(11, 15, 23, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 10;
+      }
+
+      .modal {
+        width: min(760px, 100%);
+        max-height: min(90vh, 900px);
+        overflow: auto;
+        background: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .modal-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
       @media (max-width: 1024px) {
         .shell {
           grid-template-columns: 1fr;
@@ -336,7 +509,18 @@
 
         .sidebar {
           flex-direction: row;
-          justify-content: space-around;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .nav-item {
+          flex: 1;
+          justify-content: center;
+          padding: 10px;
+        }
+
+        .nav-sub {
+          display: none;
         }
 
         .layout {
@@ -373,14 +557,18 @@
         const [groups, setGroups] = useState([]);
         const [rounds, setRounds] = useState([]);
         const [teams, setTeams] = useState([]);
+        const [players, setPlayers] = useState([]);
         const [assignments, setAssignments] = useState([]);
         const [selectedTournamentId, setSelectedTournamentId] = useState("");
         const [selectedPhaseId, setSelectedPhaseId] = useState("");
         const [selectedGroupId, setSelectedGroupId] = useState("");
         const [selectedRoundId, setSelectedRoundId] = useState("");
         const [selectedTeamId, setSelectedTeamId] = useState("");
+        const [activeSection, setActiveSection] = useState("tournaments");
         const [activeTab, setActiveTab] = useState("details");
         const [isCreatingTournament, setIsCreatingTournament] = useState(false);
+        const [isCreatingPlayer, setIsCreatingPlayer] = useState(false);
+        const [selectedPlayerId, setSelectedPlayerId] = useState("");
 
         const [tournamentForm, setTournamentForm] = useState({
           name: "",
@@ -442,6 +630,21 @@
           groupId: "",
           roundId: ""
         });
+        const [playerEdit, setPlayerEdit] = useState({
+          dni: "",
+          name: "",
+          lastName: "",
+          nickname: "",
+          dateOfBirth: "",
+          cellphone: "",
+          email: "",
+          playedBefore: "no",
+          aptoMedico: "no",
+          position: "",
+          puntaje: "",
+          referencia: "",
+          egresoYear: ""
+        });
 
         const canQuery = useMemo(
           () => endpoint.trim() && apiKey.trim(),
@@ -477,8 +680,15 @@
           });
           return map;
         }, [rounds]);
+        const selectedPlayer = useMemo(
+          () => players.find(item => item.id === selectedPlayerId),
+          [players, selectedPlayerId]
+        );
 
-        const showTabs = isCreatingTournament || selectedTournamentId;
+        const showTabs =
+          activeSection === "tournaments" &&
+          (isCreatingTournament || selectedTournamentId);
+        const canOpenSubsections = Boolean(selectedTournamentId);
 
         function cleanInput(input) {
           return Object.fromEntries(
@@ -513,7 +723,7 @@
           setLoading(true);
           try {
             const data = await request(
-              "query { listTournaments { id name season startDate endDate } }"
+              "query { listTournaments { id name season startDate endDate isActive } }"
             );
             setTournaments(data.listTournaments);
           } catch (err) {
@@ -592,7 +802,7 @@
           setStatus("");
           try {
             const data = await request(
-              "mutation ($input: CreateTournamentInput!) { createTournament(input: $input) { id name season startDate endDate } }",
+              "mutation ($input: CreateTournamentInput!) { createTournament(input: $input) { id name season startDate endDate isActive } }",
               { input: cleanInput(tournamentForm) }
             );
             setTournaments([data.createTournament, ...tournaments]);
@@ -620,10 +830,11 @@
           try {
             const payload = {
               ...tournamentEdit,
-              id: selectedTournamentId
+              id: selectedTournamentId,
+              isActive: selectedTournament ? selectedTournament.isActive : false
             };
             const data = await request(
-              "mutation ($input: UpdateTournamentInput!) { updateTournament(input: $input) { id name season startDate endDate } }",
+              "mutation ($input: UpdateTournamentInput!) { updateTournament(input: $input) { id name season startDate endDate isActive } }",
               { input: cleanInput(payload) }
             );
             setTournaments(
@@ -919,6 +1130,7 @@
         }
 
         function handleCreateTournamentClick() {
+          setActiveSection("tournaments");
           setIsCreatingTournament(true);
           setSelectedTournamentId("");
           setSelectedPhaseId("");
@@ -932,6 +1144,68 @@
           setActiveTab("details");
         }
 
+        async function toggleTournamentActive(id) {
+          const target = tournaments.find(tournament => tournament.id === id);
+          if (!target) return;
+          setLoading(true);
+          setStatus("");
+          const nextActive = !target.isActive;
+          try {
+            const updates = [];
+            const deactivations = nextActive
+              ? tournaments.filter(tournament => tournament.isActive && tournament.id !== id)
+              : [];
+            updates.push(
+              request(
+                "mutation ($input: UpdateTournamentInput!) { updateTournament(input: $input) { id name season startDate endDate isActive } }",
+                {
+                  input: cleanInput({
+                    id: target.id,
+                    name: target.name,
+                    season: target.season,
+                    startDate: target.startDate,
+                    endDate: target.endDate,
+                    isActive: nextActive
+                  })
+                }
+              )
+            );
+            deactivations.forEach(tournament => {
+              updates.push(
+                request(
+                  "mutation ($input: UpdateTournamentInput!) { updateTournament(input: $input) { id name season startDate endDate isActive } }",
+                  {
+                    input: cleanInput({
+                      id: tournament.id,
+                      name: tournament.name,
+                      season: tournament.season,
+                      startDate: tournament.startDate,
+                      endDate: tournament.endDate,
+                      isActive: false
+                    })
+                  }
+                )
+              );
+            });
+            const results = await Promise.all(updates);
+            const updated = results.map(result => result.updateTournament);
+            setTournaments(
+              tournaments.map(tournament => {
+                const match = updated.find(item => item.id === tournament.id);
+                return match ? { ...tournament, ...match } : tournament;
+              })
+            );
+            if (nextActive) {
+              setSelectedTournamentId(target.id);
+            }
+            setStatus("Tournament status updated.");
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
         useEffect(() => {
           if (canQuery) {
             refreshTournaments();
@@ -942,6 +1216,7 @@
           if (!selectedTournamentId) {
             setPhases([]);
             setTeams([]);
+            setPlayers([]);
             setSelectedPhaseId("");
             setTournamentEdit({
               id: "",
@@ -964,6 +1239,33 @@
             });
           }
         }, [selectedTournamentId, selectedTournament]);
+
+        useEffect(() => {
+          const activeTournament = tournaments.find(item => item.isActive);
+          if (activeTournament && activeTournament.id !== selectedTournamentId) {
+            setSelectedTournamentId(activeTournament.id);
+          }
+        }, [tournaments, selectedTournamentId]);
+
+        useEffect(() => {
+          setSelectedPlayerId("");
+          setIsCreatingPlayer(false);
+          setPlayerEdit({
+            dni: "",
+            name: "",
+            lastName: "",
+            nickname: "",
+            dateOfBirth: "",
+            cellphone: "",
+            email: "",
+            playedBefore: "no",
+            aptoMedico: "no",
+            position: "",
+            puntaje: "",
+            referencia: "",
+            egresoYear: ""
+          });
+        }, [selectedTournamentId]);
 
         useEffect(() => {
           if (!selectedPhaseId) {
@@ -1057,85 +1359,349 @@
             });
           }
         }, [selectedTeamId, teams, selectedTournamentId]);
+        useEffect(() => {
+          if (!selectedPlayerId) return;
+          if (selectedPlayer) {
+            setPlayerEdit({
+              dni: selectedPlayer.dni || "",
+              name: selectedPlayer.name || "",
+              lastName: selectedPlayer.lastName || "",
+              nickname: selectedPlayer.nickname || "",
+              dateOfBirth: selectedPlayer.dateOfBirth || "",
+              cellphone: selectedPlayer.cellphone || "",
+              email: selectedPlayer.email || "",
+              playedBefore: selectedPlayer.playedBefore ? "yes" : "no",
+              aptoMedico: selectedPlayer.aptoMedico ? "yes" : "no",
+              position: selectedPlayer.position ?? "",
+              puntaje: selectedPlayer.puntaje ?? "",
+              referencia: selectedPlayer.referencia || "",
+              egresoYear: selectedPlayer.egresoYear ?? ""
+            });
+          }
+        }, [selectedPlayerId, selectedPlayer]);
         const isZonesPhase = phaseEdit.phaseType === "ZONES";
+        const zoneLabel = isZonesPhase ? "Zones" : "Rounds";
+        const breadcrumb = useMemo(() => {
+          if (activeSection === "players") {
+            return ["Home", "Tournament List", "Teams", "Players"];
+          }
+          if (activeTab === "phases") {
+            return ["Home", "Tournament List", "Phases", "Zones"];
+          }
+          if (activeTab === "assign") {
+            return ["Home", "Tournament List", "Phases", zoneLabel];
+          }
+          if (activeTab === "teams") {
+            return ["Home", "Tournament List", "Teams", "Players"];
+          }
+          return ["Home", "Tournament List"];
+        }, [activeSection, activeTab, zoneLabel]);
+        const heroTitle =
+          activeSection === "players"
+            ? "Players"
+            : selectedTournament
+            ? selectedTournament.name
+            : "Tournaments";
+        const searchPlaceholder =
+          activeSection === "players" ? "Search players" : "Search tournaments";
+        const highlightPhasesPath =
+          activeSection === "tournaments" &&
+          (activeTab === "phases" || activeTab === "assign");
+        const highlightPlayersPath =
+          activeSection === "players" ||
+          (activeSection === "tournaments" && activeTab === "teams");
+        const showPlayerModal = isCreatingPlayer || selectedPlayerId;
+
+        function startCreatePlayer() {
+          if (!selectedTournamentId) {
+            setStatus("Select a tournament to add players.");
+            return;
+          }
+          setIsCreatingPlayer(true);
+          setSelectedPlayerId("");
+          setPlayerEdit({
+            dni: "",
+            name: "",
+            lastName: "",
+            nickname: "",
+            dateOfBirth: "",
+            cellphone: "",
+            email: "",
+            playedBefore: "no",
+            aptoMedico: "no",
+            position: "",
+            puntaje: "",
+            referencia: "",
+            egresoYear: ""
+          });
+        }
+
+        function updatePlayerProfile() {
+          if (!selectedPlayerId && !isCreatingPlayer) return;
+          if (!selectedTournamentId) return;
+          const payload = {
+            id: selectedPlayerId || `player_${Date.now()}`,
+            tournamentId: selectedTournamentId,
+            dni: playerEdit.dni ? Number(playerEdit.dni) : "",
+            name: playerEdit.name,
+            lastName: playerEdit.lastName,
+            nickname: playerEdit.nickname,
+            dateOfBirth: playerEdit.dateOfBirth,
+            cellphone: playerEdit.cellphone,
+            email: playerEdit.email,
+            playedBefore: playerEdit.playedBefore === "yes",
+            aptoMedico: playerEdit.aptoMedico === "yes",
+            position: playerEdit.position ? Number(playerEdit.position) : "",
+            puntaje: playerEdit.puntaje ? Number(playerEdit.puntaje) : "",
+            referencia: playerEdit.referencia,
+            egresoYear: playerEdit.egresoYear ? Number(playerEdit.egresoYear) : ""
+          };
+          if (isCreatingPlayer) {
+            setPlayers([payload, ...players]);
+            setSelectedPlayerId(payload.id);
+            setIsCreatingPlayer(false);
+            setStatus("Player profile created.");
+            return;
+          }
+          setPlayers(
+            players.map(player =>
+              player.id === selectedPlayerId ? payload : player
+            )
+          );
+          setStatus("Player profile updated.");
+        }
+
+        function closePlayerModal() {
+          setIsCreatingPlayer(false);
+          setSelectedPlayerId("");
+        }
 
         return html`
           <div className="shell">
             <aside className="sidebar">
               <div className="logo">FA</div>
-              <div className="nav-icon active">TM</div>
-              <div className="nav-icon">PH</div>
-              <div className="nav-icon">TE</div>
-              <div className="nav-icon">AS</div>
-              <div className="nav-icon">ST</div>
+              <button
+                className=${`nav-item ${activeSection === "tournaments" ? "active" : ""}`}
+                onClick=${() => setActiveSection("tournaments")}
+              >
+                <div className="nav-icon">TM</div>
+                <div>
+                  <div className="nav-title">Tournaments</div>
+                  <div className="nav-sub">Phases & teams</div>
+                </div>
+              </button>
+              <button
+                className=${`nav-item ${activeSection === "players" ? "active" : ""}`}
+                onClick=${() => setActiveSection("players")}
+              >
+                <div className="nav-icon">PL</div>
+                <div>
+                  <div className="nav-title">Players</div>
+                  <div className="nav-sub">Rosters & squads</div>
+                </div>
+              </button>
             </aside>
 
             <main className="main">
               <div className="topbar">
                 <div className="search">
                   <span>Q</span>
-                  <input placeholder="Search tournaments" />
+                  <input placeholder=${searchPlaceholder} />
                 </div>
                 <div className="top-nav">
-                  <span>My Tournaments</span>
-                  <span>Phases</span>
-                  <span>Teams</span>
+                  ${breadcrumb.map(
+                    (item, index) =>
+                      html`<span>${item}${index < breadcrumb.length - 1 ? " /" : ""}</span>`
+                  )}
                 </div>
                 <div className="top-actions">
                   <div className="pill">${loading ? "Saving..." : "Ready"}</div>
-                  <button className="btn primary" onClick=${handleCreateTournamentClick}>
-                    Create tournament
-                  </button>
+                  ${activeSection === "tournaments"
+                    ? html`
+                        <button className="btn primary" onClick=${handleCreateTournamentClick}>
+                          Create tournament
+                        </button>
+                      `
+                    : html`
+                        <button className="btn ghost" onClick=${() => setActiveSection("tournaments")}>
+                          Manage tournaments
+                        </button>
+                      `}
                 </div>
               </div>
 
               <div className="hero">
-                <h1>${selectedTournament ? selectedTournament.name : "Tournaments"}</h1>
+                <h1>${heroTitle}</h1>
                 <div className="meta">
-                  <div className="stat">${selectedTournament ? selectedTournament.season || "Season" : "All seasons"}</div>
-                  <div className="stat">${phases.length} phases</div>
-                  <div className="stat">${teams.length} teams</div>
+                  ${activeSection === "players"
+                    ? html`
+                        <div className="stat">
+                          ${selectedTournament ? selectedTournament.name : "No tournament selected"}
+                        </div>
+                        <div className="stat">${players.length} players</div>
+                        <div className="stat">
+                          ${selectedPlayerId ? "Profile open" : "Select a player"}
+                        </div>
+                      `
+                    : html`
+                        <div className="stat">
+                          ${selectedTournament
+                            ? selectedTournament.season || "Season"
+                            : "All seasons"}
+                        </div>
+                        <div className="stat">${phases.length} phases</div>
+                        <div className="stat">${teams.length} teams</div>
+                      `}
                 </div>
               </div>
 
-              <div className="layout">
-                <div className="panel">
-                  <h2>Tournaments</h2>
-                  ${tournaments.length
-                    ? html`
-                        <table className="table">
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-                              <th>Season</th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            ${tournaments.map(
-                              tournament => html`
-                                <tr>
-                                  <td>${tournament.name}</td>
-                                  <td>${tournament.season || "--"}</td>
-                                  <td>
-                                    <button
-                                      className="btn ghost"
-                                      onClick=${() => handleOpenTournament(tournament.id)}
-                                    >
-                                      Open
-                                    </button>
-                                  </td>
-                                </tr>
+              <div className=${`layout ${activeSection === "players" ? "single" : ""}`}>
+                ${activeSection === "players"
+                  ? ""
+                  : html`
+                      <div className="stack">
+                        <div className="panel">
+                          <h2>Sections</h2>
+                          <ul className="section-tree">
+                            <li>
+                              <div className="tree-item">
+                                <span className="tree-dot"></span>
+                                <span>Home</span>
+                              </div>
+                              <div className="tree-branch">
+                                <div className=${`tree-leaf ${highlightPhasesPath ? "active" : ""}`}>
+                                  Tournament List -> Phases -> Zones
+                                </div>
+                                <div className=${`tree-leaf ${highlightPlayersPath ? "active" : ""}`}>
+                                  Tournament List -> Teams -> Players
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                        <div className="panel">
+                          <h2>Tournaments</h2>
+                          ${tournaments.length
+                            ? html`
+                                <table className="table">
+                                  <thead>
+                                    <tr>
+                                      <th>Name</th>
+                                      <th>Season</th>
+                                      <th>Status</th>
+                                      <th></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    ${tournaments.map(
+                                      tournament => html`
+                                        <tr>
+                                          <td>${tournament.name}</td>
+                                          <td>${tournament.season || "--"}</td>
+                                          <td>
+                                            ${tournament.isActive
+                                              ? html`<span className="tag">Active</span>`
+                                              : html`<span className="tag">Inactive</span>`}
+                                          </td>
+                                          <td>
+                                            <button
+                                              className="btn ghost"
+                                              onClick=${() => toggleTournamentActive(tournament.id)}
+                                            >
+                                              ${tournament.isActive ? "Deactivate" : "Activate"}
+                                            </button>
+                                            <button
+                                              className="btn ghost"
+                                              onClick=${() => handleOpenTournament(tournament.id)}
+                                            >
+                                              Open
+                                            </button>
+                                          </td>
+                                        </tr>
+                                      `
+                                    )}
+                                  </tbody>
+                                </table>
                               `
-                            )}
-                          </tbody>
-                        </table>
-                      `
-                    : html`<div className="empty">No tournaments yet.</div>`}
-                </div>
+                            : html`<div className="empty">No tournaments yet.</div>`}
+                        </div>
+                      </div>
+                    `}
 
                 <div className="panel">
-                  ${showTabs
+                  ${activeSection === "players"
+                    ? html`
+                        <div className="form-grid" style=${{ marginTop: "16px" }}>
+                          <h2>Players</h2>
+                          ${!selectedTournamentId
+                            ? html`
+                                <div className="empty">
+                                  Select a tournament from the list to access teams and players.
+                                  <div style=${{ marginTop: "12px" }}>
+                                    <button
+                                      className="btn ghost"
+                                      onClick=${() => setActiveSection("tournaments")}
+                                    >
+                                      Go to tournaments
+                                    </button>
+                                  </div>
+                                </div>
+                              `
+                            : html`
+                                <div className="subpanel players-panel">
+                                  <div className="panel-header">
+                                    <h3>Players in tournament</h3>
+                                    <button className="btn ghost" onClick=${startCreatePlayer}>
+                                      Add player
+                                    </button>
+                                  </div>
+                                  ${players.length
+                                    ? html`
+                                        <table className="table">
+                                          <thead>
+                                            <tr>
+                                              <th>DNI</th>
+                                              <th>Name</th>
+                                              <th>Lastname</th>
+                                              <th>Nickname</th>
+                                              <th>Pos.</th>
+                                              <th>Puntaje</th>
+                                              <th></th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            ${players.map(
+                                              player => html`
+                                                <tr>
+                                                  <td>${player.dni}</td>
+                                                  <td>${player.name}</td>
+                                                  <td>${player.lastName}</td>
+                                                  <td>${player.nickname || "--"}</td>
+                                                  <td>${player.position ?? "--"}</td>
+                                                  <td>${player.puntaje ?? "--"}</td>
+                                                  <td>
+                                                    <button
+                                                      className="btn ghost"
+                                                      onClick=${() =>
+                                                        (setSelectedPlayerId(player.id),
+                                                        setIsCreatingPlayer(false))}
+                                                    >
+                                                      Open
+                                                    </button>
+                                                  </td>
+                                                </tr>
+                                              `
+                                            )}
+                                          </tbody>
+                                        </table>
+                                      `
+                                    : html`<div className="empty">No players inscribed yet.</div>`}
+                                  <button className="fab" onClick=${startCreatePlayer}>+</button>
+                                </div>
+                              `}
+                        </div>
+                      `
+                    : showTabs
                     ? html`
                         <div className="tabs">
                           <button
@@ -1147,20 +1713,23 @@
                           <button
                             className=${`tab ${activeTab === "phases" ? "active" : ""}`}
                             onClick=${() => setActiveTab("phases")}
+                            disabled=${!canOpenSubsections}
                           >
                             Phases
                           </button>
                           <button
                             className=${`tab ${activeTab === "teams" ? "active" : ""}`}
                             onClick=${() => setActiveTab("teams")}
+                            disabled=${!canOpenSubsections}
                           >
                             Teams
                           </button>
                           <button
                             className=${`tab ${activeTab === "assign" ? "active" : ""}`}
                             onClick=${() => setActiveTab("assign")}
+                            disabled=${!canOpenSubsections}
                           >
-                            Assign
+                            ${zoneLabel}
                           </button>
                         </div>
 
@@ -1430,7 +1999,7 @@
                         ${activeTab === "assign"
                           ? html`
                               <div className="form-grid" style=${{ marginTop: "16px" }}>
-                                <h2>Assignments</h2>
+                                <h2>${zoneLabel}</h2>
                                 ${!selectedPhase
                                   ? html`<div className="empty">Open a phase first.</div>`
                                   : html`
@@ -1523,6 +2092,205 @@
               ${status ? html`<div className="status">${status}</div>` : ""}
             </main>
           </div>
+          ${activeSection === "players" && showPlayerModal
+            ? html`
+                <div className="modal-backdrop" onClick=${closePlayerModal}>
+                  <div className="modal" onClick=${e => e.stopPropagation()}>
+                    <div className="modal-header">
+                      <div className="modal-title">
+                        ${isCreatingPlayer ? "Create player" : "Player profile"}
+                      </div>
+                      <button className="btn ghost" onClick=${closePlayerModal}>Close</button>
+                    </div>
+                    <div className="form-grid">
+                      <div className="form-row">
+                        <div>
+                          <label>DNI</label>
+                          <input
+                            type="number"
+                            value=${playerEdit.dni}
+                            onInput=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                dni: e.target.value
+                              })}
+                          />
+                        </div>
+                        <div>
+                          <label>Position</label>
+                          <input
+                            type="number"
+                            value=${playerEdit.position}
+                            onInput=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                position: e.target.value
+                              })}
+                          />
+                        </div>
+                        <div>
+                          <label>Puntaje</label>
+                          <input
+                            type="number"
+                            value=${playerEdit.puntaje}
+                            onInput=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                puntaje: e.target.value
+                              })}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div>
+                          <label>Name</label>
+                          <input
+                            value=${playerEdit.name}
+                            onInput=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                name: e.target.value
+                              })}
+                          />
+                        </div>
+                        <div>
+                          <label>Lastname</label>
+                          <input
+                            value=${playerEdit.lastName}
+                            onInput=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                lastName: e.target.value
+                              })}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div>
+                          <label>Nickname</label>
+                          <input
+                            value=${playerEdit.nickname}
+                            onInput=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                nickname: e.target.value
+                              })}
+                          />
+                        </div>
+                        <div>
+                          <label>Date of birth</label>
+                          <input
+                            value=${playerEdit.dateOfBirth}
+                            onInput=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                dateOfBirth: e.target.value
+                              })}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div>
+                          <label>Cellphone</label>
+                          <input
+                            value=${playerEdit.cellphone}
+                            onInput=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                cellphone: e.target.value
+                              })}
+                          />
+                        </div>
+                        <div>
+                          <label>Email</label>
+                          <input
+                            value=${playerEdit.email}
+                            onInput=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                email: e.target.value
+                              })}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div>
+                          <label>Played before</label>
+                          <select
+                            value=${playerEdit.playedBefore}
+                            onChange=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                playedBefore: e.target.value
+                              })}
+                          >
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label>Apto medico</label>
+                          <select
+                            value=${playerEdit.aptoMedico}
+                            onChange=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                aptoMedico: e.target.value
+                              })}
+                          >
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div>
+                          <label>Referencia</label>
+                          <select
+                            value=${playerEdit.referencia}
+                            onChange=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                referencia: e.target.value
+                              })}
+                          >
+                            <option value="">Select</option>
+                            <option value="Padre de Alumno">Padre de Alumno</option>
+                            <option value="Padre de ex Alumno">Padre de ex Alumno</option>
+                            <option value="Ex alumno">Ex alumno</option>
+                            <option value="Docente">Docente</option>
+                            <option value="Invitado">Invitado</option>
+                            <option value="Hermano marista">Hermano marista</option>
+                            <option value="Esposo educadora">Esposo educadora</option>
+                            <option value="Abuelo de alumno">Abuelo de alumno</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label>Ano de egreso</label>
+                          <input
+                            type="number"
+                            value=${playerEdit.egresoYear}
+                            onInput=${e =>
+                              setPlayerEdit({
+                                ...playerEdit,
+                                egresoYear: e.target.value
+                              })}
+                          />
+                        </div>
+                      </div>
+                      <div className="modal-actions">
+                        <button className="btn primary" onClick=${updatePlayerProfile}>
+                          ${isCreatingPlayer ? "Create profile" : "Save profile"}
+                        </button>
+                        <button className="btn ghost" onClick=${closePlayerModal}>
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `
+            : ""}
         `;
       }
 
