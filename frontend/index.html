@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -208,11 +209,23 @@
         const [tournaments, setTournaments] = useState([]);
         const [phases, setPhases] = useState([]);
         const [groups, setGroups] = useState([]);
+        const [rounds, setRounds] = useState([]);
         const [teams, setTeams] = useState([]);
+        const [assignments, setAssignments] = useState([]);
         const [selectedTournamentId, setSelectedTournamentId] = useState("");
         const [selectedPhaseId, setSelectedPhaseId] = useState("");
+        const [selectedGroupId, setSelectedGroupId] = useState("");
+        const [selectedRoundId, setSelectedRoundId] = useState("");
+        const [selectedTeamId, setSelectedTeamId] = useState("");
 
         const [tournamentForm, setTournamentForm] = useState({
+          name: "",
+          season: "",
+          startDate: "",
+          endDate: ""
+        });
+        const [tournamentEdit, setTournamentEdit] = useState({
+          id: "",
           name: "",
           season: "",
           startDate: "",
@@ -223,19 +236,83 @@
           phaseType: "ZONES",
           phaseOrder: 1
         });
+        const [phaseEdit, setPhaseEdit] = useState({
+          id: "",
+          tournamentId: "",
+          name: "",
+          phaseType: "ZONES",
+          phaseOrder: 1
+        });
         const [groupForm, setGroupForm] = useState({
           name: "",
           groupOrder: 1
         });
+        const [groupEdit, setGroupEdit] = useState({
+          id: "",
+          phaseId: "",
+          name: "",
+          groupOrder: 1
+        });
+        const [roundForm, setRoundForm] = useState({
+          name: "",
+          roundOrder: 1
+        });
+        const [roundEdit, setRoundEdit] = useState({
+          id: "",
+          phaseId: "",
+          name: "",
+          roundOrder: 1
+        });
         const [teamForm, setTeamForm] = useState({
           name: "",
           shortName: ""
+        });
+        const [teamEdit, setTeamEdit] = useState({
+          id: "",
+          tournamentId: "",
+          name: "",
+          shortName: ""
+        });
+        const [assignmentForm, setAssignmentForm] = useState({
+          teamId: "",
+          groupId: "",
+          roundId: ""
         });
 
         const canQuery = useMemo(
           () => endpoint.trim() && apiKey.trim(),
           [endpoint, apiKey]
         );
+
+        const selectedTournament = useMemo(
+          () => tournaments.find(item => item.id === selectedTournamentId),
+          [tournaments, selectedTournamentId]
+        );
+        const selectedPhase = useMemo(
+          () => phases.find(item => item.id === selectedPhaseId),
+          [phases, selectedPhaseId]
+        );
+        const teamLookup = useMemo(() => {
+          const map = {};
+          teams.forEach(team => {
+            map[team.id] = team;
+          });
+          return map;
+        }, [teams]);
+        const groupLookup = useMemo(() => {
+          const map = {};
+          groups.forEach(group => {
+            map[group.id] = group;
+          });
+          return map;
+        }, [groups]);
+        const roundLookup = useMemo(() => {
+          const map = {};
+          rounds.forEach(round => {
+            map[round.id] = round;
+          });
+          return map;
+        }, [rounds]);
 
         function cleanInput(input) {
           return Object.fromEntries(
@@ -306,6 +383,19 @@
           }
         }
 
+        async function refreshRounds(phaseId) {
+          if (!phaseId) return;
+          try {
+            const data = await request(
+              "query ($phaseId: ID!) { listRoundsByPhase(phaseId: $phaseId) { id name roundOrder } }",
+              { phaseId }
+            );
+            setRounds(data.listRoundsByPhase);
+          } catch (err) {
+            setStatus(err.message);
+          }
+        }
+
         async function refreshTeams(tournamentId) {
           if (!tournamentId) return;
           try {
@@ -319,6 +409,18 @@
           }
         }
 
+        async function refreshAssignments(phaseId) {
+          if (!phaseId) return;
+          try {
+            const data = await request(
+              "query ($phaseId: ID!) { listAssignmentsByPhase(phaseId: $phaseId) { id teamId groupId roundId } }",
+              { phaseId }
+            );
+            setAssignments(data.listAssignmentsByPhase);
+          } catch (err) {
+            setStatus(err.message);
+          }
+        }
         async function createTournament() {
           setLoading(true);
           setStatus("");
@@ -335,6 +437,35 @@
               endDate: ""
             });
             setStatus("Tournament created.");
+            setSelectedTournamentId(data.createTournament.id);
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function updateTournament() {
+          if (!selectedTournamentId) return;
+          setLoading(true);
+          setStatus("");
+          try {
+            const payload = {
+              ...tournamentEdit,
+              id: selectedTournamentId
+            };
+            const data = await request(
+              "mutation ($input: UpdateTournamentInput!) { updateTournament(input: $input) { id name season startDate endDate } }",
+              { input: cleanInput(payload) }
+            );
+            setTournaments(
+              tournaments.map(item =>
+                item.id === data.updateTournament.id
+                  ? data.updateTournament
+                  : item
+              )
+            );
+            setStatus("Tournament updated.");
           } catch (err) {
             setStatus(err.message);
           } finally {
@@ -367,6 +498,36 @@
               phaseOrder: 1
             });
             setStatus("Phase created.");
+            setSelectedPhaseId(data.createPhase.id);
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function updatePhase() {
+          if (!selectedPhaseId || !selectedTournamentId) return;
+          setLoading(true);
+          setStatus("");
+          try {
+            const data = await request(
+              "mutation ($input: UpdatePhaseInput!) { updatePhase(input: $input) { id name phaseType phaseOrder tournamentId } }",
+              {
+                input: {
+                  ...phaseEdit,
+                  id: selectedPhaseId,
+                  tournamentId: selectedTournamentId,
+                  phaseOrder: Number(phaseEdit.phaseOrder)
+                }
+              }
+            );
+            setPhases(
+              phases.map(item =>
+                item.id === data.updatePhase.id ? data.updatePhase : item
+              )
+            );
+            setStatus("Phase updated.");
           } catch (err) {
             setStatus(err.message);
           } finally {
@@ -402,6 +563,92 @@
           }
         }
 
+        async function updateGroup() {
+          if (!selectedGroupId || !selectedPhaseId) return;
+          setLoading(true);
+          setStatus("");
+          try {
+            const data = await request(
+              "mutation ($input: UpdateGroupInput!) { updateGroup(input: $input) { id name groupOrder phaseId } }",
+              {
+                input: {
+                  ...groupEdit,
+                  id: selectedGroupId,
+                  phaseId: selectedPhaseId,
+                  groupOrder: Number(groupEdit.groupOrder)
+                }
+              }
+            );
+            setGroups(
+              groups.map(item =>
+                item.id === data.updateGroup.id ? data.updateGroup : item
+              )
+            );
+            setStatus("Group updated.");
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function createRound() {
+          if (!selectedPhaseId) {
+            setStatus("Select a phase to add a round.");
+            return;
+          }
+          setLoading(true);
+          setStatus("");
+          try {
+            const data = await request(
+              "mutation ($input: CreateRoundInput!) { createRound(input: $input) { id name roundOrder phaseId } }",
+              {
+                input: {
+                  ...roundForm,
+                  phaseId: selectedPhaseId,
+                  roundOrder: Number(roundForm.roundOrder)
+                }
+              }
+            );
+            setRounds([data.createRound, ...rounds]);
+            setRoundForm({ name: "", roundOrder: 1 });
+            setStatus("Round created.");
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function updateRound() {
+          if (!selectedRoundId || !selectedPhaseId) return;
+          setLoading(true);
+          setStatus("");
+          try {
+            const data = await request(
+              "mutation ($input: UpdateRoundInput!) { updateRound(input: $input) { id name roundOrder phaseId } }",
+              {
+                input: {
+                  ...roundEdit,
+                  id: selectedRoundId,
+                  phaseId: selectedPhaseId,
+                  roundOrder: Number(roundEdit.roundOrder)
+                }
+              }
+            );
+            setRounds(
+              rounds.map(item =>
+                item.id === data.updateRound.id ? data.updateRound : item
+              )
+            );
+            setStatus("Round updated.");
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
         async function createTeam() {
           if (!selectedTournamentId) {
             setStatus("Select a tournament to add a team.");
@@ -422,6 +669,80 @@
             setTeams([data.createTeam, ...teams]);
             setTeamForm({ name: "", shortName: "" });
             setStatus("Team created.");
+            setSelectedTeamId(data.createTeam.id);
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function updateTeam() {
+          if (!selectedTeamId || !selectedTournamentId) return;
+          setLoading(true);
+          setStatus("");
+          try {
+            const data = await request(
+              "mutation ($input: UpdateTeamInput!) { updateTeam(input: $input) { id name shortName tournamentId } }",
+              {
+                input: cleanInput({
+                  ...teamEdit,
+                  id: selectedTeamId,
+                  tournamentId: selectedTournamentId
+                })
+              }
+            );
+            setTeams(
+              teams.map(item =>
+                item.id === data.updateTeam.id ? data.updateTeam : item
+              )
+            );
+            setStatus("Team updated.");
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+        async function assignTeam() {
+          if (!selectedTournamentId || !selectedPhaseId) return;
+          if (!assignmentForm.teamId) {
+            setStatus("Pick a team to assign.");
+            return;
+          }
+          if (selectedPhase?.phaseType === "ZONES" && !assignmentForm.groupId) {
+            setStatus("Pick a group for this team.");
+            return;
+          }
+          if (
+            selectedPhase?.phaseType === "PLAYOFFS" &&
+            !assignmentForm.roundId
+          ) {
+            setStatus("Pick a round for this team.");
+            return;
+          }
+          setLoading(true);
+          setStatus("");
+          try {
+            await request(
+              "mutation ($input: AssignTeamInput!) { assignTeamToPhase(input: $input) { id teamId groupId roundId } }",
+              {
+                input: cleanInput({
+                  tournamentId: selectedTournamentId,
+                  phaseId: selectedPhaseId,
+                  teamId: assignmentForm.teamId,
+                  groupId: assignmentForm.groupId,
+                  roundId: assignmentForm.roundId
+                })
+              }
+            );
+            setStatus("Team assigned.");
+            setAssignmentForm({
+              teamId: "",
+              groupId: "",
+              roundId: ""
+            });
+            refreshAssignments(selectedPhaseId);
           } catch (err) {
             setStatus(err.message);
           } finally {
@@ -430,36 +751,136 @@
         }
 
         useEffect(() => {
-          if (!selectedTournamentId) {
-            setPhases([]);
-            setTeams([]);
-            setSelectedPhaseId("");
-            return;
-          }
-          refreshPhases(selectedTournamentId);
-          refreshTeams(selectedTournamentId);
-        }, [selectedTournamentId]);
-
-        useEffect(() => {
-          if (!selectedPhaseId) {
-            setGroups([]);
-            return;
-          }
-          refreshGroups(selectedPhaseId);
-        }, [selectedPhaseId]);
-
-        useEffect(() => {
           if (canQuery) {
             refreshTournaments();
           }
         }, [canQuery]);
 
+        useEffect(() => {
+          if (!selectedTournamentId) {
+            setPhases([]);
+            setTeams([]);
+            setSelectedPhaseId("");
+            setTournamentEdit({
+              id: "",
+              name: "",
+              season: "",
+              startDate: "",
+              endDate: ""
+            });
+            return;
+          }
+          refreshPhases(selectedTournamentId);
+          refreshTeams(selectedTournamentId);
+          if (selectedTournament) {
+            setTournamentEdit({
+              id: selectedTournament.id,
+              name: selectedTournament.name || "",
+              season: selectedTournament.season || "",
+              startDate: selectedTournament.startDate || "",
+              endDate: selectedTournament.endDate || ""
+            });
+          }
+        }, [selectedTournamentId, selectedTournament]);
+
+        useEffect(() => {
+          if (!selectedPhaseId) {
+            setGroups([]);
+            setRounds([]);
+            setAssignments([]);
+            setSelectedGroupId("");
+            setSelectedRoundId("");
+            setPhaseEdit({
+              id: "",
+              tournamentId: "",
+              name: "",
+              phaseType: "ZONES",
+              phaseOrder: 1
+            });
+            return;
+          }
+          refreshGroups(selectedPhaseId);
+          refreshRounds(selectedPhaseId);
+          refreshAssignments(selectedPhaseId);
+          if (selectedPhase) {
+            setPhaseEdit({
+              id: selectedPhase.id,
+              tournamentId: selectedTournamentId,
+              name: selectedPhase.name || "",
+              phaseType: selectedPhase.phaseType || "ZONES",
+              phaseOrder: selectedPhase.phaseOrder || 1
+            });
+          }
+        }, [selectedPhaseId, selectedPhase, selectedTournamentId]);
+
+        useEffect(() => {
+          if (!selectedGroupId) {
+            setGroupEdit({
+              id: "",
+              phaseId: selectedPhaseId,
+              name: "",
+              groupOrder: 1
+            });
+            return;
+          }
+          const group = groups.find(item => item.id === selectedGroupId);
+          if (group) {
+            setGroupEdit({
+              id: group.id,
+              phaseId: selectedPhaseId,
+              name: group.name || "",
+              groupOrder: group.groupOrder || 1
+            });
+          }
+        }, [selectedGroupId, groups, selectedPhaseId]);
+
+        useEffect(() => {
+          if (!selectedRoundId) {
+            setRoundEdit({
+              id: "",
+              phaseId: selectedPhaseId,
+              name: "",
+              roundOrder: 1
+            });
+            return;
+          }
+          const round = rounds.find(item => item.id === selectedRoundId);
+          if (round) {
+            setRoundEdit({
+              id: round.id,
+              phaseId: selectedPhaseId,
+              name: round.name || "",
+              roundOrder: round.roundOrder || 1
+            });
+          }
+        }, [selectedRoundId, rounds, selectedPhaseId]);
+
+        useEffect(() => {
+          if (!selectedTeamId) {
+            setTeamEdit({
+              id: "",
+              tournamentId: selectedTournamentId,
+              name: "",
+              shortName: ""
+            });
+            return;
+          }
+          const team = teams.find(item => item.id === selectedTeamId);
+          if (team) {
+            setTeamEdit({
+              id: team.id,
+              tournamentId: selectedTournamentId,
+              name: team.name || "",
+              shortName: team.shortName || ""
+            });
+          }
+        }, [selectedTeamId, teams, selectedTournamentId]);
         return html`
           <div className="app">
             <header>
               <div>
                 <h1>Futbol Admin</h1>
-                <p>Create tournaments, phases, groups, and teams.</p>
+                <p>Manage tournaments, phases, groups, rounds, and teams.</p>
               </div>
               <div className="pill">
                 ${loading ? "Saving..." : "Ready"}
@@ -468,7 +889,30 @@
 
             <section className="grid">
               <div className="card stack">
-                <h2>New tournament</h2>
+                <h2>Tournaments</h2>
+                <ul className="list">
+                  ${tournaments.map(
+                    tournament => html`
+                      <li>
+                        <div>
+                          <strong>${tournament.name}</strong>
+                          <div className="muted">
+                            ${tournament.season || "Season TBD"}
+                          </div>
+                        </div>
+                        <button
+                          onClick=${() => {
+                            setSelectedTournamentId(tournament.id);
+                            setSelectedPhaseId("");
+                          }}
+                        >
+                          Open
+                        </button>
+                      </li>
+                    `
+                  )}
+                </ul>
+                <h3 className="muted">Create tournament</h3>
                 <div>
                   <label>Name</label>
                   <input
@@ -525,22 +969,99 @@
               </div>
 
               <div className="card stack">
-                <h2>New phase</h2>
+                <h2>Tournament settings</h2>
                 <div>
                   <label>Tournament</label>
-                  <select
-                    value=${selectedTournamentId}
-                    onChange=${e => setSelectedTournamentId(e.target.value)}
-                  >
-                    <option value="">Select tournament</option>
-                    ${tournaments.map(
-                      tournament =>
-                        html`<option value=${tournament.id}>
-                          ${tournament.name}
-                        </option>`
-                    )}
-                  </select>
+                  <div className="pill">
+                    ${selectedTournament
+                      ? selectedTournament.name
+                      : "Select a tournament"}
+                  </div>
                 </div>
+                ${selectedTournament
+                  ? html`
+                      <div>
+                        <label>Name</label>
+                        <input
+                          value=${tournamentEdit.name}
+                          onInput=${e =>
+                            setTournamentEdit({
+                              ...tournamentEdit,
+                              name: e.target.value
+                            })}
+                        />
+                      </div>
+                      <div className="row two">
+                        <div>
+                          <label>Season</label>
+                          <input
+                            value=${tournamentEdit.season}
+                            onInput=${e =>
+                              setTournamentEdit({
+                                ...tournamentEdit,
+                                season: e.target.value
+                              })}
+                          />
+                        </div>
+                        <div>
+                          <label>Start date</label>
+                          <input
+                            value=${tournamentEdit.startDate}
+                            onInput=${e =>
+                              setTournamentEdit({
+                                ...tournamentEdit,
+                                startDate: e.target.value
+                              })}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label>End date</label>
+                        <input
+                          value=${tournamentEdit.endDate}
+                          onInput=${e =>
+                            setTournamentEdit({
+                              ...tournamentEdit,
+                              endDate: e.target.value
+                            })}
+                        />
+                      </div>
+                      <button onClick=${updateTournament} disabled=${!canQuery}>
+                        Save tournament
+                      </button>
+                    `
+                  : html`<div className="muted">Select a tournament.</div>`}
+              </div>
+
+              <div className="card stack">
+                <h2>Phases</h2>
+                <div className="muted">
+                  ${selectedTournament
+                    ? "Linked to selected tournament."
+                    : "Select a tournament first."}
+                </div>
+                <ul className="list">
+                  ${phases.map(
+                    phase => html`
+                      <li>
+                        <div>
+                          <strong>${phase.name}</strong>
+                          <div className="muted">${phase.phaseType}</div>
+                        </div>
+                        <button
+                          onClick=${() => {
+                            setSelectedPhaseId(phase.id);
+                            setSelectedGroupId("");
+                            setSelectedRoundId("");
+                          }}
+                        >
+                          Open
+                        </button>
+                      </li>
+                    `
+                  )}
+                </ul>
+                <h3 className="muted">Create phase</h3>
                 <div>
                   <label>Phase name</label>
                   <input
@@ -585,68 +1106,76 @@
               </div>
 
               <div className="card stack">
-                <h2>New group</h2>
-                <div>
-                  <label>Phase</label>
-                  <select
-                    value=${selectedPhaseId}
-                    onChange=${e => setSelectedPhaseId(e.target.value)}
-                  >
-                    <option value="">Select phase</option>
-                    ${phases.map(
-                      phase =>
-                        html`<option value=${phase.id}>
-                          ${phase.name} (#${phase.phaseOrder})
-                        </option>`
-                    )}
-                  </select>
-                </div>
-                <div className="row two">
-                  <div>
-                    <label>Group name</label>
-                    <input
-                      value=${groupForm.name}
-                      onInput=${e =>
-                        setGroupForm({ ...groupForm, name: e.target.value })}
-                      placeholder="Group A"
-                    />
-                  </div>
-                  <div>
-                    <label>Order</label>
-                    <input
-                      type="number"
-                      min="1"
-                      value=${groupForm.groupOrder}
-                      onInput=${e =>
-                        setGroupForm({
-                          ...groupForm,
-                          groupOrder: e.target.value
-                        })}
-                    />
-                  </div>
-                </div>
-                <button disabled=${!canQuery} onClick=${createGroup}>
-                  Create group
-                </button>
+                <h2>Phase settings</h2>
+                ${selectedPhase
+                  ? html`
+                      <div>
+                        <label>Phase name</label>
+                        <input
+                          value=${phaseEdit.name}
+                          onInput=${e =>
+                            setPhaseEdit({ ...phaseEdit, name: e.target.value })}
+                        />
+                      </div>
+                      <div className="row two">
+                        <div>
+                          <label>Type</label>
+                          <select
+                            value=${phaseEdit.phaseType}
+                            onChange=${e =>
+                              setPhaseEdit({
+                                ...phaseEdit,
+                                phaseType: e.target.value
+                              })}
+                          >
+                            <option value="ZONES">Zones</option>
+                            <option value="PLAYOFFS">Playoffs</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label>Order</label>
+                          <input
+                            type="number"
+                            min="1"
+                            value=${phaseEdit.phaseOrder}
+                            onInput=${e =>
+                              setPhaseEdit({
+                                ...phaseEdit,
+                                phaseOrder: e.target.value
+                              })}
+                          />
+                        </div>
+                      </div>
+                      <button onClick=${updatePhase} disabled=${!canQuery}>
+                        Save phase
+                      </button>
+                    `
+                  : html`<div className="muted">Select a phase.</div>`}
               </div>
 
               <div className="card stack">
-                <h2>New team</h2>
-                <div>
-                  <label>Tournament</label>
-                  <select
-                    value=${selectedTournamentId}
-                    onChange=${e => setSelectedTournamentId(e.target.value)}
-                  >
-                    <option value="">Select tournament</option>
-                    ${tournaments.map(
-                      tournament =>
-                        html`<option value=${tournament.id}>
-                          ${tournament.name}
-                        </option>`
-                    )}
-                  </select>
+                <h2>Teams</h2>
+                <div className="muted">
+                  ${selectedTournament
+                    ? "Teams belong to the tournament."
+                    : "Select a tournament first."}
                 </div>
+                <ul className="list">
+                  ${teams.map(
+                    team => html`
+                      <li>
+                        <div>
+                          <strong>${team.name}</strong>
+                          <div className="muted">${team.shortName || "--"}</div>
+                        </div>
+                        <button onClick=${() => setSelectedTeamId(team.id)}>
+                          Edit
+                        </button>
+                      </li>
+                    `
+                  )}
+                </ul>
+                <h3 className="muted">Create team</h3>
                 <div className="row two">
                   <div>
                     <label>Team name</label>
@@ -673,93 +1202,363 @@
                 <button disabled=${!canQuery} onClick=${createTeam}>
                   Create team
                 </button>
+                <h3 className="muted">Edit team</h3>
+                <div>
+                  <label>Selected team</label>
+                  <select
+                    value=${selectedTeamId}
+                    onChange=${e => setSelectedTeamId(e.target.value)}
+                  >
+                    <option value="">Select team</option>
+                    ${teams.map(
+                      team =>
+                        html`<option value=${team.id}>${team.name}</option>`
+                    )}
+                  </select>
+                </div>
+                <div className="row two">
+                  <div>
+                    <label>Name</label>
+                    <input
+                      value=${teamEdit.name}
+                      onInput=${e =>
+                        setTeamEdit({ ...teamEdit, name: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label>Short name</label>
+                    <input
+                      value=${teamEdit.shortName}
+                      onInput=${e =>
+                        setTeamEdit({
+                          ...teamEdit,
+                          shortName: e.target.value
+                        })}
+                    />
+                  </div>
+                </div>
+                <button onClick=${updateTeam} disabled=${!canQuery}>
+                  Save team
+                </button>
+              </div>
+            </section>
+            <section className="grid" style=${{ marginTop: "28px" }}>
+              <div className="card stack">
+                <h2>Phase structure</h2>
+                ${selectedPhase
+                  ? html`
+                      ${phaseEdit.phaseType === "ZONES"
+                        ? html`
+                            <div className="muted">
+                              Groups belong to this phase.
+                            </div>
+                            <ul className="list">
+                              ${groups.map(
+                                group => html`
+                                  <li>
+                                    <div>
+                                      <strong>${group.name}</strong>
+                                      <div className="muted">
+                                        Order ${group.groupOrder}
+                                      </div>
+                                    </div>
+                                    <button
+                                      onClick=${() =>
+                                        setSelectedGroupId(group.id)}
+                                    >
+                                      Edit
+                                    </button>
+                                  </li>
+                                `
+                              )}
+                            </ul>
+                            <h3 className="muted">Create group</h3>
+                            <div className="row two">
+                              <div>
+                                <label>Group name</label>
+                                <input
+                                  value=${groupForm.name}
+                                  onInput=${e =>
+                                    setGroupForm({
+                                      ...groupForm,
+                                      name: e.target.value
+                                    })}
+                                  placeholder="Group A"
+                                />
+                              </div>
+                              <div>
+                                <label>Order</label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value=${groupForm.groupOrder}
+                                  onInput=${e =>
+                                    setGroupForm({
+                                      ...groupForm,
+                                      groupOrder: e.target.value
+                                    })}
+                                />
+                              </div>
+                            </div>
+                            <button onClick=${createGroup} disabled=${!canQuery}>
+                              Create group
+                            </button>
+                            <h3 className="muted">Edit group</h3>
+                            <div>
+                              <label>Selected group</label>
+                              <select
+                                value=${selectedGroupId}
+                                onChange=${e =>
+                                  setSelectedGroupId(e.target.value)}
+                              >
+                                <option value="">Select group</option>
+                                ${groups.map(
+                                  group =>
+                                    html`<option value=${group.id}>
+                                      ${group.name}
+                                    </option>`
+                                )}
+                              </select>
+                            </div>
+                            <div className="row two">
+                              <div>
+                                <label>Name</label>
+                                <input
+                                  value=${groupEdit.name}
+                                  onInput=${e =>
+                                    setGroupEdit({
+                                      ...groupEdit,
+                                      name: e.target.value
+                                    })}
+                                />
+                              </div>
+                              <div>
+                                <label>Order</label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value=${groupEdit.groupOrder}
+                                  onInput=${e =>
+                                    setGroupEdit({
+                                      ...groupEdit,
+                                      groupOrder: e.target.value
+                                    })}
+                                />
+                              </div>
+                            </div>
+                            <button onClick=${updateGroup} disabled=${!canQuery}>
+                              Save group
+                            </button>
+                          `
+                        : html`
+                            <div className="muted">
+                              Rounds belong to this phase.
+                            </div>
+                            <ul className="list">
+                              ${rounds.map(
+                                round => html`
+                                  <li>
+                                    <div>
+                                      <strong>${round.name}</strong>
+                                      <div className="muted">
+                                        Order ${round.roundOrder}
+                                      </div>
+                                    </div>
+                                    <button
+                                      onClick=${() =>
+                                        setSelectedRoundId(round.id)}
+                                    >
+                                      Edit
+                                    </button>
+                                  </li>
+                                `
+                              )}
+                            </ul>
+                            <h3 className="muted">Create round</h3>
+                            <div className="row two">
+                              <div>
+                                <label>Round name</label>
+                                <input
+                                  value=${roundForm.name}
+                                  onInput=${e =>
+                                    setRoundForm({
+                                      ...roundForm,
+                                      name: e.target.value
+                                    })}
+                                  placeholder="Quarterfinals"
+                                />
+                              </div>
+                              <div>
+                                <label>Order</label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value=${roundForm.roundOrder}
+                                  onInput=${e =>
+                                    setRoundForm({
+                                      ...roundForm,
+                                      roundOrder: e.target.value
+                                    })}
+                                />
+                              </div>
+                            </div>
+                            <button onClick=${createRound} disabled=${!canQuery}>
+                              Create round
+                            </button>
+                            <h3 className="muted">Edit round</h3>
+                            <div>
+                              <label>Selected round</label>
+                              <select
+                                value=${selectedRoundId}
+                                onChange=${e =>
+                                  setSelectedRoundId(e.target.value)}
+                              >
+                                <option value="">Select round</option>
+                                ${rounds.map(
+                                  round =>
+                                    html`<option value=${round.id}>
+                                      ${round.name}
+                                    </option>`
+                                )}
+                              </select>
+                            </div>
+                            <div className="row two">
+                              <div>
+                                <label>Name</label>
+                                <input
+                                  value=${roundEdit.name}
+                                  onInput=${e =>
+                                    setRoundEdit({
+                                      ...roundEdit,
+                                      name: e.target.value
+                                    })}
+                                />
+                              </div>
+                              <div>
+                                <label>Order</label>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value=${roundEdit.roundOrder}
+                                  onInput=${e =>
+                                    setRoundEdit({
+                                      ...roundEdit,
+                                      roundOrder: e.target.value
+                                    })}
+                                />
+                              </div>
+                            </div>
+                            <button onClick=${updateRound} disabled=${!canQuery}>
+                              Save round
+                            </button>
+                          `}
+                    `
+                  : html`<div className="muted">Select a phase.</div>`}
+              </div>
+
+              <div className="card stack">
+                <h2>Assign teams</h2>
+                ${selectedPhase
+                  ? html`
+                      <div className="muted">
+                        Each team can be assigned once per phase.
+                      </div>
+                      <div>
+                        <label>Team</label>
+                        <select
+                          value=${assignmentForm.teamId}
+                          onChange=${e =>
+                            setAssignmentForm({
+                              ...assignmentForm,
+                              teamId: e.target.value
+                            })}
+                        >
+                          <option value="">Select team</option>
+                          ${teams.map(
+                            team =>
+                              html`<option value=${team.id}>
+                                ${team.name}
+                              </option>`
+                          )}
+                        </select>
+                      </div>
+                      ${phaseEdit.phaseType === "ZONES"
+                        ? html`
+                            <div>
+                              <label>Group</label>
+                              <select
+                                value=${assignmentForm.groupId}
+                                onChange=${e =>
+                                  setAssignmentForm({
+                                    ...assignmentForm,
+                                    groupId: e.target.value
+                                  })}
+                              >
+                                <option value="">Select group</option>
+                                ${groups.map(
+                                  group =>
+                                    html`<option value=${group.id}>
+                                      ${group.name}
+                                    </option>`
+                                )}
+                              </select>
+                            </div>
+                          `
+                        : html`
+                            <div>
+                              <label>Round</label>
+                              <select
+                                value=${assignmentForm.roundId}
+                                onChange=${e =>
+                                  setAssignmentForm({
+                                    ...assignmentForm,
+                                    roundId: e.target.value
+                                  })}
+                              >
+                                <option value="">Select round</option>
+                                ${rounds.map(
+                                  round =>
+                                    html`<option value=${round.id}>
+                                      ${round.name}
+                                    </option>`
+                                )}
+                              </select>
+                            </div>
+                          `}
+                      <button onClick=${assignTeam} disabled=${!canQuery}>
+                        Assign team
+                      </button>
+                      <h3 className="muted">Assignments</h3>
+                      <ul className="list">
+                        ${assignments.map(assignment => {
+                          const team = teamLookup[assignment.teamId];
+                          const group = assignment.groupId
+                            ? groupLookup[assignment.groupId]
+                            : null;
+                          const round = assignment.roundId
+                            ? roundLookup[assignment.roundId]
+                            : null;
+                          const label = group
+                            ? group.name
+                            : round
+                            ? round.name
+                            : "Unassigned";
+                          return html`
+                            <li>
+                              <div>
+                                <strong>${team ? team.name : "Team"}</strong>
+                                <div className="muted">${label}</div>
+                              </div>
+                            </li>
+                          `;
+                        })}
+                      </ul>
+                    `
+                  : html`<div className="muted">Select a phase.</div>`}
               </div>
             </section>
 
             ${status ? html`<div className="status">${status}</div>` : ""}
-
-            <section className="grid" style=${{ marginTop: "28px" }}>
-              <div className="card">
-                <h2>Tournaments</h2>
-                <button onClick=${refreshTournaments} disabled=${!canQuery}>
-                  Refresh
-                </button>
-                <ul className="list">
-                  ${tournaments.map(
-                    tournament => html`
-                      <li>
-                        <div>
-                          <strong>${tournament.name}</strong>
-                          <div className="muted">
-                            ${tournament.season || "Season TBD"}
-                          </div>
-                        </div>
-                        <div className="muted">
-                          ${tournament.startDate || "--"} to
-                          ${tournament.endDate || "--"}
-                        </div>
-                      </li>
-                    `
-                  )}
-                </ul>
-              </div>
-
-              <div className="card">
-                <h2>Phases</h2>
-                <div className="muted">
-                  Linked to selected tournament.
-                </div>
-                <ul className="list">
-                  ${phases.map(
-                    phase => html`
-                      <li>
-                        <div>
-                          <strong>${phase.name}</strong>
-                          <div className="muted">${phase.phaseType}</div>
-                        </div>
-                        <div className="muted">Order ${phase.phaseOrder}</div>
-                      </li>
-                    `
-                  )}
-                </ul>
-              </div>
-
-              <div className="card">
-                <h2>Groups</h2>
-                <div className="muted">Linked to selected phase.</div>
-                <ul className="list">
-                  ${groups.map(
-                    group => html`
-                      <li>
-                        <div>
-                          <strong>${group.name}</strong>
-                          <div className="muted">Order ${group.groupOrder}</div>
-                        </div>
-                      </li>
-                    `
-                  )}
-                </ul>
-              </div>
-
-              <div className="card">
-                <h2>Teams</h2>
-                <div className="muted">
-                  Linked to selected tournament.
-                </div>
-                <ul className="list">
-                  ${teams.map(
-                    team => html`
-                      <li>
-                        <div>
-                          <strong>${team.name}</strong>
-                          <div className="muted">${team.shortName || "--"}</div>
-                        </div>
-                      </li>
-                    `
-                  )}
-                </ul>
-              </div>
-            </section>
           </div>
         `;
       }

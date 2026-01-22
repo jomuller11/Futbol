@@ -89,6 +89,76 @@ Resources:
           Projection:
             ProjectionType: ALL
 
+  RoundsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Rounds
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: phaseId
+          AttributeType: S
+        - AttributeName: roundOrder
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: byPhase
+          KeySchema:
+            - AttributeName: phaseId
+              KeyType: HASH
+            - AttributeName: roundOrder
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  AssignmentsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: TeamAssignments
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: phaseId
+          AttributeType: S
+        - AttributeName: teamId
+          AttributeType: S
+        - AttributeName: groupId
+          AttributeType: S
+        - AttributeName: roundId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: byPhase
+          KeySchema:
+            - AttributeName: phaseId
+              KeyType: HASH
+            - AttributeName: teamId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: byGroup
+          KeySchema:
+            - AttributeName: groupId
+              KeyType: HASH
+            - AttributeName: teamId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: byRound
+          KeySchema:
+            - AttributeName: roundId
+              KeyType: HASH
+            - AttributeName: teamId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
   GraphQLApi:
     Type: AWS::AppSync::GraphQLApi
     Properties:
@@ -134,6 +204,13 @@ Resources:
           groupOrder: Int!
         }
 
+        type Round {
+          id: ID!
+          phaseId: ID!
+          name: String!
+          roundOrder: Int!
+        }
+
         type Team {
           id: ID!
           tournamentId: ID!
@@ -141,8 +218,25 @@ Resources:
           shortName: String
         }
 
+        type Assignment {
+          id: ID!
+          tournamentId: ID!
+          phaseId: ID!
+          teamId: ID!
+          groupId: ID
+          roundId: ID
+        }
+
         input CreateTournamentInput {
           id: ID
+          name: String!
+          season: String
+          startDate: String
+          endDate: String
+        }
+
+        input UpdateTournamentInput {
+          id: ID!
           name: String!
           season: String
           startDate: String
@@ -157,11 +251,40 @@ Resources:
           phaseOrder: Int!
         }
 
+        input UpdatePhaseInput {
+          id: ID!
+          tournamentId: ID!
+          name: String!
+          phaseType: PhaseType!
+          phaseOrder: Int!
+        }
+
         input CreateGroupInput {
           id: ID
           phaseId: ID!
           name: String!
           groupOrder: Int!
+        }
+
+        input UpdateGroupInput {
+          id: ID!
+          phaseId: ID!
+          name: String!
+          groupOrder: Int!
+        }
+
+        input CreateRoundInput {
+          id: ID
+          phaseId: ID!
+          name: String!
+          roundOrder: Int!
+        }
+
+        input UpdateRoundInput {
+          id: ID!
+          phaseId: ID!
+          name: String!
+          roundOrder: Int!
         }
 
         input CreateTeamInput {
@@ -171,19 +294,45 @@ Resources:
           shortName: String
         }
 
+        input UpdateTeamInput {
+          id: ID!
+          tournamentId: ID!
+          name: String!
+          shortName: String
+        }
+
+        input AssignTeamInput {
+          tournamentId: ID!
+          phaseId: ID!
+          teamId: ID!
+          groupId: ID
+          roundId: ID
+        }
+
         type Query {
           getTournament(id: ID!): Tournament
           listTournaments: [Tournament!]!
           listPhasesByTournament(tournamentId: ID!): [Phase!]!
           listGroupsByPhase(phaseId: ID!): [Group!]!
+          listRoundsByPhase(phaseId: ID!): [Round!]!
           listTeamsByTournament(tournamentId: ID!): [Team!]!
+          listAssignmentsByPhase(phaseId: ID!): [Assignment!]!
+          listAssignmentsByGroup(groupId: ID!): [Assignment!]!
+          listAssignmentsByRound(roundId: ID!): [Assignment!]!
         }
 
         type Mutation {
           createTournament(input: CreateTournamentInput!): Tournament!
+          updateTournament(input: UpdateTournamentInput!): Tournament!
           createPhase(input: CreatePhaseInput!): Phase!
+          updatePhase(input: UpdatePhaseInput!): Phase!
           createGroup(input: CreateGroupInput!): Group!
+          updateGroup(input: UpdateGroupInput!): Group!
+          createRound(input: CreateRoundInput!): Round!
+          updateRound(input: UpdateRoundInput!): Round!
           createTeam(input: CreateTeamInput!): Team!
+          updateTeam(input: UpdateTeamInput!): Team!
+          assignTeamToPhase(input: AssignTeamInput!): Assignment!
         }
 
         schema {
@@ -222,6 +371,10 @@ Resources:
                   - !Sub "${GroupsTable.Arn}/index/*"
                   - !GetAtt TeamsTable.Arn
                   - !Sub "${TeamsTable.Arn}/index/*"
+                  - !GetAtt RoundsTable.Arn
+                  - !Sub "${RoundsTable.Arn}/index/*"
+                  - !GetAtt AssignmentsTable.Arn
+                  - !Sub "${AssignmentsTable.Arn}/index/*"
 
   TournamentsDataSource:
     Type: AWS::AppSync::DataSource
@@ -285,6 +438,38 @@ Resources:
       ServiceRoleArn: !GetAtt AppSyncDynamoRole.Arn
       DynamoDBConfig:
         TableName: !Ref TeamsTable
+        AwsRegion: !Ref AWS::Region
+
+  RoundsDataSource:
+    Type: AWS::AppSync::DataSource
+    DependsOn:
+      - AppSyncDynamoRole
+      - RoundsTable
+      - GraphQLApi
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      Name: RoundsSource
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt AppSyncDynamoRole.Arn
+      DynamoDBConfig:
+        TableName: !Ref RoundsTable
+        AwsRegion: !Ref AWS::Region
+
+  AssignmentsDataSource:
+    Type: AWS::AppSync::DataSource
+    DependsOn:
+      - AppSyncDynamoRole
+      - AssignmentsTable
+      - GraphQLApi
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      Name: AssignmentsSource
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt AppSyncDynamoRole.Arn
+      DynamoDBConfig:
+        TableName: !Ref AssignmentsTable
         AwsRegion: !Ref AWS::Region
 
   GetTournamentResolver:
@@ -535,6 +720,345 @@ Resources:
         $util.qr($result.put("tournamentId", $ctx.args.input.tournamentId))
         $util.qr($result.put("name", $ctx.args.input.name))
         $util.qr($result.put("shortName", $ctx.args.input.shortName))
+        $util.toJson($result)
+
+  UpdateTournamentResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - TournamentsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: updateTournament
+      DataSourceName: TournamentsSource
+      RequestMappingTemplate: |
+        #set($tournamentId = $ctx.args.input.id)
+        $util.qr($ctx.stash.put("tournamentId", $tournamentId))
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($tournamentId)
+          },
+          "attributeValues": {
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+            "season": $util.dynamodb.toDynamoDBJson($ctx.args.input.season),
+            "startDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.startDate),
+            "endDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.endDate)
+          }
+        }
+      ResponseMappingTemplate: |
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.tournamentId))
+        $util.qr($result.put("name", $ctx.args.input.name))
+        $util.qr($result.put("season", $ctx.args.input.season))
+        $util.qr($result.put("startDate", $ctx.args.input.startDate))
+        $util.qr($result.put("endDate", $ctx.args.input.endDate))
+        $util.toJson($result)
+
+  UpdatePhaseResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - PhasesDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: updatePhase
+      DataSourceName: PhasesSource
+      RequestMappingTemplate: |
+        #set($phaseId = $ctx.args.input.id)
+        $util.qr($ctx.stash.put("phaseId", $phaseId))
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($phaseId)
+          },
+          "attributeValues": {
+            "tournamentId": $util.dynamodb.toDynamoDBJson($ctx.args.input.tournamentId),
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+            "phaseType": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseType),
+            "phaseOrder": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseOrder)
+          }
+        }
+      ResponseMappingTemplate: |
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.phaseId))
+        $util.qr($result.put("tournamentId", $ctx.args.input.tournamentId))
+        $util.qr($result.put("name", $ctx.args.input.name))
+        $util.qr($result.put("phaseType", $ctx.args.input.phaseType))
+        $util.qr($result.put("phaseOrder", $ctx.args.input.phaseOrder))
+        $util.toJson($result)
+
+  UpdateGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - GroupsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: updateGroup
+      DataSourceName: GroupsSource
+      RequestMappingTemplate: |
+        #set($groupId = $ctx.args.input.id)
+        $util.qr($ctx.stash.put("groupId", $groupId))
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($groupId)
+          },
+          "attributeValues": {
+            "phaseId": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseId),
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+            "groupOrder": $util.dynamodb.toDynamoDBJson($ctx.args.input.groupOrder)
+          }
+        }
+      ResponseMappingTemplate: |
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.groupId))
+        $util.qr($result.put("phaseId", $ctx.args.input.phaseId))
+        $util.qr($result.put("name", $ctx.args.input.name))
+        $util.qr($result.put("groupOrder", $ctx.args.input.groupOrder))
+        $util.toJson($result)
+
+  UpdateTeamResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - TeamsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: updateTeam
+      DataSourceName: TeamsSource
+      RequestMappingTemplate: |
+        #set($teamId = $ctx.args.input.id)
+        $util.qr($ctx.stash.put("teamId", $teamId))
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($teamId)
+          },
+          "attributeValues": {
+            "tournamentId": $util.dynamodb.toDynamoDBJson($ctx.args.input.tournamentId),
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+            "shortName": $util.dynamodb.toDynamoDBJson($ctx.args.input.shortName)
+          }
+        }
+      ResponseMappingTemplate: |
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.teamId))
+        $util.qr($result.put("tournamentId", $ctx.args.input.tournamentId))
+        $util.qr($result.put("name", $ctx.args.input.name))
+        $util.qr($result.put("shortName", $ctx.args.input.shortName))
+        $util.toJson($result)
+
+  ListRoundsByPhaseResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - RoundsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Query
+      FieldName: listRoundsByPhase
+      DataSourceName: RoundsSource
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Query",
+          "index": "byPhase",
+          "query": {
+            "expression": "phaseId = :phaseId",
+            "expressionValues": {
+              ":phaseId": $util.dynamodb.toDynamoDBJson($ctx.args.phaseId)
+            }
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result.items)
+
+  CreateRoundResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - RoundsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: createRound
+      DataSourceName: RoundsSource
+      RequestMappingTemplate: |
+        #set($roundId = $util.defaultIfNull($ctx.args.input.id, $util.autoId()))
+        $util.qr($ctx.stash.put("roundId", $roundId))
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($roundId)
+          },
+          "attributeValues": {
+            "phaseId": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseId),
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+            "roundOrder": $util.dynamodb.toDynamoDBJson($ctx.args.input.roundOrder)
+          }
+        }
+      ResponseMappingTemplate: |
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.roundId))
+        $util.qr($result.put("phaseId", $ctx.args.input.phaseId))
+        $util.qr($result.put("name", $ctx.args.input.name))
+        $util.qr($result.put("roundOrder", $ctx.args.input.roundOrder))
+        $util.toJson($result)
+
+  UpdateRoundResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - RoundsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: updateRound
+      DataSourceName: RoundsSource
+      RequestMappingTemplate: |
+        #set($roundId = $ctx.args.input.id)
+        $util.qr($ctx.stash.put("roundId", $roundId))
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($roundId)
+          },
+          "attributeValues": {
+            "phaseId": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseId),
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+            "roundOrder": $util.dynamodb.toDynamoDBJson($ctx.args.input.roundOrder)
+          }
+        }
+      ResponseMappingTemplate: |
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.roundId))
+        $util.qr($result.put("phaseId", $ctx.args.input.phaseId))
+        $util.qr($result.put("name", $ctx.args.input.name))
+        $util.qr($result.put("roundOrder", $ctx.args.input.roundOrder))
+        $util.toJson($result)
+
+  ListAssignmentsByPhaseResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - AssignmentsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Query
+      FieldName: listAssignmentsByPhase
+      DataSourceName: AssignmentsSource
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Query",
+          "index": "byPhase",
+          "query": {
+            "expression": "phaseId = :phaseId",
+            "expressionValues": {
+              ":phaseId": $util.dynamodb.toDynamoDBJson($ctx.args.phaseId)
+            }
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result.items)
+
+  ListAssignmentsByGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - AssignmentsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Query
+      FieldName: listAssignmentsByGroup
+      DataSourceName: AssignmentsSource
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Query",
+          "index": "byGroup",
+          "query": {
+            "expression": "groupId = :groupId",
+            "expressionValues": {
+              ":groupId": $util.dynamodb.toDynamoDBJson($ctx.args.groupId)
+            }
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result.items)
+
+  ListAssignmentsByRoundResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - AssignmentsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Query
+      FieldName: listAssignmentsByRound
+      DataSourceName: AssignmentsSource
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Query",
+          "index": "byRound",
+          "query": {
+            "expression": "roundId = :roundId",
+            "expressionValues": {
+              ":roundId": $util.dynamodb.toDynamoDBJson($ctx.args.roundId)
+            }
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result.items)
+
+  AssignTeamToPhaseResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - AssignmentsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: assignTeamToPhase
+      DataSourceName: AssignmentsSource
+      RequestMappingTemplate: |
+        #set($assignmentId = "${ctx.args.input.phaseId}:${ctx.args.input.teamId}")
+        $util.qr($ctx.stash.put("assignmentId", $assignmentId))
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($assignmentId)
+          },
+          "attributeValues": {
+            "tournamentId": $util.dynamodb.toDynamoDBJson($ctx.args.input.tournamentId),
+            "phaseId": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseId),
+            "teamId": $util.dynamodb.toDynamoDBJson($ctx.args.input.teamId),
+            "groupId": $util.dynamodb.toDynamoDBJson($ctx.args.input.groupId),
+            "roundId": $util.dynamodb.toDynamoDBJson($ctx.args.input.roundId)
+          }
+        }
+      ResponseMappingTemplate: |
+        #set($result = {})
+        $util.qr($result.put("id", $ctx.stash.assignmentId))
+        $util.qr($result.put("tournamentId", $ctx.args.input.tournamentId))
+        $util.qr($result.put("phaseId", $ctx.args.input.phaseId))
+        $util.qr($result.put("teamId", $ctx.args.input.teamId))
+        $util.qr($result.put("groupId", $ctx.args.input.groupId))
+        $util.qr($result.put("roundId", $ctx.args.input.roundId))
         $util.toJson($result)
 
 Outputs:
