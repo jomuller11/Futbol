@@ -14,16 +14,17 @@
     <style>
       :root {
         color-scheme: light;
-        --ink: #0f172a;
-        --muted: #4b5563;
-        --blue: #1d4ed8;
-        --blue-strong: #1e40af;
-        --orange: #f97316;
-        --orange-strong: #ea580c;
-        --surface: #eef2ff;
+        --ink: #0b0f17;
+        --muted: #5b6675;
+        --blue: #2b67f6;
+        --blue-strong: #1f4fd6;
+        --orange: #ff8a3d;
+        --orange-strong: #f97316;
+        --surface: #eef3ff;
         --surface-alt: #ffffff;
-        --border: #d7e0f7;
+        --border: #dde6fb;
         --shadow: 0 22px 40px rgba(15, 23, 42, 0.12);
+        --sidebar: #11131b;
       }
 
       * {
@@ -34,63 +35,99 @@
         margin: 0;
         font-family: "Space Grotesk", "Segoe UI", sans-serif;
         color: var(--ink);
-        background: linear-gradient(140deg, #e0edff 0%, #fef6ee 58%, #fff7ed 100%);
+        background: linear-gradient(135deg, #d8e7ff 0%, #fef3e7 58%, #fff7ed 100%);
         min-height: 100vh;
       }
 
-      .app {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 48px 24px 72px;
+      .shell {
+        display: grid;
+        grid-template-columns: 84px 1fr;
+        min-height: 100vh;
+        padding: 24px;
+        gap: 20px;
       }
 
-      header {
+      .sidebar {
+        background: var(--sidebar);
+        border-radius: 28px;
+        padding: 22px 16px;
         display: flex;
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        color: #fff;
+      }
+
+      .logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: #1b1f2a;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+      }
+
+      .nav-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: #1b1f2a;
+        display: grid;
+        place-items: center;
+        font-size: 0.75rem;
+      }
+
+      .nav-icon.active {
+        background: #fff;
+        color: #11131b;
+      }
+
+      .main {
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 28px;
+        padding: 28px 32px 36px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
         justify-content: space-between;
         gap: 16px;
-        margin-bottom: 32px;
       }
 
-      header h1 {
-        font-family: "Newsreader", serif;
-        font-size: clamp(2.2rem, 3vw, 2.9rem);
-        margin: 0;
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: #f5f7fd;
+        border: 1px solid var(--border);
+        min-width: 220px;
       }
 
-      header p {
-        margin: 6px 0 0;
+      .search input {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font: inherit;
+      }
+
+      .top-nav {
+        display: flex;
+        gap: 18px;
         color: var(--muted);
+        font-weight: 600;
       }
 
-      .primary-actions {
+      .top-actions {
         display: flex;
         gap: 12px;
         align-items: center;
-      }
-
-      .btn {
-        border-radius: 999px;
-        padding: 10px 18px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-      }
-
-      .btn.primary {
-        background: var(--blue);
-        color: #fff;
-        box-shadow: 0 14px 24px rgba(29, 78, 216, 0.28);
-      }
-
-      .btn.primary:hover {
-        background: var(--blue-strong);
-      }
-
-      .btn.secondary {
-        background: #fff;
-        border: 1px solid var(--border);
-        color: var(--ink);
       }
 
       .pill {
@@ -104,10 +141,84 @@
         font-size: 0.85rem;
       }
 
+      .btn {
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+      }
+
+      .btn.primary {
+        background: var(--blue);
+        color: #fff;
+        box-shadow: 0 12px 24px rgba(43, 103, 246, 0.25);
+      }
+
+      .btn.primary:hover {
+        background: var(--blue-strong);
+      }
+
+      .btn.ghost {
+        background: #fff;
+        border: 1px solid var(--border);
+        color: var(--ink);
+      }
+
+      .hero {
+        margin-top: 28px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .hero h1 {
+        font-family: "Newsreader", serif;
+        font-size: clamp(1.8rem, 3vw, 2.4rem);
+        margin: 0;
+      }
+
+      .hero .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        color: var(--muted);
+      }
+
+      .stat {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: #f4f8ff;
+        border: 1px solid var(--border);
+        font-size: 0.85rem;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(280px, 340px) 1fr;
+        gap: 24px;
+        margin-top: 24px;
+      }
+
+      .panel {
+        background: var(--surface-alt);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      .panel h2 {
+        margin-top: 0;
+        font-size: 1.05rem;
+      }
+
       .tabs {
         display: inline-flex;
         gap: 8px;
-        background: rgba(255, 255, 255, 0.7);
+        background: #f3f6ff;
         padding: 6px;
         border-radius: 999px;
         border: 1px solid var(--border);
@@ -124,28 +235,9 @@
       }
 
       .tab.active {
-        background: var(--blue);
-        color: #fff;
-      }
-
-      .layout {
-        display: grid;
-        grid-template-columns: minmax(260px, 320px) 1fr;
-        gap: 28px;
-        align-items: start;
-      }
-
-      .panel {
-        background: var(--surface-alt);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: var(--shadow);
-      }
-
-      .panel h2 {
-        margin-top: 0;
-        font-size: 1.1rem;
+        background: #fff;
+        color: var(--ink);
+        box-shadow: 0 10px 16px rgba(20, 20, 40, 0.08);
       }
 
       .table {
@@ -164,7 +256,7 @@
       .table th {
         color: var(--muted);
         font-weight: 600;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
       }
@@ -203,7 +295,7 @@
 
       input:focus,
       select:focus {
-        outline: 2px solid rgba(29, 78, 216, 0.2);
+        outline: 2px solid rgba(43, 103, 246, 0.2);
         border-color: var(--blue);
       }
 
@@ -222,7 +314,7 @@
         gap: 6px;
         border-radius: 999px;
         padding: 4px 10px;
-        background: rgba(249, 115, 22, 0.16);
+        background: rgba(255, 138, 61, 0.18);
         color: var(--orange-strong);
         font-size: 0.75rem;
         font-weight: 600;
@@ -237,14 +329,23 @@
         text-align: center;
       }
 
-      @media (max-width: 960px) {
-        header {
-          flex-direction: column;
-          align-items: flex-start;
+      @media (max-width: 1024px) {
+        .shell {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          flex-direction: row;
+          justify-content: space-around;
         }
 
         .layout {
           grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
         }
       }
     </style>
@@ -956,417 +1057,471 @@
             });
           }
         }, [selectedTeamId, teams, selectedTournamentId]);
-        const phasesForTab = phases;
         const isZonesPhase = phaseEdit.phaseType === "ZONES";
 
         return html`
-          <div className="app">
-            <header>
-              <div>
-                <h1>Futbol Admin</h1>
-                <p>Tournaments are the home. Open one to configure its phases and teams.</p>
-              </div>
-              <div className="primary-actions">
-                <div className="pill">${loading ? "Saving..." : "Ready"}</div>
-                <button className="btn primary" onClick=${handleCreateTournamentClick}>
-                  + Create tournament
-                </button>
-              </div>
-            </header>
+          <div className="shell">
+            <aside className="sidebar">
+              <div className="logo">FA</div>
+              <div className="nav-icon active">TM</div>
+              <div className="nav-icon">PH</div>
+              <div className="nav-icon">TE</div>
+              <div className="nav-icon">AS</div>
+              <div className="nav-icon">ST</div>
+            </aside>
 
-            <div className="layout">
-              <div className="panel">
-                <h2>Tournaments</h2>
-                ${tournaments.length
-                  ? html`
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Season</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          ${tournaments.map(
-                            tournament => html`
-                              <tr>
-                                <td>${tournament.name}</td>
-                                <td>${tournament.season || "--"}</td>
-                                <td>
-                                  <button
-                                    className="btn secondary"
-                                    onClick=${() => handleOpenTournament(tournament.id)}
-                                  >
-                                    Open
-                                  </button>
-                                </td>
-                              </tr>
-                            `
-                          )}
-                        </tbody>
-                      </table>
-                    `
-                  : html`<div className="empty">No tournaments yet.</div>`}
+            <main className="main">
+              <div className="topbar">
+                <div className="search">
+                  <span>Q</span>
+                  <input placeholder="Search tournaments" />
+                </div>
+                <div className="top-nav">
+                  <span>My Tournaments</span>
+                  <span>Phases</span>
+                  <span>Teams</span>
+                </div>
+                <div className="top-actions">
+                  <div className="pill">${loading ? "Saving..." : "Ready"}</div>
+                  <button className="btn primary" onClick=${handleCreateTournamentClick}>
+                    Create tournament
+                  </button>
+                </div>
               </div>
 
-              <div className="panel">
-                ${showTabs
-                  ? html`
-                      <div className="tabs">
-                        <button
-                          className=${`tab ${activeTab === "details" ? "active" : ""}`}
-                          onClick=${() => setActiveTab("details")}
-                        >
-                          Details
-                        </button>
-                        <button
-                          className=${`tab ${activeTab === "phases" ? "active" : ""}`}
-                          onClick=${() => setActiveTab("phases")}
-                        >
-                          Phases
-                        </button>
-                        <button
-                          className=${`tab ${activeTab === "teams" ? "active" : ""}`}
-                          onClick=${() => setActiveTab("teams")}
-                        >
-                          Teams
-                        </button>
-                        <button
-                          className=${`tab ${activeTab === "assign" ? "active" : ""}`}
-                          onClick=${() => setActiveTab("assign")}
-                        >
-                          Assign
-                        </button>
-                      </div>
-                      ${activeTab === "details" ? html`
-                        <div className="form-grid" style=${{ marginTop: "16px" }}>
-                          <h2>${isCreatingTournament ? "Create tournament" : "Tournament settings"}</h2>
-                          <div>
-                            <label>Name</label>
-                            <input
-                              value=${isCreatingTournament ? tournamentForm.name : tournamentEdit.name}
-                              onInput=${e =>
-                                isCreatingTournament
-                                  ? setTournamentForm({
-                                      ...tournamentForm,
-                                      name: e.target.value
-                                    })
-                                  : setTournamentEdit({
-                                      ...tournamentEdit,
-                                      name: e.target.value
-                                    })}
-                            />
-                          </div>
-                          <div className="form-row">
-                            <div>
-                              <label>Season</label>
-                              <input
-                                value=${isCreatingTournament ? tournamentForm.season : tournamentEdit.season}
-                                onInput=${e =>
-                                  isCreatingTournament
-                                    ? setTournamentForm({
-                                        ...tournamentForm,
-                                        season: e.target.value
-                                      })
-                                    : setTournamentEdit({
-                                        ...tournamentEdit,
-                                        season: e.target.value
-                                      })}
-                              />
-                            </div>
-                            <div>
-                              <label>Start date</label>
-                              <input
-                                value=${isCreatingTournament ? tournamentForm.startDate : tournamentEdit.startDate}
-                                onInput=${e =>
-                                  isCreatingTournament
-                                    ? setTournamentForm({
-                                        ...tournamentForm,
-                                        startDate: e.target.value
-                                      })
-                                    : setTournamentEdit({
-                                        ...tournamentEdit,
-                                        startDate: e.target.value
-                                      })}
-                              />
-                            </div>
-                          </div>
-                          <div>
-                            <label>End date</label>
-                            <input
-                              value=${isCreatingTournament ? tournamentForm.endDate : tournamentEdit.endDate}
-                              onInput=${e =>
-                                isCreatingTournament
-                                  ? setTournamentForm({
-                                      ...tournamentForm,
-                                      endDate: e.target.value
-                                    })
-                                  : setTournamentEdit({
-                                      ...tournamentEdit,
-                                      endDate: e.target.value
-                                    })}
-                            />
-                          </div>
-                          <button className="btn primary" onClick=${isCreatingTournament ? createTournament : updateTournament}>
-                            ${isCreatingTournament ? "Create" : "Save"}
+              <div className="hero">
+                <h1>${selectedTournament ? selectedTournament.name : "Tournaments"}</h1>
+                <div className="meta">
+                  <div className="stat">${selectedTournament ? selectedTournament.season || "Season" : "All seasons"}</div>
+                  <div className="stat">${phases.length} phases</div>
+                  <div className="stat">${teams.length} teams</div>
+                </div>
+              </div>
+
+              <div className="layout">
+                <div className="panel">
+                  <h2>Tournaments</h2>
+                  ${tournaments.length
+                    ? html`
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Season</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            ${tournaments.map(
+                              tournament => html`
+                                <tr>
+                                  <td>${tournament.name}</td>
+                                  <td>${tournament.season || "--"}</td>
+                                  <td>
+                                    <button
+                                      className="btn ghost"
+                                      onClick=${() => handleOpenTournament(tournament.id)}
+                                    >
+                                      Open
+                                    </button>
+                                  </td>
+                                </tr>
+                              `
+                            )}
+                          </tbody>
+                        </table>
+                      `
+                    : html`<div className="empty">No tournaments yet.</div>`}
+                </div>
+
+                <div className="panel">
+                  ${showTabs
+                    ? html`
+                        <div className="tabs">
+                          <button
+                            className=${`tab ${activeTab === "details" ? "active" : ""}`}
+                            onClick=${() => setActiveTab("details")}
+                          >
+                            Details
+                          </button>
+                          <button
+                            className=${`tab ${activeTab === "phases" ? "active" : ""}`}
+                            onClick=${() => setActiveTab("phases")}
+                          >
+                            Phases
+                          </button>
+                          <button
+                            className=${`tab ${activeTab === "teams" ? "active" : ""}`}
+                            onClick=${() => setActiveTab("teams")}
+                          >
+                            Teams
+                          </button>
+                          <button
+                            className=${`tab ${activeTab === "assign" ? "active" : ""}`}
+                            onClick=${() => setActiveTab("assign")}
+                          >
+                            Assign
                           </button>
                         </div>
-                      ` : ""}
-                      ${activeTab === "phases" ? html`
-                        <div className="form-grid" style=${{ marginTop: "16px" }}>
-                          <h2>Phases</h2>
-                          ${!selectedTournamentId ? html`<div className="empty">Select a tournament.</div>` : html`
-                            <table className="table">
-                              <thead>
-                                <tr>
-                                  <th>Name</th>
-                                  <th>Type</th>
-                                  <th>Order</th>
-                                  <th></th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                ${phasesForTab.map(
-                                  phase => html`
-                                    <tr>
-                                      <td>${phase.name}</td>
-                                      <td><span className="tag">${phase.phaseType}</span></td>
-                                      <td>${phase.phaseOrder}</td>
-                                      <td>
-                                        <button className="btn secondary" onClick=${() => setSelectedPhaseId(phase.id)}>
-                                          Open
-                                        </button>
-                                      </td>
-                                    </tr>
-                                  `
-                                )}
-                              </tbody>
-                            </table>
-                            <div className="form-row">
-                              <div>
-                                <label>Name</label>
-                                <input
-                                  value=${phaseForm.name}
-                                  onInput=${e => setPhaseForm({ ...phaseForm, name: e.target.value })}
-                                />
-                              </div>
-                              <div>
-                                <label>Type</label>
-                                <select
-                                  value=${phaseForm.phaseType}
-                                  onChange=${e => setPhaseForm({ ...phaseForm, phaseType: e.target.value })}
-                                >
-                                  <option value="ZONES">Zones</option>
-                                  <option value="PLAYOFFS">Playoffs</option>
-                                </select>
-                              </div>
-                              <div>
-                                <label>Order</label>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  value=${phaseForm.phaseOrder}
-                                  onInput=${e => setPhaseForm({ ...phaseForm, phaseOrder: e.target.value })}
-                                />
-                              </div>
-                            </div>
-                            <button className="btn primary" onClick=${createPhase}>Add phase</button>
-                            ${selectedPhase ? html`
-                              <div className="form-grid">
-                                <h3>Edit phase</h3>
+
+                        ${activeTab === "details"
+                          ? html`
+                              <div className="form-grid" style=${{ marginTop: "16px" }}>
+                                <h2>${isCreatingTournament ? "Create tournament" : "Tournament settings"}</h2>
+                                <div>
+                                  <label>Name</label>
+                                  <input
+                                    value=${isCreatingTournament ? tournamentForm.name : tournamentEdit.name}
+                                    onInput=${e =>
+                                      isCreatingTournament
+                                        ? setTournamentForm({
+                                            ...tournamentForm,
+                                            name: e.target.value
+                                          })
+                                        : setTournamentEdit({
+                                            ...tournamentEdit,
+                                            name: e.target.value
+                                          })}
+                                  />
+                                </div>
                                 <div className="form-row">
                                   <div>
-                                    <label>Name</label>
+                                    <label>Season</label>
                                     <input
-                                      value=${phaseEdit.name}
-                                      onInput=${e => setPhaseEdit({ ...phaseEdit, name: e.target.value })}
+                                      value=${isCreatingTournament ? tournamentForm.season : tournamentEdit.season}
+                                      onInput=${e =>
+                                        isCreatingTournament
+                                          ? setTournamentForm({
+                                              ...tournamentForm,
+                                              season: e.target.value
+                                            })
+                                          : setTournamentEdit({
+                                              ...tournamentEdit,
+                                              season: e.target.value
+                                            })}
                                     />
                                   </div>
                                   <div>
-                                    <label>Type</label>
-                                    <select
-                                      value=${phaseEdit.phaseType}
-                                      onChange=${e => setPhaseEdit({ ...phaseEdit, phaseType: e.target.value })}
-                                    >
-                                      <option value="ZONES">Zones</option>
-                                      <option value="PLAYOFFS">Playoffs</option>
-                                    </select>
-                                  </div>
-                                  <div>
-                                    <label>Order</label>
+                                    <label>Start date</label>
                                     <input
-                                      type="number"
-                                      min="1"
-                                      value=${phaseEdit.phaseOrder}
-                                      onInput=${e => setPhaseEdit({ ...phaseEdit, phaseOrder: e.target.value })}
+                                      value=${isCreatingTournament ? tournamentForm.startDate : tournamentEdit.startDate}
+                                      onInput=${e =>
+                                        isCreatingTournament
+                                          ? setTournamentForm({
+                                              ...tournamentForm,
+                                              startDate: e.target.value
+                                            })
+                                          : setTournamentEdit({
+                                              ...tournamentEdit,
+                                              startDate: e.target.value
+                                            })}
                                     />
                                   </div>
                                 </div>
-                                <button className="btn primary" onClick=${updatePhase}>Save phase</button>
-                              </div>
-                            ` : ""}
-                          `}
-                        </div>
-                      ` : ""}
-                      ${activeTab === "teams" ? html`
-                        <div className="form-grid" style=${{ marginTop: "16px" }}>
-                          <h2>Teams</h2>
-                          ${!selectedTournamentId ? html`<div className="empty">Select a tournament.</div>` : html`
-                            <table className="table">
-                              <thead>
-                                <tr>
-                                  <th>Name</th>
-                                  <th>Short</th>
-                                  <th></th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                ${teams.map(
-                                  team => html`
-                                    <tr>
-                                      <td>${team.name}</td>
-                                      <td>${team.shortName || "--"}</td>
-                                      <td>
-                                        <button className="btn secondary" onClick=${() => setSelectedTeamId(team.id)}>
-                                          Edit
-                                        </button>
-                                      </td>
-                                    </tr>
-                                  `
-                                )}
-                              </tbody>
-                            </table>
-                            <div className="form-row">
-                              <div>
-                                <label>Name</label>
-                                <input
-                                  value=${teamForm.name}
-                                  onInput=${e => setTeamForm({ ...teamForm, name: e.target.value })}
-                                />
-                              </div>
-                              <div>
-                                <label>Short</label>
-                                <input
-                                  value=${teamForm.shortName}
-                                  onInput=${e => setTeamForm({ ...teamForm, shortName: e.target.value })}
-                                />
-                              </div>
-                            </div>
-                            <button className="btn primary" onClick=${createTeam}>Add team</button>
-                            ${selectedTeamId ? html`
-                              <div className="form-row">
                                 <div>
-                                  <label>Edit name</label>
+                                  <label>End date</label>
                                   <input
-                                    value=${teamEdit.name}
-                                    onInput=${e => setTeamEdit({ ...teamEdit, name: e.target.value })}
+                                    value=${isCreatingTournament ? tournamentForm.endDate : tournamentEdit.endDate}
+                                    onInput=${e =>
+                                      isCreatingTournament
+                                        ? setTournamentForm({
+                                            ...tournamentForm,
+                                            endDate: e.target.value
+                                          })
+                                        : setTournamentEdit({
+                                            ...tournamentEdit,
+                                            endDate: e.target.value
+                                          })}
                                   />
                                 </div>
-                                <div>
-                                  <label>Edit short</label>
-                                  <input
-                                    value=${teamEdit.shortName}
-                                    onInput=${e => setTeamEdit({ ...teamEdit, shortName: e.target.value })}
-                                  />
-                                </div>
-                                <div>
-                                  <label>&nbsp;</label>
-                                  <button className="btn primary" onClick=${updateTeam}>Save team</button>
-                                </div>
-                              </div>
-                            ` : ""}
-                          `}
-                        </div>
-                      ` : ""}
-                      ${activeTab === "assign" ? html`
-                        <div className="form-grid" style=${{ marginTop: "16px" }}>
-                          <h2>Assignments</h2>
-                          ${!selectedPhase ? html`<div className="empty">Open a phase first.</div>` : html`
-                            <div className="form-row">
-                              <div>
-                                <label>Team</label>
-                                <select
-                                  value=${assignmentForm.teamId}
-                                  onChange=${e => setAssignmentForm({ ...assignmentForm, teamId: e.target.value })}
+                                <button
+                                  className="btn primary"
+                                  onClick=${isCreatingTournament ? createTournament : updateTournament}
                                 >
-                                  <option value="">Select team</option>
-                                  ${teams.map(
-                                    team => html`<option value=${team.id}>${team.name}</option>`
-                                  )}
-                                </select>
+                                  ${isCreatingTournament ? "Create" : "Save"}
+                                </button>
                               </div>
-                              ${isZonesPhase ? html`
-                                <div>
-                                  <label>Group</label>
-                                  <select
-                                    value=${assignmentForm.groupId}
-                                    onChange=${e => setAssignmentForm({ ...assignmentForm, groupId: e.target.value })}
-                                  >
-                                    <option value="">Select group</option>
-                                    ${groups.map(
-                                      group => html`<option value=${group.id}>${group.name}</option>`
-                                    )}
-                                  </select>
-                                </div>
-                              ` : html`
-                                <div>
-                                  <label>Round</label>
-                                  <select
-                                    value=${assignmentForm.roundId}
-                                    onChange=${e => setAssignmentForm({ ...assignmentForm, roundId: e.target.value })}
-                                  >
-                                    <option value="">Select round</option>
-                                    ${rounds.map(
-                                      round => html`<option value=${round.id}>${round.name}</option>`
-                                    )}
-                                  </select>
-                                </div>
-                              `}
-                              <div>
-                                <label>&nbsp;</label>
-                                <button className="btn primary" onClick=${assignTeam}>Assign</button>
-                              </div>
-                            </div>
-                            <table className="table">
-                              <thead>
-                                <tr>
-                                  <th>Team</th>
-                                  <th>Placement</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                ${assignments.map(assignment => {
-                                  const team = teamLookup[assignment.teamId];
-                                  const group = assignment.groupId
-                                    ? groupLookup[assignment.groupId]
-                                    : null;
-                                  const round = assignment.roundId
-                                    ? roundLookup[assignment.roundId]
-                                    : null;
-                                  const label = group
-                                    ? group.name
-                                    : round
-                                    ? round.name
-                                    : "Unassigned";
-                                  return html`
-                                    <tr>
-                                      <td>${team ? team.name : "Team"}</td>
-                                      <td>${label}</td>
-                                    </tr>
-                                  `;
-                                })}
-                              </tbody>
-                            </table>
-                          `}
-                        </div>
-                      ` : ""}
-                    `
-                  : html`<div className="empty">Select a tournament to get started.</div>`}
-              </div>
-            </div>
+                            `
+                          : ""}
 
-            ${status ? html`<div className="status">${status}</div>` : ""}
+                        ${activeTab === "phases"
+                          ? html`
+                              <div className="form-grid" style=${{ marginTop: "16px" }}>
+                                <h2>Phases</h2>
+                                ${!selectedTournamentId
+                                  ? html`<div className="empty">Select a tournament.</div>`
+                                  : html`
+                                      <table className="table">
+                                        <thead>
+                                          <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Order</th>
+                                            <th></th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          ${phases.map(
+                                            phase => html`
+                                              <tr>
+                                                <td>${phase.name}</td>
+                                                <td><span className="tag">${phase.phaseType}</span></td>
+                                                <td>${phase.phaseOrder}</td>
+                                                <td>
+                                                  <button
+                                                    className="btn ghost"
+                                                    onClick=${() => setSelectedPhaseId(phase.id)}
+                                                  >
+                                                    Open
+                                                  </button>
+                                                </td>
+                                              </tr>
+                                            `
+                                          )}
+                                        </tbody>
+                                      </table>
+                                      <div className="form-row">
+                                        <div>
+                                          <label>Name</label>
+                                          <input
+                                            value=${phaseForm.name}
+                                            onInput=${e => setPhaseForm({ ...phaseForm, name: e.target.value })}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label>Type</label>
+                                          <select
+                                            value=${phaseForm.phaseType}
+                                            onChange=${e => setPhaseForm({ ...phaseForm, phaseType: e.target.value })}
+                                          >
+                                            <option value="ZONES">Zones</option>
+                                            <option value="PLAYOFFS">Playoffs</option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label>Order</label>
+                                          <input
+                                            type="number"
+                                            min="1"
+                                            value=${phaseForm.phaseOrder}
+                                            onInput=${e => setPhaseForm({ ...phaseForm, phaseOrder: e.target.value })}
+                                          />
+                                        </div>
+                                      </div>
+                                      <button className="btn primary" onClick=${createPhase}>Add phase</button>
+                                      ${selectedPhase
+                                        ? html`
+                                            <div className="form-grid">
+                                              <h3>Edit phase</h3>
+                                              <div className="form-row">
+                                                <div>
+                                                  <label>Name</label>
+                                                  <input
+                                                    value=${phaseEdit.name}
+                                                    onInput=${e => setPhaseEdit({ ...phaseEdit, name: e.target.value })}
+                                                  />
+                                                </div>
+                                                <div>
+                                                  <label>Type</label>
+                                                  <select
+                                                    value=${phaseEdit.phaseType}
+                                                    onChange=${e => setPhaseEdit({ ...phaseEdit, phaseType: e.target.value })}
+                                                  >
+                                                    <option value="ZONES">Zones</option>
+                                                    <option value="PLAYOFFS">Playoffs</option>
+                                                  </select>
+                                                </div>
+                                                <div>
+                                                  <label>Order</label>
+                                                  <input
+                                                    type="number"
+                                                    min="1"
+                                                    value=${phaseEdit.phaseOrder}
+                                                    onInput=${e => setPhaseEdit({ ...phaseEdit, phaseOrder: e.target.value })}
+                                                  />
+                                                </div>
+                                              </div>
+                                              <button className="btn primary" onClick=${updatePhase}>Save phase</button>
+                                            </div>
+                                          `
+                                        : ""}
+                                    `}
+                              </div>
+                            `
+                          : ""}
+
+                        ${activeTab === "teams"
+                          ? html`
+                              <div className="form-grid" style=${{ marginTop: "16px" }}>
+                                <h2>Teams</h2>
+                                ${!selectedTournamentId
+                                  ? html`<div className="empty">Select a tournament.</div>`
+                                  : html`
+                                      <table className="table">
+                                        <thead>
+                                          <tr>
+                                            <th>Name</th>
+                                            <th>Short</th>
+                                            <th></th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          ${teams.map(
+                                            team => html`
+                                              <tr>
+                                                <td>${team.name}</td>
+                                                <td>${team.shortName || "--"}</td>
+                                                <td>
+                                                  <button className="btn ghost" onClick=${() => setSelectedTeamId(team.id)}>
+                                                    Edit
+                                                  </button>
+                                                </td>
+                                              </tr>
+                                            `
+                                          )}
+                                        </tbody>
+                                      </table>
+                                      <div className="form-row">
+                                        <div>
+                                          <label>Name</label>
+                                          <input
+                                            value=${teamForm.name}
+                                            onInput=${e => setTeamForm({ ...teamForm, name: e.target.value })}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label>Short</label>
+                                          <input
+                                            value=${teamForm.shortName}
+                                            onInput=${e => setTeamForm({ ...teamForm, shortName: e.target.value })}
+                                          />
+                                        </div>
+                                      </div>
+                                      <button className="btn primary" onClick=${createTeam}>Add team</button>
+                                      ${selectedTeamId
+                                        ? html`
+                                            <div className="form-row">
+                                              <div>
+                                                <label>Edit name</label>
+                                                <input
+                                                  value=${teamEdit.name}
+                                                  onInput=${e => setTeamEdit({ ...teamEdit, name: e.target.value })}
+                                                />
+                                              </div>
+                                              <div>
+                                                <label>Edit short</label>
+                                                <input
+                                                  value=${teamEdit.shortName}
+                                                  onInput=${e => setTeamEdit({ ...teamEdit, shortName: e.target.value })}
+                                                />
+                                              </div>
+                                              <div>
+                                                <label>&nbsp;</label>
+                                                <button className="btn primary" onClick=${updateTeam}>Save team</button>
+                                              </div>
+                                            </div>
+                                          `
+                                        : ""}
+                                    `}
+                              </div>
+                            `
+                          : ""}
+
+                        ${activeTab === "assign"
+                          ? html`
+                              <div className="form-grid" style=${{ marginTop: "16px" }}>
+                                <h2>Assignments</h2>
+                                ${!selectedPhase
+                                  ? html`<div className="empty">Open a phase first.</div>`
+                                  : html`
+                                      <div className="form-row">
+                                        <div>
+                                          <label>Team</label>
+                                          <select
+                                            value=${assignmentForm.teamId}
+                                            onChange=${e => setAssignmentForm({ ...assignmentForm, teamId: e.target.value })}
+                                          >
+                                            <option value="">Select team</option>
+                                            ${teams.map(
+                                              team => html`<option value=${team.id}>${team.name}</option>`
+                                            )}
+                                          </select>
+                                        </div>
+                                        ${isZonesPhase
+                                          ? html`
+                                              <div>
+                                                <label>Group</label>
+                                                <select
+                                                  value=${assignmentForm.groupId}
+                                                  onChange=${e => setAssignmentForm({ ...assignmentForm, groupId: e.target.value })}
+                                                >
+                                                  <option value="">Select group</option>
+                                                  ${groups.map(
+                                                    group => html`<option value=${group.id}>${group.name}</option>`
+                                                  )}
+                                                </select>
+                                              </div>
+                                            `
+                                          : html`
+                                              <div>
+                                                <label>Round</label>
+                                                <select
+                                                  value=${assignmentForm.roundId}
+                                                  onChange=${e => setAssignmentForm({ ...assignmentForm, roundId: e.target.value })}
+                                                >
+                                                  <option value="">Select round</option>
+                                                  ${rounds.map(
+                                                    round => html`<option value=${round.id}>${round.name}</option>`
+                                                  )}
+                                                </select>
+                                              </div>
+                                            `}
+                                        <div>
+                                          <label>&nbsp;</label>
+                                          <button className="btn primary" onClick=${assignTeam}>Assign</button>
+                                        </div>
+                                      </div>
+                                      <table className="table">
+                                        <thead>
+                                          <tr>
+                                            <th>Team</th>
+                                            <th>Placement</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          ${assignments.map(assignment => {
+                                            const team = teamLookup[assignment.teamId];
+                                            const group = assignment.groupId
+                                              ? groupLookup[assignment.groupId]
+                                              : null;
+                                            const round = assignment.roundId
+                                              ? roundLookup[assignment.roundId]
+                                              : null;
+                                            const label = group
+                                              ? group.name
+                                              : round
+                                              ? round.name
+                                              : "Unassigned";
+                                            return html`
+                                              <tr>
+                                                <td>${team ? team.name : "Team"}</td>
+                                                <td>${label}</td>
+                                              </tr>
+                                            `;
+                                          })}
+                                        </tbody>
+                                      </table>
+                                    `}
+                              </div>
+                            `
+                          : ""}
+                      `
+                    : html`<div className="empty">Select a tournament to get started.</div>`}
+                </div>
+              </div>
+
+              ${status ? html`<div className="status">${status}</div>` : ""}
+            </main>
           </div>
         `;
       }
