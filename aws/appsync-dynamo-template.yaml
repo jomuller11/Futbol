@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AppSync GraphQL API with DynamoDB table (Hello world)
+
+Resources:
+  HelloMessagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: HelloMessages
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  GraphQLApi:
+    Type: AWS::AppSync::GraphQLApi
+    Properties:
+      Name: HelloAppSyncApi
+      AuthenticationType: API_KEY
+
+  ApiKey:
+    Type: AWS::AppSync::ApiKey
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      # Intentionally no Expires to avoid ApiKeyValidityOutOfBoundsException
+
+  GraphQLSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      Definition: |
+        type Message {
+          id: ID!
+          content: String!
+        }
+
+        type Query {
+          getMessage(id: ID!): Message
+        }
+
+        type Mutation {
+          createMessage(id: ID!, content: String!): Message
+        }
+
+        schema {
+          query: Query
+          mutation: Mutation
+        }
+
+  AppSyncDynamoRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - appsync.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: AppSyncDynamoPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:Query
+                  - dynamodb:Scan
+                Resource: !GetAtt HelloMessagesTable.Arn
+
+  MessagesDataSource:
+    Type: AWS::AppSync::DataSource
+    DependsOn:
+      - AppSyncDynamoRole
+      - HelloMessagesTable
+      - GraphQLApi
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      Name: HelloMessagesSource
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt AppSyncDynamoRole.Arn
+      DynamoDBConfig:
+        TableName: !Ref HelloMessagesTable
+        AwsRegion: !Ref AWS::Region
+
+  GetMessageResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - MessagesDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Query
+      FieldName: getMessage
+      DataSourceName: HelloMessagesSource
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "GetItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result)
+
+  CreateMessageResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - MessagesDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: createMessage
+      DataSourceName: HelloMessagesSource
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+          },
+          "attributeValues": {
+            "content": $util.dynamodb.toDynamoDBJson($ctx.args.content)
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result)
+
+Outputs:
+  GraphQLApiUrl:
+    Description: GraphQL endpoint URL
+    Value: !GetAtt GraphQLApi.GraphQLUrl
+  ApiKeyValue:
+    Description: API key for the AppSync API
+    Value: !Ref ApiKey

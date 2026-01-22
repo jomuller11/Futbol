@@ -1,0 +1,19 @@
+{
+  "name": "hello-world-node",
+  "version": "1.0.0",
+  "description": "Minimal Node project to support local dev scripts",
+  "main": "serve-static.js",
+  "scripts": {
+    "start": "node serve-static.js",
+    "dev": "node serve-static.js",
+    "build": "node scripts/build.js",
+    "clean": "node scripts/clean.js",
+    "lint": "eslint \"scripts/**/*.js\" \"*.js\" --ext .js",
+    "lint:fix": "eslint \"scripts/**/*.js\" \"*.js\" --ext .js --fix"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.49.0"
+  }
+}

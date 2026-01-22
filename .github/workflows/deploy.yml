@@ -1,0 +1,254 @@
+name: CI/CD — Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  validate-secrets:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+
+    steps:
+      - name: Check required secrets
+        run: |
+          missing=""
+          [ -z "$AWS_ACCESS_KEY_ID" ] && missing="$missing AWS_ACCESS_KEY_ID"
+          [ -z "$AWS_SECRET_ACCESS_KEY" ] && missing="$missing AWS_SECRET_ACCESS_KEY"
+          [ -z "$AWS_REGION" ] && missing="$missing AWS_REGION"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing required secrets:$missing"
+            exit 1
+          fi
+          echo "All required secrets present."
+
+      - name: Check optional secrets
+        run: |
+          if [ -z "$S3_BUCKET" ]; then echo "Warning: S3_BUCKET not set — S3 sync will be skipped"; fi
+          if [ -z "$CLOUDFRONT_DISTRIBUTION_ID" ]; then echo "Note: CLOUDFRONT_DISTRIBUTION_ID not set — workflow may create a CloudFront distribution"; fi
+
+  build-and-deploy:
+    needs: validate-secrets
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync dist to S3
+        if: env.S3_BUCKET != ''
+        run: |
+          if ! aws s3api head-bucket --bucket "$S3_BUCKET" 2>/dev/null; then
+            echo "S3 bucket $S3_BUCKET not found — creating"
+            aws s3 mb s3://"$S3_BUCKET" --region $AWS_REGION
+            echo "Disabling public access block and enabling website hosting"
+            aws s3api put-public-access-block --bucket "$S3_BUCKET" --public-access-block-configuration '{"BlockPublicAcls":false,"IgnorePublicAcls":false,"BlockPublicPolicy":false,"RestrictPublicBuckets":false}' || true
+            aws s3 website s3://"$S3_BUCKET" --index-document index.html --error-document index.html || true
+            cat > bucket-policy.json <<POL
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": ["s3:GetObject"],
+      "Resource": ["arn:aws:s3:::$S3_BUCKET/*"]
+    }
+  ]
+}
+POL
+            aws s3api put-bucket-policy --bucket "$S3_BUCKET" --policy file://bucket-policy.json || true
+          else
+            echo "S3 bucket $S3_BUCKET exists"
+          fi
+          aws s3 sync dist/ s3://$S3_BUCKET --delete
+
+      - name: Ensure CloudFront distribution with OAI (optional)
+        if: env.S3_BUCKET != '' && env.CLOUDFRONT_DISTRIBUTION_ID == ''
+        run: |
+          set -e
+          echo "Installing jq for JSON parsing"
+          sudo apt-get update && sudo apt-get install -y jq
+
+          echo "Creating CloudFront Origin Access Identity (OAI)"
+          OAI_JSON=$(aws cloudfront create-cloud-front-origin-access-identity --cloud-front-origin-access-identity-config CallerReference=$(date +%s),Comment="OAI for $S3_BUCKET" --output json)
+          OAI_ID=$(echo "$OAI_JSON" | jq -r '.CloudFrontOriginAccessIdentity.Id')
+          OAI_S3_CANONICAL_USER=$(echo "$OAI_JSON" | jq -r '.CloudFrontOriginAccessIdentity.S3CanonicalUserId')
+          echo "Created OAI: $OAI_ID"
+
+          echo "Replacing bucket policy to restrict access to CloudFront OAI"
+          cat > oai-policy.json <<POL
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowCloudFrontServicePrincipalReadOnly",
+      "Effect": "Allow",
+      "Principal": {"CanonicalUser": "$OAI_S3_CANONICAL_USER"},
+      "Action": ["s3:GetObject"],
+      "Resource": ["arn:aws:s3:::$S3_BUCKET/*"]
+    }
+  ]
+}
+POL
+          aws s3api put-bucket-policy --bucket "$S3_BUCKET" --policy file://oai-policy.json || true
+
+          echo "Creating CloudFront distribution for $S3_BUCKET"
+          cat > dist-config.json <<EOF
+{
+  "CallerReference": "$(date +%s)",
+  "Origins": {"Quantity": 1, "Items": [{
+    "Id": "S3-$S3_BUCKET",
+    "DomainName": "$S3_BUCKET.s3.amazonaws.com",
+    "S3OriginConfig": {"OriginAccessIdentity": "origin-access-identity/cloudfront/$OAI_ID"}
+  }]},
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "S3-$S3_BUCKET",
+    "ViewerProtocolPolicy": "redirect-to-https",
+    "TrustedSigners": {"Enabled": false, "Quantity": 0},
+    "ForwardedValues": {"QueryString": false, "Cookies": {"Forward": "none"}},
+    "MinTTL": 0,
+    "DefaultTTL": 86400,
+    "MaxTTL": 31536000
+  },
+  "Comment": "Distribution for $S3_BUCKET",
+  "Enabled": true,
+  "DefaultRootObject": "index.html"
+}
+EOF
+
+          DIST_JSON=$(aws cloudfront create-distribution --distribution-config file://dist-config.json --output json)
+          DIST_ID=$(echo "$DIST_JSON" | jq -r '.Distribution.Id')
+          DIST_DOMAIN=$(echo "$DIST_JSON" | jq -r '.Distribution.DomainName')
+          echo "CLOUDFRONT_DISTRIBUTION_ID=$DIST_ID" >> $GITHUB_ENV
+          echo "CLOUDFRONT_DOMAIN=$DIST_DOMAIN" >> $GITHUB_ENV
+          echo "Created distribution $DIST_ID ($DIST_DOMAIN)"
+
+          echo "Waiting for distribution to be Deployed"
+          for i in $(seq 1 30); do
+            STATUS=$(aws cloudfront get-distribution --id $DIST_ID --output json | jq -r '.Distribution.Status')
+            echo "Attempt $i: status=$STATUS"
+            if [ "$STATUS" = "Deployed" ]; then
+              break
+            fi
+            sleep 10
+          done
+
+      - name: Invalidate CloudFront (optional)
+        if: env.CLOUDFRONT_DISTRIBUTION_ID != ''
+        run: |
+          set -e
+          echo "Installing jq for JSON parsing"
+          sudo apt-get update && sudo apt-get install -y jq
+          echo "Creating invalidation for distribution $CLOUDFRONT_DISTRIBUTION_ID"
+          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*" --output json > invalidation.json
+          INV_ID=$(jq -r '.Invalidation.Id' invalidation.json)
+          echo "Invalidation created: $INV_ID"
+          STATUS=""
+          for i in $(seq 1 30); do
+            STATUS=$(aws cloudfront get-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --id $INV_ID --output json | jq -r '.Invalidation.Status')
+            echo "Attempt $i: status=$STATUS"
+            if [ "$STATUS" = "Completed" ]; then
+              break
+            fi
+            sleep 10
+          done
+          aws cloudfront get-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --id $INV_ID --output json > invalidation-final.json
+
+      - name: Deploy CloudFormation stack (AppSync + Dynamo)
+        run: |
+          aws cloudformation deploy \
+            --template-file aws/appsync-dynamo-template.yaml \
+            --stack-name hello-appsync \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --region $AWS_REGION
+
+      - name: Show stack outputs
+        run: |
+          aws cloudformation describe-stacks --stack-name hello-appsync --query "Stacks[0].Outputs" --output json
+
+      - name: Save stack outputs to file
+        run: |
+          aws cloudformation describe-stacks --stack-name hello-appsync --query "Stacks[0].Outputs" --output json > stack-outputs.json
+
+      - name: Upload stack outputs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stack-outputs
+          path: stack-outputs.json
+
+      - name: Comment PR with deployment info
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const outputs = JSON.parse(fs.readFileSync('stack-outputs.json', 'utf8') || '[]');
+            function getOutput(key) {
+              const item = outputs.find(o => o.OutputKey === key || o.Key === key);
+              return item ? item.OutputValue || item.Value : null;
+            }
+            const endpoint = getOutput('GraphQLApiUrl') || getOutput('GraphQlApiUrl') || getOutput('GraphqlApiUrl');
+            const apiKey = getOutput('ApiKeyValue') || getOutput('ApiKey');
+            const body = [];
+            if (endpoint) body.push(`**Deployed endpoint:** ${endpoint}`);
+            if (apiKey) body.push(`**API key:** ${apiKey}`);
+            // Include CloudFront invalidation info if available
+            try {
+              if (fs.existsSync('invalidation-final.json')) {
+                const inv = JSON.parse(fs.readFileSync('invalidation-final.json', 'utf8'));
+                const invId = inv.Invalidation && inv.Invalidation.Id ? inv.Invalidation.Id : null;
+                const invStatus = inv.Invalidation && inv.Invalidation.Status ? inv.Invalidation.Status : null;
+                if (invId || invStatus) {
+                  body.push(`**CloudFront invalidation:** id=${invId || 'unknown'} status=${invStatus || 'unknown'}`);
+                }
+              }
+            } catch (e) {
+              // ignore parsing errors
+            }
+            if (body.length === 0) body.push('Deployment completed — stack outputs available as artifact `stack-outputs`.');
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body.join('\n\n')
+            });
+
+# Required secrets (set these in repo Settings → Secrets and variables → Actions):
+# - AWS_ACCESS_KEY_ID
+# - AWS_SECRET_ACCESS_KEY
+# - AWS_REGION (e.g., us-east-1)
+# - S3_BUCKET (optional — bucket to host static site)
+# - CLOUDFRONT_DISTRIBUTION_ID (optional — invalidation)
