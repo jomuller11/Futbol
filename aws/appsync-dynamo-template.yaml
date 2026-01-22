@@ -1,11 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: AppSync GraphQL API with DynamoDB table (Hello world)
+Description: AppSync GraphQL API with DynamoDB tables for tournaments admin
 
 Resources:
-  HelloMessagesTable:
+  TournamentsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: HelloMessages
+      TableName: Tournaments
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: id
@@ -13,6 +13,81 @@ Resources:
       KeySchema:
         - AttributeName: id
           KeyType: HASH
+
+  PhasesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Phases
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: tournamentId
+          AttributeType: S
+        - AttributeName: phaseOrder
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: byTournament
+          KeySchema:
+            - AttributeName: tournamentId
+              KeyType: HASH
+            - AttributeName: phaseOrder
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  GroupsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Groups
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: phaseId
+          AttributeType: S
+        - AttributeName: groupOrder
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: byPhase
+          KeySchema:
+            - AttributeName: phaseId
+              KeyType: HASH
+            - AttributeName: groupOrder
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  TeamsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Teams
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: tournamentId
+          AttributeType: S
+        - AttributeName: name
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: byTournament
+          KeySchema:
+            - AttributeName: tournamentId
+              KeyType: HASH
+            - AttributeName: name
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
 
   GraphQLApi:
     Type: AWS::AppSync::GraphQLApi
@@ -31,17 +106,84 @@ Resources:
     Properties:
       ApiId: !GetAtt GraphQLApi.ApiId
       Definition: |
-        type Message {
+        enum PhaseType {
+          ZONES
+          PLAYOFFS
+        }
+
+        type Tournament {
           id: ID!
-          content: String!
+          name: String!
+          season: String
+          startDate: String
+          endDate: String
+        }
+
+        type Phase {
+          id: ID!
+          tournamentId: ID!
+          name: String!
+          phaseType: PhaseType!
+          phaseOrder: Int!
+        }
+
+        type Group {
+          id: ID!
+          phaseId: ID!
+          name: String!
+          groupOrder: Int!
+        }
+
+        type Team {
+          id: ID!
+          tournamentId: ID!
+          name: String!
+          shortName: String
+        }
+
+        input CreateTournamentInput {
+          id: ID
+          name: String!
+          season: String
+          startDate: String
+          endDate: String
+        }
+
+        input CreatePhaseInput {
+          id: ID
+          tournamentId: ID!
+          name: String!
+          phaseType: PhaseType!
+          phaseOrder: Int!
+        }
+
+        input CreateGroupInput {
+          id: ID
+          phaseId: ID!
+          name: String!
+          groupOrder: Int!
+        }
+
+        input CreateTeamInput {
+          id: ID
+          tournamentId: ID!
+          name: String!
+          shortName: String
         }
 
         type Query {
-          getMessage(id: ID!): Message
+          getTournament(id: ID!): Tournament
+          listTournaments: [Tournament!]!
+          listPhasesByTournament(tournamentId: ID!): [Phase!]!
+          listGroupsByPhase(phaseId: ID!): [Group!]!
+          listTeamsByTournament(tournamentId: ID!): [Team!]!
         }
 
         type Mutation {
-          createMessage(id: ID!, content: String!): Message
+          createTournament(input: CreateTournamentInput!): Tournament!
+          createPhase(input: CreatePhaseInput!): Phase!
+          createGroup(input: CreateGroupInput!): Group!
+          createTeam(input: CreateTeamInput!): Team!
         }
 
         schema {
@@ -72,34 +214,89 @@ Resources:
                   - dynamodb:PutItem
                   - dynamodb:Query
                   - dynamodb:Scan
-                Resource: !GetAtt HelloMessagesTable.Arn
+                Resource:
+                  - !GetAtt TournamentsTable.Arn
+                  - !GetAtt PhasesTable.Arn
+                  - !Sub "${PhasesTable.Arn}/index/*"
+                  - !GetAtt GroupsTable.Arn
+                  - !Sub "${GroupsTable.Arn}/index/*"
+                  - !GetAtt TeamsTable.Arn
+                  - !Sub "${TeamsTable.Arn}/index/*"
 
-  MessagesDataSource:
+  TournamentsDataSource:
     Type: AWS::AppSync::DataSource
     DependsOn:
       - AppSyncDynamoRole
-      - HelloMessagesTable
+      - TournamentsTable
       - GraphQLApi
       - GraphQLSchema
     Properties:
       ApiId: !GetAtt GraphQLApi.ApiId
-      Name: HelloMessagesSource
+      Name: TournamentsSource
       Type: AMAZON_DYNAMODB
       ServiceRoleArn: !GetAtt AppSyncDynamoRole.Arn
       DynamoDBConfig:
-        TableName: !Ref HelloMessagesTable
+        TableName: !Ref TournamentsTable
         AwsRegion: !Ref AWS::Region
 
-  GetMessageResolver:
+  PhasesDataSource:
+    Type: AWS::AppSync::DataSource
+    DependsOn:
+      - AppSyncDynamoRole
+      - PhasesTable
+      - GraphQLApi
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      Name: PhasesSource
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt AppSyncDynamoRole.Arn
+      DynamoDBConfig:
+        TableName: !Ref PhasesTable
+        AwsRegion: !Ref AWS::Region
+
+  GroupsDataSource:
+    Type: AWS::AppSync::DataSource
+    DependsOn:
+      - AppSyncDynamoRole
+      - GroupsTable
+      - GraphQLApi
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      Name: GroupsSource
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt AppSyncDynamoRole.Arn
+      DynamoDBConfig:
+        TableName: !Ref GroupsTable
+        AwsRegion: !Ref AWS::Region
+
+  TeamsDataSource:
+    Type: AWS::AppSync::DataSource
+    DependsOn:
+      - AppSyncDynamoRole
+      - TeamsTable
+      - GraphQLApi
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      Name: TeamsSource
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt AppSyncDynamoRole.Arn
+      DynamoDBConfig:
+        TableName: !Ref TeamsTable
+        AwsRegion: !Ref AWS::Region
+
+  GetTournamentResolver:
     Type: AWS::AppSync::Resolver
     DependsOn:
-      - MessagesDataSource
+      - TournamentsDataSource
       - GraphQLSchema
     Properties:
       ApiId: !GetAtt GraphQLApi.ApiId
       TypeName: Query
-      FieldName: getMessage
-      DataSourceName: HelloMessagesSource
+      FieldName: getTournament
+      DataSourceName: TournamentsSource
       RequestMappingTemplate: |
         {
           "version": "2018-05-29",
@@ -111,26 +308,209 @@ Resources:
       ResponseMappingTemplate: |
         $util.toJson($ctx.result)
 
-  CreateMessageResolver:
+  ListTournamentsResolver:
     Type: AWS::AppSync::Resolver
     DependsOn:
-      - MessagesDataSource
+      - TournamentsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Query
+      FieldName: listTournaments
+      DataSourceName: TournamentsSource
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Scan"
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result.items)
+
+  CreateTournamentResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - TournamentsDataSource
       - GraphQLSchema
     Properties:
       ApiId: !GetAtt GraphQLApi.ApiId
       TypeName: Mutation
-      FieldName: createMessage
-      DataSourceName: HelloMessagesSource
+      FieldName: createTournament
+      DataSourceName: TournamentsSource
       RequestMappingTemplate: |
+        #set($tournamentId = $util.defaultIfNull($ctx.args.input.id, $util.autoId()))
         {
           "version": "2018-05-29",
           "operation": "PutItem",
           "key": {
-            "id": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+            "id": $util.dynamodb.toDynamoDBJson($tournamentId)
           },
           "attributeValues": {
-            "content": $util.dynamodb.toDynamoDBJson($ctx.args.content)
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+            "season": $util.dynamodb.toDynamoDBJson($ctx.args.input.season),
+            "startDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.startDate),
+            "endDate": $util.dynamodb.toDynamoDBJson($ctx.args.input.endDate)
+          },
+          "returnValues": "ALL_NEW"
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result)
+
+  ListPhasesByTournamentResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - PhasesDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Query
+      FieldName: listPhasesByTournament
+      DataSourceName: PhasesSource
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Query",
+          "index": "byTournament",
+          "query": {
+            "expression": "tournamentId = :tournamentId",
+            "expressionValues": {
+              ":tournamentId": $util.dynamodb.toDynamoDBJson($ctx.args.tournamentId)
+            }
           }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result.items)
+
+  CreatePhaseResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - PhasesDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: createPhase
+      DataSourceName: PhasesSource
+      RequestMappingTemplate: |
+        #set($phaseId = $util.defaultIfNull($ctx.args.input.id, $util.autoId()))
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($phaseId)
+          },
+          "attributeValues": {
+            "tournamentId": $util.dynamodb.toDynamoDBJson($ctx.args.input.tournamentId),
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+            "phaseType": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseType),
+            "phaseOrder": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseOrder)
+          },
+          "returnValues": "ALL_NEW"
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result)
+
+  ListGroupsByPhaseResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - GroupsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Query
+      FieldName: listGroupsByPhase
+      DataSourceName: GroupsSource
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Query",
+          "index": "byPhase",
+          "query": {
+            "expression": "phaseId = :phaseId",
+            "expressionValues": {
+              ":phaseId": $util.dynamodb.toDynamoDBJson($ctx.args.phaseId)
+            }
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result.items)
+
+  CreateGroupResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - GroupsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: createGroup
+      DataSourceName: GroupsSource
+      RequestMappingTemplate: |
+        #set($groupId = $util.defaultIfNull($ctx.args.input.id, $util.autoId()))
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($groupId)
+          },
+          "attributeValues": {
+            "phaseId": $util.dynamodb.toDynamoDBJson($ctx.args.input.phaseId),
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+            "groupOrder": $util.dynamodb.toDynamoDBJson($ctx.args.input.groupOrder)
+          },
+          "returnValues": "ALL_NEW"
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result)
+
+  ListTeamsByTournamentResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - TeamsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Query
+      FieldName: listTeamsByTournament
+      DataSourceName: TeamsSource
+      RequestMappingTemplate: |
+        {
+          "version": "2018-05-29",
+          "operation": "Query",
+          "index": "byTournament",
+          "query": {
+            "expression": "tournamentId = :tournamentId",
+            "expressionValues": {
+              ":tournamentId": $util.dynamodb.toDynamoDBJson($ctx.args.tournamentId)
+            }
+          }
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result.items)
+
+  CreateTeamResolver:
+    Type: AWS::AppSync::Resolver
+    DependsOn:
+      - TeamsDataSource
+      - GraphQLSchema
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: createTeam
+      DataSourceName: TeamsSource
+      RequestMappingTemplate: |
+        #set($teamId = $util.defaultIfNull($ctx.args.input.id, $util.autoId()))
+        {
+          "version": "2018-05-29",
+          "operation": "PutItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($teamId)
+          },
+          "attributeValues": {
+            "tournamentId": $util.dynamodb.toDynamoDBJson($ctx.args.input.tournamentId),
+            "name": $util.dynamodb.toDynamoDBJson($ctx.args.input.name),
+            "shortName": $util.dynamodb.toDynamoDBJson($ctx.args.input.shortName)
+          },
+          "returnValues": "ALL_NEW"
         }
       ResponseMappingTemplate: |
         $util.toJson($ctx.result)

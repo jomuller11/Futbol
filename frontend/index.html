@@ -1,44 +1,784 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Hello AppSync Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Futbol Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #131318;
+        --muted: #606070;
+        --accent: #19725f;
+        --accent-strong: #115245;
+        --surface: #f6f2ec;
+        --surface-alt: #ffffff;
+        --border: #e0d8cf;
+        --shadow: 0 20px 50px rgba(20, 16, 12, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at top, #fef7ee, #efe6db 55%, #e7ddd1);
+        min-height: 100vh;
+      }
+
+      .app {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 48px 24px 72px;
+      }
+
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+
+      header h1 {
+        font-family: "Newsreader", serif;
+        font-size: clamp(2rem, 3vw, 2.7rem);
+        margin: 0;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+      }
+
+      .card {
+        background: var(--surface-alt);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      .card h2 {
+        margin-top: 0;
+        font-size: 1.1rem;
+        letter-spacing: 0.01em;
+      }
+
+      label {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      input,
+      select,
+      button,
+      textarea {
+        width: 100%;
+        font: inherit;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+
+      input:focus,
+      select:focus,
+      button:focus {
+        outline: 2px solid rgba(25, 114, 95, 0.3);
+        border-color: var(--accent);
+      }
+
+      button {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+
+      button:hover {
+        background: var(--accent-strong);
+        transform: translateY(-1px);
+      }
+
+      .stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .row {
+        display: grid;
+        gap: 12px;
+      }
+
+      .row.two {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--surface);
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        font-size: 0.85rem;
+      }
+
+      .list {
+        margin: 12px 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 10px;
+      }
+
+      .list li {
+        background: var(--surface);
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9rem;
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .status {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: #fff4da;
+        border: 1px solid #f1d7a1;
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 720px) {
+        .app {
+          padding: 32px 16px 56px;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>Hello AppSync</h1>
-    <p>Replace the values below with the CloudFormation outputs after deploy.</p>
-    <label>GraphQL Endpoint: <input id="graphqlEndpoint" size="60" value="https://rvvglboqrfhohh6d66du7xvgeq.appsync-api.us-east-1.amazonaws.com/graphql" /></label><br/>
-    <label>API Key: <input id="apiKey" size="60" value="da2-d3ntxmjqvbc3tcgglmkpe5wrcy" /></label><br/>
-    <button id="getMsg">Get Message</button>
-    <button id="createMsg">Create Message</button>
-    <pre id="output"></pre>
-
+    <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
     <script>
-      const out = id => document.getElementById(id);
-      document.getElementById('getMsg').onclick = async () => {
-        const ep = out('graphqlEndpoint').value.trim();
-        const key = out('apiKey').value.trim();
-        if (!ep || !key) return alert('Set endpoint and API key');
-        const query = `query GetMessage($id: ID!){ getMessage(id:$id){ id content } }`;
-        const res = await fetch(ep, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-key': key },
-          body: JSON.stringify({ query, variables: { id: '1' } })
+      const { useEffect, useMemo, useState } = React;
+      const html = htm.bind(React.createElement);
+
+      const defaultEndpoint =
+        "https://rvvglboqrfhohh6d66du7xvgeq.appsync-api.us-east-1.amazonaws.com/graphql";
+      const defaultApiKey = "da2-d3ntxmjqvbc3tcgglmkpe5wrcy";
+
+      function App() {
+        const [endpoint, setEndpoint] = useState(
+          localStorage.getItem("endpoint") || defaultEndpoint
+        );
+        const [apiKey, setApiKey] = useState(
+          localStorage.getItem("apiKey") || defaultApiKey
+        );
+        const [status, setStatus] = useState("");
+        const [loading, setLoading] = useState(false);
+        const [tournaments, setTournaments] = useState([]);
+        const [phases, setPhases] = useState([]);
+        const [groups, setGroups] = useState([]);
+        const [teams, setTeams] = useState([]);
+        const [selectedTournamentId, setSelectedTournamentId] = useState("");
+        const [selectedPhaseId, setSelectedPhaseId] = useState("");
+
+        const [tournamentForm, setTournamentForm] = useState({
+          name: "",
+          season: "",
+          startDate: "",
+          endDate: ""
         });
-        out('output').textContent = JSON.stringify(await res.json(), null, 2);
-      };
-      document.getElementById('createMsg').onclick = async () => {
-        const ep = out('graphqlEndpoint').value.trim();
-        const key = out('apiKey').value.trim();
-        if (!ep || !key) return alert('Set endpoint and API key');
-        const mutation = `mutation Create($id: ID!, $content: String!){ createMessage(id:$id, content:$content){ id content } }`;
-        const res = await fetch(ep, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-key': key },
-          body: JSON.stringify({ query: mutation, variables: { id: '1', content: 'Hello from demo' } })
+        const [phaseForm, setPhaseForm] = useState({
+          name: "",
+          phaseType: "ZONES",
+          phaseOrder: 1
         });
-        out('output').textContent = JSON.stringify(await res.json(), null, 2);
-      };
+        const [groupForm, setGroupForm] = useState({
+          name: "",
+          groupOrder: 1
+        });
+        const [teamForm, setTeamForm] = useState({
+          name: "",
+          shortName: ""
+        });
+
+        const canQuery = useMemo(
+          () => endpoint.trim() && apiKey.trim(),
+          [endpoint, apiKey]
+        );
+
+        async function request(query, variables) {
+          if (!canQuery) {
+            throw new Error("Add endpoint and API key first.");
+          }
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": apiKey
+            },
+            body: JSON.stringify({ query, variables })
+          });
+          const json = await res.json();
+          if (json.errors && json.errors.length) {
+            throw new Error(json.errors[0].message || "GraphQL error");
+          }
+          return json.data;
+        }
+
+        async function refreshTournaments() {
+          setLoading(true);
+          try {
+            const data = await request(
+              "query { listTournaments { id name season startDate endDate } }"
+            );
+            setTournaments(data.listTournaments);
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function refreshPhases(tournamentId) {
+          if (!tournamentId) return;
+          try {
+            const data = await request(
+              "query ($tournamentId: ID!) { listPhasesByTournament(tournamentId: $tournamentId) { id name phaseType phaseOrder } }",
+              { tournamentId }
+            );
+            setPhases(data.listPhasesByTournament);
+          } catch (err) {
+            setStatus(err.message);
+          }
+        }
+
+        async function refreshGroups(phaseId) {
+          if (!phaseId) return;
+          try {
+            const data = await request(
+              "query ($phaseId: ID!) { listGroupsByPhase(phaseId: $phaseId) { id name groupOrder } }",
+              { phaseId }
+            );
+            setGroups(data.listGroupsByPhase);
+          } catch (err) {
+            setStatus(err.message);
+          }
+        }
+
+        async function refreshTeams(tournamentId) {
+          if (!tournamentId) return;
+          try {
+            const data = await request(
+              "query ($tournamentId: ID!) { listTeamsByTournament(tournamentId: $tournamentId) { id name shortName } }",
+              { tournamentId }
+            );
+            setTeams(data.listTeamsByTournament);
+          } catch (err) {
+            setStatus(err.message);
+          }
+        }
+
+        async function handleConnect() {
+          localStorage.setItem("endpoint", endpoint.trim());
+          localStorage.setItem("apiKey", apiKey.trim());
+          setStatus("Connected. Loading tournaments...");
+          await refreshTournaments();
+          setStatus("");
+        }
+
+        async function createTournament() {
+          setLoading(true);
+          setStatus("");
+          try {
+            const data = await request(
+              "mutation ($input: CreateTournamentInput!) { createTournament(input: $input) { id name season startDate endDate } }",
+              { input: tournamentForm }
+            );
+            setTournaments([data.createTournament, ...tournaments]);
+            setTournamentForm({
+              name: "",
+              season: "",
+              startDate: "",
+              endDate: ""
+            });
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function createPhase() {
+          if (!selectedTournamentId) {
+            setStatus("Select a tournament to add a phase.");
+            return;
+          }
+          setLoading(true);
+          setStatus("");
+          try {
+            const data = await request(
+              "mutation ($input: CreatePhaseInput!) { createPhase(input: $input) { id name phaseType phaseOrder tournamentId } }",
+              {
+                input: {
+                  ...phaseForm,
+                  tournamentId: selectedTournamentId,
+                  phaseOrder: Number(phaseForm.phaseOrder)
+                }
+              }
+            );
+            setPhases([data.createPhase, ...phases]);
+            setPhaseForm({
+              name: "",
+              phaseType: "ZONES",
+              phaseOrder: 1
+            });
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function createGroup() {
+          if (!selectedPhaseId) {
+            setStatus("Select a phase to add a group.");
+            return;
+          }
+          setLoading(true);
+          setStatus("");
+          try {
+            const data = await request(
+              "mutation ($input: CreateGroupInput!) { createGroup(input: $input) { id name groupOrder phaseId } }",
+              {
+                input: {
+                  ...groupForm,
+                  phaseId: selectedPhaseId,
+                  groupOrder: Number(groupForm.groupOrder)
+                }
+              }
+            );
+            setGroups([data.createGroup, ...groups]);
+            setGroupForm({ name: "", groupOrder: 1 });
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function createTeam() {
+          if (!selectedTournamentId) {
+            setStatus("Select a tournament to add a team.");
+            return;
+          }
+          setLoading(true);
+          setStatus("");
+          try {
+            const data = await request(
+              "mutation ($input: CreateTeamInput!) { createTeam(input: $input) { id name shortName tournamentId } }",
+              {
+                input: {
+                  ...teamForm,
+                  tournamentId: selectedTournamentId
+                }
+              }
+            );
+            setTeams([data.createTeam, ...teams]);
+            setTeamForm({ name: "", shortName: "" });
+          } catch (err) {
+            setStatus(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        useEffect(() => {
+          if (!selectedTournamentId) {
+            setPhases([]);
+            setTeams([]);
+            setSelectedPhaseId("");
+            return;
+          }
+          refreshPhases(selectedTournamentId);
+          refreshTeams(selectedTournamentId);
+        }, [selectedTournamentId]);
+
+        useEffect(() => {
+          if (!selectedPhaseId) {
+            setGroups([]);
+            return;
+          }
+          refreshGroups(selectedPhaseId);
+        }, [selectedPhaseId]);
+
+        return html`
+          <div className="app">
+            <header>
+              <div>
+                <h1>Futbol Admin</h1>
+                <p>Create tournaments, phases, groups, and teams.</p>
+              </div>
+              <div className="pill">
+                ${loading ? "Saving..." : "Ready"}
+              </div>
+            </header>
+
+            <section className="grid">
+              <div className="card stack">
+                <h2>Connection</h2>
+                <div>
+                  <label>GraphQL Endpoint</label>
+                  <input
+                    value=${endpoint}
+                    onInput=${e => setEndpoint(e.target.value)}
+                    placeholder="https://..."
+                  />
+                </div>
+                <div>
+                  <label>API Key</label>
+                  <input
+                    value=${apiKey}
+                    onInput=${e => setApiKey(e.target.value)}
+                    placeholder="da2-..."
+                  />
+                </div>
+                <button onClick=${handleConnect}>Save & load</button>
+                ${status ? html`<div className="status">${status}</div>` : ""}
+              </div>
+
+              <div className="card stack">
+                <h2>New tournament</h2>
+                <div>
+                  <label>Name</label>
+                  <input
+                    value=${tournamentForm.name}
+                    onInput=${e =>
+                      setTournamentForm({
+                        ...tournamentForm,
+                        name: e.target.value
+                      })}
+                    placeholder="Liga Apertura"
+                  />
+                </div>
+                <div className="row two">
+                  <div>
+                    <label>Season</label>
+                    <input
+                      value=${tournamentForm.season}
+                      onInput=${e =>
+                        setTournamentForm({
+                          ...tournamentForm,
+                          season: e.target.value
+                        })}
+                      placeholder="2025"
+                    />
+                  </div>
+                  <div>
+                    <label>Start date</label>
+                    <input
+                      value=${tournamentForm.startDate}
+                      onInput=${e =>
+                        setTournamentForm({
+                          ...tournamentForm,
+                          startDate: e.target.value
+                        })}
+                      placeholder="2025-02-15"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label>End date</label>
+                  <input
+                    value=${tournamentForm.endDate}
+                    onInput=${e =>
+                      setTournamentForm({
+                        ...tournamentForm,
+                        endDate: e.target.value
+                      })}
+                    placeholder="2025-07-20"
+                  />
+                </div>
+                <button disabled=${!canQuery} onClick=${createTournament}>
+                  Create tournament
+                </button>
+              </div>
+
+              <div className="card stack">
+                <h2>New phase</h2>
+                <div>
+                  <label>Tournament</label>
+                  <select
+                    value=${selectedTournamentId}
+                    onChange=${e => setSelectedTournamentId(e.target.value)}
+                  >
+                    <option value="">Select tournament</option>
+                    ${tournaments.map(
+                      tournament =>
+                        html`<option value=${tournament.id}>
+                          ${tournament.name}
+                        </option>`
+                    )}
+                  </select>
+                </div>
+                <div>
+                  <label>Phase name</label>
+                  <input
+                    value=${phaseForm.name}
+                    onInput=${e =>
+                      setPhaseForm({ ...phaseForm, name: e.target.value })}
+                    placeholder="Group Stage"
+                  />
+                </div>
+                <div className="row two">
+                  <div>
+                    <label>Type</label>
+                    <select
+                      value=${phaseForm.phaseType}
+                      onChange=${e =>
+                        setPhaseForm({
+                          ...phaseForm,
+                          phaseType: e.target.value
+                        })}
+                    >
+                      <option value="ZONES">Zones</option>
+                      <option value="PLAYOFFS">Playoffs</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label>Order</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value=${phaseForm.phaseOrder}
+                      onInput=${e =>
+                        setPhaseForm({
+                          ...phaseForm,
+                          phaseOrder: e.target.value
+                        })}
+                    />
+                  </div>
+                </div>
+                <button disabled=${!canQuery} onClick=${createPhase}>
+                  Create phase
+                </button>
+              </div>
+
+              <div className="card stack">
+                <h2>New group</h2>
+                <div>
+                  <label>Phase</label>
+                  <select
+                    value=${selectedPhaseId}
+                    onChange=${e => setSelectedPhaseId(e.target.value)}
+                  >
+                    <option value="">Select phase</option>
+                    ${phases.map(
+                      phase =>
+                        html`<option value=${phase.id}>
+                          ${phase.name} (#${phase.phaseOrder})
+                        </option>`
+                    )}
+                  </select>
+                </div>
+                <div className="row two">
+                  <div>
+                    <label>Group name</label>
+                    <input
+                      value=${groupForm.name}
+                      onInput=${e =>
+                        setGroupForm({ ...groupForm, name: e.target.value })}
+                      placeholder="Group A"
+                    />
+                  </div>
+                  <div>
+                    <label>Order</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value=${groupForm.groupOrder}
+                      onInput=${e =>
+                        setGroupForm({
+                          ...groupForm,
+                          groupOrder: e.target.value
+                        })}
+                    />
+                  </div>
+                </div>
+                <button disabled=${!canQuery} onClick=${createGroup}>
+                  Create group
+                </button>
+              </div>
+
+              <div className="card stack">
+                <h2>New team</h2>
+                <div>
+                  <label>Tournament</label>
+                  <select
+                    value=${selectedTournamentId}
+                    onChange=${e => setSelectedTournamentId(e.target.value)}
+                  >
+                    <option value="">Select tournament</option>
+                    ${tournaments.map(
+                      tournament =>
+                        html`<option value=${tournament.id}>
+                          ${tournament.name}
+                        </option>`
+                    )}
+                  </select>
+                </div>
+                <div className="row two">
+                  <div>
+                    <label>Team name</label>
+                    <input
+                      value=${teamForm.name}
+                      onInput=${e =>
+                        setTeamForm({ ...teamForm, name: e.target.value })}
+                      placeholder="River Plate"
+                    />
+                  </div>
+                  <div>
+                    <label>Short name</label>
+                    <input
+                      value=${teamForm.shortName}
+                      onInput=${e =>
+                        setTeamForm({
+                          ...teamForm,
+                          shortName: e.target.value
+                        })}
+                      placeholder="RIV"
+                    />
+                  </div>
+                </div>
+                <button disabled=${!canQuery} onClick=${createTeam}>
+                  Create team
+                </button>
+              </div>
+            </section>
+
+            <section className="grid" style=${{ marginTop: "28px" }}>
+              <div className="card">
+                <h2>Tournaments</h2>
+                <button onClick=${refreshTournaments} disabled=${!canQuery}>
+                  Refresh
+                </button>
+                <ul className="list">
+                  ${tournaments.map(
+                    tournament => html`
+                      <li>
+                        <div>
+                          <strong>${tournament.name}</strong>
+                          <div className="muted">
+                            ${tournament.season || "Season TBD"}
+                          </div>
+                        </div>
+                        <div className="muted">
+                          ${tournament.startDate || "--"} to
+                          ${tournament.endDate || "--"}
+                        </div>
+                      </li>
+                    `
+                  )}
+                </ul>
+              </div>
+
+              <div className="card">
+                <h2>Phases</h2>
+                <div className="muted">
+                  Linked to selected tournament.
+                </div>
+                <ul className="list">
+                  ${phases.map(
+                    phase => html`
+                      <li>
+                        <div>
+                          <strong>${phase.name}</strong>
+                          <div className="muted">${phase.phaseType}</div>
+                        </div>
+                        <div className="muted">Order ${phase.phaseOrder}</div>
+                      </li>
+                    `
+                  )}
+                </ul>
+              </div>
+
+              <div className="card">
+                <h2>Groups</h2>
+                <div className="muted">Linked to selected phase.</div>
+                <ul className="list">
+                  ${groups.map(
+                    group => html`
+                      <li>
+                        <div>
+                          <strong>${group.name}</strong>
+                          <div className="muted">Order ${group.groupOrder}</div>
+                        </div>
+                      </li>
+                    `
+                  )}
+                </ul>
+              </div>
+
+              <div className="card">
+                <h2>Teams</h2>
+                <div className="muted">
+                  Linked to selected tournament.
+                </div>
+                <ul className="list">
+                  ${teams.map(
+                    team => html`
+                      <li>
+                        <div>
+                          <strong>${team.name}</strong>
+                          <div className="muted">${team.shortName || "--"}</div>
+                        </div>
+                      </li>
+                    `
+                  )}
+                </ul>
+              </div>
+            </section>
+          </div>
+        `;
+      }
+
+      ReactDOM.createRoot(document.getElementById("app")).render(
+        html`<${App} />`
+      );
     </script>
   </body>
 </html>
