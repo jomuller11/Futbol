@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Papi Futbol Moron - Team</title>
+    <title>Papi Futbol Moron - Estadisticas del partido</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -51,36 +51,6 @@
         --shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
         background: linear-gradient(135deg, #f6f8fb 0%, #ecf1f8 50%, #e7eef7 100%);
       }
-      body[data-theme="light"] .hero-card {
-        background: #ffffff;
-      }
-
-      body[data-theme="light"] .tab-row {
-        background: #e2e8f0;
-        border-color: #cbd5e1;
-      }
-
-      body[data-theme="light"] .tab.active {
-        background: rgba(249, 115, 22, 0.25);
-      }
-
-      body[data-theme="light"] .badge {
-        background: rgba(14, 116, 144, 0.16);
-        color: #0e7490;
-      }
-
-      body[data-theme="light"] .pill,
-      body[data-theme="light"] .stat-pill,
-      body[data-theme="light"] .pill-mini {
-        background: #e2e8f0;
-        color: #334155;
-      }
-
-      body[data-theme="light"] .fixture,
-      body[data-theme="light"] .team-card {
-        background: #f1f5f9;
-        border-color: #d5deea;
-      }
 
       a {
         color: inherit;
@@ -113,12 +83,12 @@
       }
 
       .brand-badge {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  object-fit: contain;
-  display: block;
-}
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: contain;
+        display: block;
+      }
 
       .nav {
         display: flex;
@@ -132,12 +102,6 @@
         padding: 8px 12px;
         border-radius: 999px;
         border: 1px solid transparent;
-      }
-
-      .nav a.active {
-        background: rgba(249, 115, 22, 0.18);
-        border-color: rgba(249, 115, 22, 0.4);
-        color: var(--ink);
       }
 
       .nav a:hover {
@@ -169,9 +133,6 @@
         background: var(--accent);
         color: #0b0f14;
         box-shadow: 0 14px 28px rgba(249, 115, 22, 0.35);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
       }
 
       .btn.secondary {
@@ -187,7 +148,7 @@
 
       .hero {
         display: grid;
-        grid-template-columns: minmax(280px, 1.1fr) minmax(240px, 0.9fr);
+        grid-template-columns: minmax(280px, 1.2fr) minmax(260px, 0.8fr);
         gap: 24px;
       }
 
@@ -199,6 +160,10 @@
         box-shadow: var(--shadow);
         display: grid;
         gap: 16px;
+      }
+
+      body[data-theme="light"] .hero-card {
+        background: #ffffff;
       }
 
       .hero h1 {
@@ -223,6 +188,21 @@
         color: var(--accent-alt);
         font-weight: 600;
         font-size: 0.8rem;
+      }
+
+      body[data-theme="light"] .badge {
+        background: rgba(14, 116, 144, 0.16);
+        color: #0e7490;
+      }
+
+      .scoreline {
+        display: grid;
+        gap: 8px;
+      }
+
+      .score {
+        font-size: 2.6rem;
+        font-weight: 700;
       }
 
       .grid {
@@ -260,6 +240,10 @@
         border-bottom: none;
       }
 
+      body[data-theme="light"] .stat-row {
+        border-bottom-color: rgba(15, 23, 42, 0.08);
+      }
+
       .stat-label {
         color: var(--muted);
         font-size: 0.9rem;
@@ -289,25 +273,16 @@
         letter-spacing: 0.12em;
       }
 
-      .cta {
-        display: grid;
-        gap: 16px;
-        background: linear-gradient(140deg, rgba(34, 211, 238, 0.16), rgba(249, 115, 22, 0.18));
-        border-radius: 24px;
-        padding: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
+      .Calendario-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
       }
 
-      .cta h2 {
-        font-family: "Bebas Neue", sans-serif;
-        letter-spacing: 0.08em;
-        margin: 0;
-        font-size: 2.2rem;
-      }
-
-      .cta p {
-        margin: 0;
-        color: var(--muted);
+      .Calendario-controls .btn.secondary {
+        padding: 8px 14px;
       }
 
       .reveal {
@@ -336,7 +311,7 @@
           Papi Futbol Moron
         </div>
         <nav class="nav">
-          <a class="active" href="teams.html">Equipos</a>
+          <a href="teams.html">Equipos</a>
           <a href="players.html">Jugadores</a>
           <a href="tournament-stats.html">Torneos</a>
           <a href="match.html">Partidos</a>
@@ -354,110 +329,72 @@
 
       <section class="hero">
         <div class="hero-card reveal">
-          <span class="badge">Team profile</span>
-          <h1 id="team-name">Team</h1>
-          <p id="team-meta"></p>
-          <div class="stat-row">
-            <div>
-              <div class="stat-label">Record</div>
-              <div class="stat-value" id="team-record"></div>
-            </div>
-            <div>
-              <div class="stat-label">Goles</div>
-              <div class="stat-value" id="team-goals"></div>
-            </div>
-            <div>
-              <div class="stat-label">Points</div>
-              <div class="stat-value" id="team-points"></div>
-            </div>
+          <span class="badge">Fecha 3</span>
+          <h1 id="match-title">Partido</h1>
+          <p id="match-meta"></p>
+          <div class="scoreline">
+            <div class="score" id="match-score"></div>
+            <div class="stat-label" id="match-zone"></div>
           </div>
         </div>
         <div class="hero-card reveal">
-          <div class="panel-title">Estadisticas del equipo</div>
+          <div class="panel-title">Destacados del partido</div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Shots per match</div>
-              <div class="stat-value" id="team-shots">0</div>
+              <div class="stat-label">Shots</div>
+              <div class="stat-value" id="match-shots"></div>
             </div>
-            <span class="badge">Top tier</span>
-          </div>
-          <div class="stat-row">
-            <div>
-              <div class="stat-label">Clean sheets</div>
-              <div class="stat-value" id="team-cleans">0</div>
-            </div>
-            <span class="badge">Fecha 3</span>
+            <span class="badge" id="match-xg"></span>
           </div>
           <div class="stat-row">
             <div>
               <div class="stat-label">Possession</div>
-              <div class="stat-value" id="team-possession">0%</div>
+              <div class="stat-value" id="match-possession"></div>
             </div>
-            <span class="badge">Zone play</span>
+            <span class="badge">Full time</span>
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Passing accuracy</div>
-              <div class="stat-value" id="team-passing">0%</div>
+              <div class="stat-label">Tarjetas</div>
+              <div class="stat-value" id="match-cards"></div>
             </div>
-            <span class="badge">Fecha 3</span>
+            <span class="badge">Discipline</span>
           </div>
         </div>
       </section>
 
       <section class="grid">
         <div class="panel reveal">
-          <div class="panel-title">Plantel</div>
+          <div class="panel-title">Estadisticas del equipo</div>
           <table class="table">
             <thead>
               <tr>
-                <th>Player</th>
-                <th>Position</th>
-                <th>Goles</th>
-                <th>Perfil</th>
+                <th>Team</th>
+                <th>Shots</th>
+                <th>xG</th>
+                <th>Possession</th>
+                <th>Tarjetas</th>
               </tr>
             </thead>
-            <tbody id="team-roster"></tbody>
+            <tbody id="team-Estadisticas"></tbody>
           </table>
         </div>
 
         <div class="panel reveal">
-          <div class="panel-title">Resultados recientes</div>
-          <div id="team-results"></div>
-        </div>
-
-        <div class="panel reveal">
-          <div class="panel-title">Tournament status</div>
-          <div class="stat-row">
-            <div>
-              <div class="stat-label">Zone</div>
-              <div class="stat-value" id="team-zone"></div>
-            </div>
-            <span class="badge" id="team-zone-rank"></span>
-          </div>
-          <div class="stat-row">
-            <div>
-              <div class="stat-label">Partidos jugados</div>
-              <div class="stat-value">3</div>
-            </div>
-            <span class="badge">Fecha 3</span>
-          </div>
-          <div class="stat-row">
-            <div>
-              <div class="stat-label">Goles for</div>
-              <div class="stat-value" id="team-gf"></div>
-            </div>
-            <span class="badge">Attack</span>
-          </div>
+          <div class="panel-title">Eventos del partido</div>
+          <div id="match-events"></div>
         </div>
       </section>
 
-      <section class="cta reveal">
-        <h2>Segui a tu equipo en la temporada</h2>
-        <p>Create an account to subscribe to match alerts and roster updates.</p>
-        <div class="stat-pills">
-          <a class="btn" href="register.html">Crear cuenta</a>
-          <a class="btn secondary" href="login.html">Iniciar sesion</a>
+      <section class="grid">
+        <div class="panel reveal">
+          <div class="panel-title">Todos los partidos</div>
+          <div class="fixture-controls">
+            <button class="btn secondary" type="button" id="prev-date">Anterior</button>
+            <span class="badge" id="fixture-range">Fecha</span>
+            <button class="btn secondary" type="button" id="next-date">Siguiente</button>
+          </div>
+          <div class="grid" id="fixture-zones"></div>
         </div>
       </section>
     </div>
@@ -465,11 +402,11 @@
     <script src="data.js"></script>
     <script>
       const themeToggle = document.getElementById("theme-toggle");
-      const storedTheme = localStorage.getItem("statline-theme");
+      const stoRojasTheme = localStorage.getItem("statline-theme");
       const prefersLight =
         window.matchMedia &&
         window.matchMedia("(prefers-color-scheme: light)").matches;
-      const initialTheme = storedTheme || (prefersLight ? "light" : "dark");
+      const initialTheme = stoRojasTheme || (prefersLight ? "light" : "dark");
 
       if (themeToggle) {
         document.body.dataset.theme = initialTheme;
@@ -484,54 +421,131 @@
       }
 
       const params = new URLSearchParams(window.location.search);
-      const teamId = params.get("team");
+      const matchId = params.get("match");
       const data = window.StatlineData.tournament;
-      const team = window.StatlineData.getTeamById(teamId) || data.teams[0];
-      const zoneEquipos = data.zones.find(zone => zone.name === team.zone).teams;
-      const zoneRank = zoneEquipos.findIndex(item => item.id === team.id) + 1;
+      const match = window.StatlineData.getMatchById(matchId) || data.results[0];
 
-      document.getElementById("team-name").textContent = team.name;
-      document.getElementById("team-meta").textContent = `${team.zone} - Papi Futbol 2026`;
-      document.getElementById("team-record").textContent = `${team.wins}W ${team.draws}D ${team.losses}L`;
-      document.getElementById("team-goals").textContent = `${team.goalsFor} scored`;
-      document.getElementById("team-points").textContent = team.points;
+      const LocalTeam = data.teams.find(team => team.name === match.home);
+      const VisitanteTeam = data.teams.find(team => team.name === match.away);
+      const LocalLink = `<a href="team.html?team=${LocalTeam ? LocalTeam.id : ""}">${match.home}</a>`;
+      const VisitanteLink = `<a href="team.html?team=${VisitanteTeam ? VisitanteTeam.id : ""}">${match.away}</a>`;
 
-      document.getElementById("team-zone").textContent = team.zone;
-      document.getElementById("team-zone-rank").textContent = `Rank ${zoneRank} / 12`;
-      document.getElementById("team-gf").textContent = team.goalsFor;
-      document.getElementById("team-shots").textContent = (12 + (team.goalsFor % 6)).toFixed(1);
-      document.getElementById("team-cleans").textContent = Math.max(0, 4 - team.goalsAgainst % 3);
-      document.getElementById("team-possession").textContent = 50 + (team.points % 7);
-      document.getElementById("team-passing").textContent = 78 + (team.points % 5);
+      document.getElementById("match-title").innerHTML = `${LocalLink} vs ${VisitanteLink}`;
+      document.getElementById("match-meta").textContent = "Papi Futbol 2026 - Final";
+      document.getElementById("match-score").textContent = `${match.homeScore} - ${match.awayScore}`;
+      document.getElementById("match-zone").textContent = match.zone;
 
-      const roster = document.getElementById("team-roster");
-      team.players.forEach(player => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${player.name}</td>
-          <td>${player.position}</td>
-          <td>${player.stats.goals}</td>
-          <td><a class="btn secondary" href="player-public.html?player=${player.id}">Ver</a></td>
-        `;
-        roster.appendChild(row);
+      document.getElementById("match-shots").textContent = `${match.stats.shotsHome} - ${match.stats.shotsAway}`;
+      document.getElementById("match-xg").textContent = `xG ${match.stats.xgHome} - ${match.stats.xgAway}`;
+      document.getElementById("match-possession").textContent =
+        `${match.stats.possessionHome}% - ${match.stats.possessionAway}%`;
+      document.getElementById("match-cards").textContent =
+        `${match.stats.yellowHome + match.stats.redHome + match.stats.blueHome} - ` +
+        `${match.stats.yellowAway + match.stats.redAway + match.stats.blueAway}`;
+
+      const EquipoEstadisticas = document.getElementById("team-Estadisticas");
+      EquipoEstadisticas.innerHTML = `
+        <tr>
+          <td>${LocalLink}</td>
+          <td>${match.stats.shotsHome}</td>
+          <td>${match.stats.xgHome}</td>
+          <td>${match.stats.possessionHome}%</td>
+          <td>${match.stats.yellowHome}/${match.stats.redHome}/${match.stats.blueHome}</td>
+        </tr>
+        <tr>
+          <td>${VisitanteLink}</td>
+          <td>${match.stats.shotsAway}</td>
+          <td>${match.stats.xgAway}</td>
+          <td>${match.stats.possessionAway}%</td>
+          <td>${match.stats.yellowAway}/${match.stats.redAway}/${match.stats.blueAway}</td>
+        </tr>
+      `;
+
+      const events = document.getElementById("match-events");
+      const eventItems = [
+        `${match.home} anoto temprano a los 12 minutos.`,
+        `${match.away} empato en el minuto 42.`,
+        `Gol decisivo para ${match.home} al 64'.`
+      ];
+      eventItems.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "stat-row";
+        row.innerHTML = `<div class="stat-label">${item}</div><span class="badge">Evento</span>`;
+        events.appendChild(row);
       });
 
-      const results = document.getElementById("team-results");
-      data.results
-        .filter(match => match.home === team.name || match.away === team.name)
-        .slice(0, 3)
-        .forEach(match => {
-          const row = document.createElement("div");
-          row.className = "stat-row";
-          row.innerHTML = `
-            <div>
-              <div class="stat-label">${match.home} vs ${match.away}</div>
-              <div class="stat-value">${match.homeScore}-${match.awayScore}</div>
-            </div>
-            <span class="badge">Fecha ${data.matchday}</span>
+      const fixtureZones = document.getElementById("fixture-zones");
+      const fixtureRange = document.getElementById("fixture-range");
+      const prevButton = document.getElementById("prev-date");
+      const nextButton = document.getElementById("next-date");
+      const dates = [...new Set(data.matches.map(item => item.date))].sort();
+      const firstUpcomingDate = dates.find(date =>
+        data.matches.some(match => match.date === date && match.status !== "final")
+      );
+      let activeDate = match.date || firstUpcomingDate || dates[0];
+
+      function renderFixtures(date) {
+        const fixtures = data.matches.filter(match => match.date === date);
+        fixtureZones.innerHTML = "";
+        const zones = ["Zone A", "Zone B"];
+        zones.forEach(zoneName => {
+          const zoneMatches = fixtures.filter(match => match.zone === zoneName);
+          const panel = document.createElement("div");
+          panel.className = "panel reveal is-visible";
+          panel.innerHTML = `
+            <div class="panel-title">${zoneName}</div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Local</th>
+                  <th>Visitante</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${zoneMatches
+                  .map(fixture => {
+                    const Estado = fixture.status === "final"
+                      ? `${fixture.homeScore}-${fixture.awayScore}`
+                      : "Programado";
+                    const LocalId = data.teams.find(t => t.name === fixture.home)?.id || "";
+                    const VisitanteId = data.teams.find(t => t.name === fixture.away)?.id || "";
+                    return `
+                      <tr>
+                        <td><a href="team.html?team=${LocalId}">${fixture.home}</a></td>
+                        <td><a href="team.html?team=${VisitanteId}">${fixture.away}</a></td>
+                        <td><a href="match.html?match=${fixture.id}">${Estado}</a></td>
+                      </tr>
+                    `;
+                  })
+                  .join("")}
+              </tbody>
+            </table>
           `;
-          results.appendChild(row);
+          fixtureZones.appendChild(panel);
         });
+        fixtureRange.textContent = date;
+        prevButton.disabled = date === dates[0];
+        nextButton.disabled = date === dates[dates.length - 1];
+      }
+
+      prevButton.addEventListener("click", () => {
+        const index = dates.indexOf(activeDate);
+        if (index > 0) {
+          activeDate = dates[index - 1];
+          renderFixtures(activeDate);
+        }
+      });
+
+      nextButton.addEventListener("click", () => {
+        const index = dates.indexOf(activeDate);
+        if (index < dates.length - 1) {
+          activeDate = dates[index + 1];
+          renderFixtures(activeDate);
+        }
+      });
+
+      renderFixtures(activeDate);
 
       const revealItems = document.querySelectorAll(".reveal");
       const observer = new IntersectionObserver(

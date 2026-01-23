@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Papi Futbol Moron - Players</title>
+    <title>Papi Futbol Moron - Jugadores</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -279,11 +279,23 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       }
 
+      .table td {
+        color: var(--ink);
+      }
+
       .table th {
         color: var(--muted);
         font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.12em;
+      }
+
+      .table tbody tr {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      body[data-theme="light"] .table tbody tr {
+        background: rgba(15, 23, 42, 0.04);
       }
 
       .select {
@@ -318,12 +330,6 @@
       }
 
       .reveal {
-        opacity: 0;
-        transform: translateY(14px);
-        transition: 0.6s ease;
-      }
-
-      .reveal.is-visible {
         opacity: 1;
         transform: translateY(0);
       }
@@ -343,52 +349,52 @@
           Papi Futbol Moron
         </div>
         <nav class="nav">
-          <a href="teams.html">Teams</a>
-          <a class="active" href="players.html">Players</a>
-          <a href="tournament-stats.html">Tournaments</a>
-          <a href="index.html#matches">Matches</a>
-          <a href="index.html#stats">Stats</a>
+          <a href="teams.html">Equipos</a>
+          <a class="active" href="players.html">Jugadores</a>
+          <a href="tournament-stats.html">Torneos</a>
+          <a href="match.html">Partidos</a>
+          <a href="index.html#stats">Estadisticas</a>
         </nav>
         <div class="account">
-          <span class="pill">Account</span>
+          <span class="pill">Cuenta</span>
           <button class="btn secondary theme-toggle" type="button" id="theme-toggle">
-            Light mode
+            Modo claro
           </button>
-          <a class="btn secondary" href="login.html">Log in</a>
-          <a class="btn" href="register.html">Create account</a>
+          <a class="btn secondary" href="login.html">Iniciar sesion</a>
+          <a class="btn" href="register.html">Crear cuenta</a>
         </div>
       </header>
 
       <section class="hero">
         <div class="hero-card reveal">
-          <span class="badge">Players radar</span>
+          <span class="badge">Jugadores radar</span>
           <h1>Every player, every stat</h1>
           <p>
-            Explore player profiles across all 24 teams in Papi Futbol 2026. Filter
+            Explora perfiles de jugadores en los 24 equipos de Papi Futbol 2026. Filtra
             by team or zone to find your roster.
           </p>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Registered players</div>
+              <div class="stat-label">Registroed players</div>
               <div class="stat-value" id="player-count">288</div>
             </div>
             <div>
-              <div class="stat-label">Teams</div>
+              <div class="stat-label">Equipos</div>
               <div class="stat-value">24</div>
             </div>
             <div>
-              <div class="stat-label">Matchday</div>
+              <div class="stat-label">Fecha</div>
               <div class="stat-value" id="player-matchday">3</div>
             </div>
           </div>
         </div>
         <div class="hero-card reveal">
-          <div class="panel-title">Filter roster</div>
+          <div class="panel-title">Filtrar plantel</div>
           <label class="stat-label" for="team-filter">Team or zone avoids long lists</label>
           <select class="select" id="team-filter"></select>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Showing</div>
+              <div class="stat-label">Mostrando</div>
               <div class="stat-value" id="player-showing">0</div>
             </div>
             <span class="badge" id="filter-label">All teams</span>
@@ -398,15 +404,15 @@
 
       <section class="grid">
         <div class="panel reveal">
-          <div class="panel-title">Player list</div>
+          <div class="panel-title">Lista de jugadores</div>
           <table class="table">
             <thead>
               <tr>
                 <th>Player</th>
                 <th>Team</th>
                 <th>Position</th>
-                <th>Goals</th>
-                <th>Profile</th>
+                <th>Goles</th>
+                <th>Perfil</th>
               </tr>
             </thead>
             <tbody id="player-list"></tbody>
@@ -415,11 +421,11 @@
       </section>
 
       <section class="cta reveal">
-        <h2>Claim your player profile</h2>
-        <p>Register to manage your stats and follow your tournament history.</p>
+        <h2>Reclama tu perfil</h2>
+        <p>Registro to manage your stats and follow your tournament history.</p>
         <div class="stat-pills">
-          <a class="btn" href="register.html">Create account</a>
-          <a class="btn secondary" href="login.html">Log in</a>
+          <a class="btn" href="register.html">Crear cuenta</a>
+          <a class="btn secondary" href="login.html">Iniciar sesion</a>
         </div>
       </section>
     </div>
@@ -436,12 +442,12 @@
       if (themeToggle) {
         document.body.dataset.theme = initialTheme;
         themeToggle.textContent =
-          document.body.dataset.theme === "light" ? "Dark mode" : "Light mode";
+          document.body.dataset.theme === "light" ? "Modo oscuro" : "Modo claro";
         themeToggle.addEventListener("click", () => {
           const nextTheme = document.body.dataset.theme === "light" ? "dark" : "light";
           document.body.dataset.theme = nextTheme;
           localStorage.setItem("statline-theme", nextTheme);
-          themeToggle.textContent = nextTheme === "light" ? "Dark mode" : "Light mode";
+          themeToggle.textContent = nextTheme === "light" ? "Modo oscuro" : "Modo claro";
         });
       }
 
@@ -455,7 +461,7 @@
       const filterLabel = document.getElementById("filter-label");
 
       const options = [
-        { label: "All teams", value: "all" },
+        { label: "Todos los equipos", value: "all" },
         { label: "Zone A", value: "zone-a" },
         { label: "Zone B", value: "zone-b" }
       ];
@@ -471,24 +477,24 @@
         filter.appendChild(entry);
       });
 
-      function renderPlayers(filterValue) {
+      function renderJugadores(filterValue) {
         let list = data.players;
         if (filterValue === "zone-a") {
           list = data.players.filter(player =>
             data.zones[0].teams.some(team => team.id === player.teamId)
           );
-          filterLabel.textContent = "Zone A";
+          filterLabel.textContent = "Zona A";
         } else if (filterValue === "zone-b") {
           list = data.players.filter(player =>
             data.zones[1].teams.some(team => team.id === player.teamId)
           );
-          filterLabel.textContent = "Zone B";
+          filterLabel.textContent = "Zona B";
         } else if (filterValue !== "all") {
           list = data.players.filter(player => player.teamId === filterValue);
           const team = window.StatlineData.getTeamById(filterValue);
-          filterLabel.textContent = team ? team.name : "Team";
+          filterLabel.textContent = team ? team.name : "Equipo";
         } else {
-          filterLabel.textContent = "All teams";
+          filterLabel.textContent = "Todos los equipos";
         }
 
         playerList.innerHTML = list
@@ -499,7 +505,7 @@
                 <td>${player.teamName}</td>
                 <td>${player.position}</td>
                 <td>${player.stats.goals}</td>
-                <td><a class="btn secondary" href="player-public.html?player=${player.id}">View</a></td>
+                <td><a class="btn secondary" href="player-public.html?player=${player.id}">Ver</a></td>
               </tr>
             `
           )
@@ -509,25 +515,21 @@
       }
 
       filter.addEventListener("change", event => {
-        renderPlayers(event.target.value);
+        renderJugadores(event.target.value);
       });
 
-      renderPlayers("all");
+      filter.value = "all";
+      renderJugadores(filter.value);
 
       const revealItems = document.querySelectorAll(".reveal");
-      const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("is-visible");
-            }
-          });
-        },
-        { threshold: 0.2 }
-      );
-      revealItems.forEach(item => observer.observe(item));
+      revealItems.forEach(item => item.classList.add("is-visible"));
     </script>
   </body>
 </html>
+
+
+
+
+
 
 

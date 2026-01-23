@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Papi Futbol Moron - Teams</title>
+    <title>Papi Futbol Moron - Equipos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -344,26 +344,26 @@
           Papi Futbol Moron
         </div>
         <nav class="nav">
-          <a class="active" href="teams.html">Teams</a>
-          <a href="players.html">Players</a>
-          <a href="tournament-stats.html">Tournaments</a>
-          <a href="index.html#matches">Matches</a>
-          <a href="index.html#stats">Stats</a>
+          <a class="active" href="teams.html">Equipos</a>
+          <a href="players.html">Jugadores</a>
+          <a href="tournament-stats.html">Torneos</a>
+          <a href="match.html">Partidos</a>
+          <a href="index.html#stats">Estadisticas</a>
         </nav>
         <div class="account">
-          <span class="pill">Account</span>
+          <span class="pill">Cuenta</span>
           <button class="btn secondary theme-toggle" type="button" id="theme-toggle">
-            Light mode
+            Modo claro
           </button>
-          <a class="btn secondary" href="login.html">Log in</a>
-          <a class="btn" href="register.html">Create account</a>
+          <a class="btn secondary" href="login.html">Iniciar sesion</a>
+          <a class="btn" href="register.html">Crear cuenta</a>
         </div>
       </header>
 
       <section class="hero">
         <div class="hero-card reveal">
           <span class="badge">Top performing squads</span>
-          <h1>Teams powering the season</h1>
+          <h1>Equipos powering the season</h1>
           <p>
             24 teams split into two zones for Papi Futbol 2026. Click a team to
             open its roster and stats page.
@@ -378,7 +378,7 @@
               <div class="stat-value">2</div>
             </div>
             <div>
-              <div class="stat-label">Matchday</div>
+              <div class="stat-label">Fecha</div>
               <div class="stat-value" id="matchday">3</div>
             </div>
           </div>
@@ -392,7 +392,7 @@
               <div class="stat-label">Total goals</div>
               <div class="stat-value" id="total-goals">0</div>
             </div>
-            <span class="badge">Matchday 3</span>
+            <span class="badge">Fecha 3</span>
           </div>
         </div>
       </section>
@@ -403,8 +403,8 @@
         <h2>Want your team stats tracked?</h2>
         <p>Create an account to manage your roster and register for tournaments.</p>
         <div class="stat-pills">
-          <a class="btn" href="register.html">Create account</a>
-          <a class="btn secondary" href="login.html">Log in</a>
+          <a class="btn" href="register.html">Crear cuenta</a>
+          <a class="btn secondary" href="login.html">Iniciar sesion</a>
         </div>
       </section>
     </div>
@@ -421,12 +421,12 @@
       if (themeToggle) {
         document.body.dataset.theme = initialTheme;
         themeToggle.textContent =
-          document.body.dataset.theme === "light" ? "Dark mode" : "Light mode";
+          document.body.dataset.theme === "light" ? "Modo oscuro" : "Modo claro";
         themeToggle.addEventListener("click", () => {
           const nextTheme = document.body.dataset.theme === "light" ? "dark" : "light";
           document.body.dataset.theme = nextTheme;
           localStorage.setItem("statline-theme", nextTheme);
-          themeToggle.textContent = nextTheme === "light" ? "Dark mode" : "Light mode";
+          themeToggle.textContent = nextTheme === "light" ? "Modo oscuro" : "Modo claro";
         });
       }
 
@@ -434,8 +434,8 @@
       document.getElementById("team-count").textContent = data.teams.length;
       document.getElementById("matchday").textContent = data.matchday;
 
-      const totalGoals = data.teams.reduce((sum, team) => sum + team.goalsFor, 0);
-      document.getElementById("total-goals").textContent = totalGoals;
+      const totalGoles = data.teams.reduce((sum, team) => sum + team.goalsFor, 0);
+      document.getElementById("total-goals").textContent = totalGoles;
 
       const zoneALeader = data.zones[0].teams[0];
       const zoneBLeader = data.zones[1].teams[0];
@@ -473,7 +473,7 @@
               <span class="pill-mini">Top scorer: ${topScorer.name}</span>
               <span class="pill-mini">Record: ${team.wins}W ${team.draws}D ${team.losses}L</span>
             </div>
-            <a class="btn secondary" href="team.html?team=${team.id}">View team</a>
+            <a class="btn secondary" href="team.html?team=${team.id}">Ver equipo</a>
           `;
           panel.appendChild(card);
         });
@@ -496,5 +496,10 @@
     </script>
   </body>
 </html>
+
+
+
+
+
 
 

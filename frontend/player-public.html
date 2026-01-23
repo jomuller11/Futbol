@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Papi Futbol Moron - Player Profile</title>
+    <title>Papi Futbol Moron - Player Perfil</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -391,25 +391,25 @@
           Papi Futbol Moron
         </div>
         <nav class="nav">
-          <a href="teams.html">Teams</a>
-          <a class="active" href="players.html">Players</a>
-          <a href="tournament-stats.html">Tournaments</a>
-          <a href="index.html#matches">Matches</a>
-          <a href="index.html#stats">Stats</a>
+          <a href="teams.html">Equipos</a>
+          <a class="active" href="players.html">Jugadores</a>
+          <a href="tournament-stats.html">Torneos</a>
+          <a href="match.html">Partidos</a>
+          <a href="index.html#stats">Estadisticas</a>
         </nav>
         <div class="account">
-          <span class="pill">Account</span>
+          <span class="pill">Cuenta</span>
           <button class="btn secondary theme-toggle" type="button" id="theme-toggle">
-            Light mode
+            Modo claro
           </button>
-          <a class="btn secondary" href="login.html">Log in</a>
-          <a class="btn" href="register.html">Create account</a>
+          <a class="btn secondary" href="login.html">Iniciar sesion</a>
+          <a class="btn" href="register.html">Crear cuenta</a>
         </div>
       </header>
 
       <section class="hero">
         <div class="hero-card reveal">
-          <span class="badge">Public profile</span>
+          <span class="badge">Perfil publico</span>
           <h1 id="player-name">Player</h1>
           <p id="player-team"></p>
           <div class="profile">
@@ -423,17 +423,17 @@
           <div class="stat-badges" id="player-badges"></div>
         </div>
         <div class="hero-card reveal">
-          <div class="panel-title">General stats</div>
+          <div class="panel-title">Estadisticas generales</div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Goals</div>
+              <div class="stat-label">Goles</div>
               <div class="stat-value" id="total-goals">0</div>
             </div>
             <span class="badge">All tournaments</span>
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Assists</div>
+              <div class="stat-label">Asistencias</div>
               <div class="stat-value" id="total-assists">0</div>
             </div>
             <span class="badge">All tournaments</span>
@@ -447,7 +447,7 @@
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Cards</div>
+              <div class="stat-label">Tarjetas</div>
               <div class="stat-value" id="total-cards">0</div>
             </div>
             <span class="badge">Fair play</span>
@@ -457,7 +457,7 @@
 
       <section class="grid">
         <div class="panel reveal">
-          <div class="panel-title">Tournament stats</div>
+          <div class="panel-title">Estadisticas del torneo</div>
           <label class="stat-label" for="tournament-select">Select tournament</label>
           <select class="select" id="tournament-select"></select>
           <div class="stat-row">
@@ -469,33 +469,33 @@
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Goals</div>
+              <div class="stat-label">Goles</div>
               <div class="stat-value" id="tournament-goals">0</div>
             </div>
             <span class="badge" id="tournament-team">Team</span>
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Assists</div>
+              <div class="stat-label">Asistencias</div>
               <div class="stat-value" id="tournament-assists">0</div>
             </div>
             <span class="badge" id="tournament-stage">Stage</span>
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Minutes</div>
+              <div class="stat-label">Minutos</div>
               <div class="stat-value" id="tournament-minutes">0</div>
             </div>
-            <span class="badge" id="tournament-cards">Cards 0</span>
+            <span class="badge" id="tournament-cards">Tarjetas 0</span>
           </div>
         </div>
 
         <div class="panel reveal">
-          <div class="panel-title">Match logs</div>
+          <div class="panel-title">Registro de partidos</div>
           <table class="table">
             <thead>
               <tr>
-                <th>Match</th>
+                <th>Partido</th>
                 <th>Result</th>
                 <th>Impact</th>
               </tr>
@@ -505,7 +505,7 @@
         </div>
 
         <div class="panel reveal">
-          <div class="panel-title">Radar snapshot</div>
+          <div class="panel-title">Radar</div>
           <div class="stat-row">
             <div>
               <div class="stat-label">Finishing</div>
@@ -538,11 +538,11 @@
       </section>
 
       <section class="cta reveal">
-        <h2>Join the tournament to track your journey</h2>
+        <h2>Unite al torneo para seguir tu camino</h2>
         <p>Create an account to register and manage your player history.</p>
         <div class="stat-badges">
-          <a class="btn" href="register.html">Create account</a>
-          <a class="btn secondary" href="login.html">Log in</a>
+          <a class="btn" href="register.html">Crear cuenta</a>
+          <a class="btn secondary" href="login.html">Iniciar sesion</a>
         </div>
       </section>
     </div>
@@ -559,12 +559,12 @@
       if (themeToggle) {
         document.body.dataset.theme = initialTheme;
         themeToggle.textContent =
-          document.body.dataset.theme === "light" ? "Dark mode" : "Light mode";
+          document.body.dataset.theme === "light" ? "Modo oscuro" : "Modo claro";
         themeToggle.addEventListener("click", () => {
           const nextTheme = document.body.dataset.theme === "light" ? "dark" : "light";
           document.body.dataset.theme = nextTheme;
           localStorage.setItem("statline-theme", nextTheme);
-          themeToggle.textContent = nextTheme === "light" ? "Dark mode" : "Light mode";
+          themeToggle.textContent = nextTheme === "light" ? "Modo oscuro" : "Modo claro";
         });
       }
 
@@ -579,7 +579,7 @@
           label: "Papi Futbol 2026",
           season: "Season 2026",
           team: player.teamName,
-          stage: "Matchday 3",
+          stage: "Fecha 3",
           stats: {
             apps: player.stats.apps,
             goals: player.stats.goals,
@@ -618,10 +618,10 @@
         }
       ];
 
-      const totalGoals = tournaments.reduce((sum, t) => sum + t.stats.goals, 0);
-      const totalAssists = tournaments.reduce((sum, t) => sum + t.stats.assists, 0);
+      const totalGoles = tournaments.reduce((sum, t) => sum + t.stats.goals, 0);
+      const totalAsistencias = tournaments.reduce((sum, t) => sum + t.stats.assists, 0);
       const totalApps = tournaments.reduce((sum, t) => sum + t.stats.apps, 0);
-      const totalCards = tournaments.reduce((sum, t) => sum + t.stats.cards, 0);
+      const totalTarjetas = tournaments.reduce((sum, t) => sum + t.stats.cards, 0);
 
       document.getElementById("player-name").textContent = player.name;
       document.getElementById("player-team").textContent = `${player.position} - ${player.teamName}`;
@@ -630,7 +630,7 @@
         .map(part => part[0])
         .join("");
       document.getElementById("player-role").textContent = `${player.position} for ${player.teamName}`;
-      document.getElementById("player-minutes").textContent = `Minutes played ${player.stats.minutes} - Matches ${player.stats.apps}`;
+      document.getElementById("player-minutes").textContent = `Minutos played ${player.stats.minutes} - Partidos ${player.stats.apps}`;
       document.getElementById("player-jersey").textContent = "Footedness Right - Jersey 10";
 
       document.getElementById("player-badges").innerHTML = `
@@ -640,32 +640,32 @@
         <span class="stat-pill">Sprints ${160 + player.stats.apps * 12}</span>
       `;
 
-      document.getElementById("total-goals").textContent = totalGoals;
-      document.getElementById("total-assists").textContent = totalAssists;
+      document.getElementById("total-goals").textContent = totalGoles;
+      document.getElementById("total-assists").textContent = totalAsistencias;
       document.getElementById("total-apps").textContent = totalApps;
-      document.getElementById("total-cards").textContent = totalCards;
+      document.getElementById("total-cards").textContent = totalTarjetas;
 
       const select = document.getElementById("tournament-select");
       const matchLogs = document.getElementById("match-logs");
 
       const tApps = document.getElementById("tournament-apps");
-      const tGoals = document.getElementById("tournament-goals");
-      const tAssists = document.getElementById("tournament-assists");
-      const tMinutes = document.getElementById("tournament-minutes");
+      const tGoles = document.getElementById("tournament-goals");
+      const tAsistencias = document.getElementById("tournament-assists");
+      const tMinutos = document.getElementById("tournament-minutes");
       const tSeason = document.getElementById("tournament-season");
       const tTeam = document.getElementById("tournament-team");
       const tStage = document.getElementById("tournament-stage");
-      const tCards = document.getElementById("tournament-cards");
+      const tTarjetas = document.getElementById("tournament-cards");
 
       function renderTournament(tournament) {
         tApps.textContent = tournament.stats.apps;
-        tGoals.textContent = tournament.stats.goals;
-        tAssists.textContent = tournament.stats.assists;
-        tMinutes.textContent = tournament.stats.minutes;
+        tGoles.textContent = tournament.stats.goals;
+        tAsistencias.textContent = tournament.stats.assists;
+        tMinutos.textContent = tournament.stats.minutes;
         tSeason.textContent = tournament.season;
         tTeam.textContent = tournament.team;
         tStage.textContent = tournament.stage;
-        tCards.textContent = `Cards ${tournament.stats.cards}`;
+        tTarjetas.textContent = `Tarjetas ${tournament.stats.cards}`;
 
         matchLogs.innerHTML = [
           {
@@ -727,5 +727,10 @@
     </script>
   </body>
 </html>
+
+
+
+
+
 
 

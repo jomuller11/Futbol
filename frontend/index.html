@@ -424,19 +424,19 @@
             Papi Futbol Moron
           </div>
           <nav class="nav">
-            <a href="teams.html">Teams</a>
-            <a href="players.html">Players</a>
-            <a href="tournament-stats.html">Tournaments</a>
-            <a href="#matches">Matches</a>
-            <a href="#stats">Stats</a>
+            <a href="teams.html">Equipos</a>
+            <a href="players.html">Jugadores</a>
+            <a href="tournament-stats.html">Torneos</a>
+            <a href="match.html">Partidos</a>
+            <a href="#stats">Estadisticas</a>
           </nav>
           <div class="account">
-            <span class="pill">Account</span>
+            <span class="pill">Cuenta</span>
             <button class="btn secondary theme-toggle" type="button" id="theme-toggle">
-              Light mode
+              Modo claro
             </button>
-            <a class="btn secondary" href="login.html">Log in</a>
-            <a class="btn" href="register.html">Create account</a>
+            <a class="btn secondary" href="login.html">Iniciar sesion</a>
+            <a class="btn" href="register.html">Crear cuenta</a>
           </div>
         </div>
         <div class="ticker">
@@ -458,8 +458,8 @@
             scoreboard style experience.
           </p>
           <div class="hero-actions">
-            <a class="btn" href="tournament-stats.html">Explore tournaments</a>
-            <a class="btn secondary" href="players.html">Browse players</a>
+            <a class="btn" href="tournament-stats.html">Explorar torneos</a>
+            <a class="btn secondary" href="players.html">Ver jugadores</a>
           </div>
         </div>
         <div class="hero-card reveal">
@@ -473,21 +473,21 @@
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Goals scored</div>
+              <div class="stat-label">Goles</div>
               <div class="stat-value">14</div>
             </div>
             <span class="score win">+6</span>
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Cards issued</div>
+              <div class="stat-label">Tarjetas issued</div>
               <div class="stat-value">9</div>
             </div>
             <span class="score loss">+2</span>
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Next kickoff</div>
+              <div class="stat-label">Siguiente kickoff</div>
               <div class="stat-value">19:30</div>
             </div>
             <span class="badge">Main field</span>
@@ -528,7 +528,7 @@
               <tr>
                 <th>Player</th>
                 <th>Team</th>
-                <th>Goals</th>
+                <th>Goles</th>
               </tr>
             </thead>
             <tbody>
@@ -555,21 +555,21 @@
           <div class="panel-title">Tournament pulse</div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Active tournaments</div>
+              <div class="stat-label">Torneo activos</div>
               <div class="stat-value">4</div>
             </div>
             <span class="badge">Live</span>
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Matches played</div>
+              <div class="stat-label">Partidos jugados</div>
               <div class="stat-value">98</div>
             </div>
             <span class="badge">Season 2026</span>
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Upcoming finals</div>
+              <div class="stat-label">Proximo finals</div>
               <div class="stat-value">2</div>
             </div>
             <span class="badge">Knockout</span>
@@ -579,11 +579,11 @@
 
       <section class="grid" id="matches">
         <div class="panel reveal">
-          <div class="panel-title">Featured match</div>
+          <div class="panel-title">Partido destacado</div>
           <div class="fixture">
             <div>
               <div class="fixture-team">Los Tigres</div>
-              <div class="fixture-meta">Home</div>
+              <div class="fixture-meta">Local</div>
             </div>
             <div>
               <div class="score win">2 - 1</div>
@@ -591,7 +591,7 @@
             </div>
             <div>
               <div class="fixture-team">Atl. Central</div>
-              <div class="fixture-meta">Away</div>
+              <div class="fixture-meta">Visitante</div>
             </div>
           </div>
           <div class="stat-row">
@@ -602,11 +602,11 @@
             <div class="stat-label">Possession</div>
             <div class="stat-value">57% - 43%</div>
           </div>
-          <a class="btn secondary" href="tournament-stats.html">Match center</a>
+          <a class="btn secondary" href="tournament-stats.html">Centro del partido</a>
         </div>
 
         <div class="panel reveal">
-          <div class="panel-title">Fixture</div>
+          <div class="panel-title">Calendario</div>
           <div class="fixture-list">
             <div class="fixture">
               <div>
@@ -657,12 +657,12 @@
       <section class="cta reveal">
         <h2>Build your account and join the season</h2>
         <p>
-          Track your stats across tournaments and register for the next active
+          Segui tus estadisticas en torneos and register for the next active
           competition from your profile.
         </p>
         <div class="hero-actions">
-          <a class="btn" href="register.html">Create account</a>
-          <a class="btn secondary" href="login.html">Log in</a>
+          <a class="btn" href="register.html">Crear cuenta</a>
+          <a class="btn secondary" href="login.html">Iniciar sesion</a>
         </div>
       </section>
     </div>
@@ -678,12 +678,12 @@
       if (themeToggle) {
         document.body.dataset.theme = initialTheme;
         themeToggle.textContent =
-          document.body.dataset.theme === "light" ? "Dark mode" : "Light mode";
+          document.body.dataset.theme === "light" ? "Modo oscuro" : "Modo claro";
         themeToggle.addEventListener("click", () => {
           const nextTheme = document.body.dataset.theme === "light" ? "dark" : "light";
           document.body.dataset.theme = nextTheme;
           localStorage.setItem("statline-theme", nextTheme);
-          themeToggle.textContent = nextTheme === "light" ? "Dark mode" : "Light mode";
+          themeToggle.textContent = nextTheme === "light" ? "Modo oscuro" : "Modo claro";
         });
       }
 
@@ -702,5 +702,10 @@
     </script>
   </body>
 </html>
+
+
+
+
+
 
 

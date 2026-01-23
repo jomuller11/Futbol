@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Player Login</title>
+    <title>Player Ingresar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -37,7 +37,7 @@
 
       function App() {
         const [theme, setTheme] = useState(getInitialTheme());
-        const [login, setLogin] = useState({ dni: "", email: "" });
+        const [login, setIngresar] = useState({ dni: "", email: "" });
 
         useEffect(() => {
           applyTheme(theme);
@@ -52,20 +52,20 @@
                 onClick=${() => setTheme(theme === "light" ? "dark" : "light")}
                 type="button"
               >
-                ${theme === "light" ? "Dark mode" : "Light mode"}
+                ${theme === "light" ? "Modo oscuro" : "Modo claro"}
               </button>
               <nav className="portal-nav">
                 <div className="portal-nav-group">
                   <div className="portal-nav-title">Public</div>
-                  <a className="portal-link" href="tournament-stats.html">Tournament Stats</a>
-                  <a className="portal-link" href="teams.html">Teams</a>
-                  <a className="portal-link" href="players.html">Players</a>
+                  <a className="portal-link" href="tournament-stats.html">Estadisticas del torneo</a>
+                  <a className="portal-link" href="teams.html">Equipos</a>
+                  <a className="portal-link" href="players.html">Jugadores</a>
                 </div>
                 <div className="portal-nav-group">
-                  <div className="portal-nav-title">Account</div>
-                  <a className="portal-link" href="register.html">Register</a>
-                  <a className="portal-link active" href="login.html">Login</a>
-                  <a className="portal-link" href="profile.html">Profile</a>
+                  <div className="portal-nav-title">Cuenta</div>
+                  <a className="portal-link" href="register.html">Registro</a>
+                  <a className="portal-link active" href="login.html">Ingresar</a>
+                  <a className="portal-link" href="profile.html">Perfil</a>
                 </div>
               </nav>
             </aside>
@@ -73,9 +73,9 @@
             <main className="portal-main">
               <div className="portal-header">
                 <div>
-                  <h1 className="portal-title">Welcome Back</h1>
+                  <h1 className="portal-title">Bienvenido</h1>
                   <div className="portal-subtitle">
-                    Log in to reach your profile and the active tournament signup.
+                    Iniciar sesion to reach your profile and the active tournament signup.
                   </div>
                 </div>
                 <span className="chip">Step 2 of 3</span>
@@ -90,20 +90,20 @@
                         <input
                           type="number"
                           value=${login.dni}
-                          onInput=${e => setLogin({ ...login, dni: e.target.value })}
+                          onInput=${e => setIngresar({ ...login, dni: e.target.value })}
                         />
                       </div>
                       <div>
                         <label>Email</label>
                         <input
                           value=${login.email}
-                          onInput=${e => setLogin({ ...login, email: e.target.value })}
+                          onInput=${e => setIngresar({ ...login, email: e.target.value })}
                         />
                       </div>
                     </div>
-                    <button className="portal-button">Open profile</button>
+                    <button className="portal-button">Abrir perfil</button>
                     <a className="portal-button secondary" href="register.html">
-                      Need an account?
+                      Necesitas una cuenta?
                     </a>
                   </div>
                 </div>
@@ -117,4 +117,10 @@
     </script>
   </body>
 </html>
+
+
+
+
+
+
 

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Player Profile</title>
+    <title>Player Perfil</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -70,20 +70,20 @@
                 onClick=${() => setTheme(theme === "light" ? "dark" : "light")}
                 type="button"
               >
-                ${theme === "light" ? "Dark mode" : "Light mode"}
+                ${theme === "light" ? "Modo oscuro" : "Modo claro"}
               </button>
               <nav className="portal-nav">
                 <div className="portal-nav-group">
                   <div className="portal-nav-title">Public</div>
-                  <a className="portal-link" href="tournament-stats.html">Tournament Stats</a>
-                  <a className="portal-link" href="teams.html">Teams</a>
-                  <a className="portal-link" href="players.html">Players</a>
+                  <a className="portal-link" href="tournament-stats.html">Estadisticas del torneo</a>
+                  <a className="portal-link" href="teams.html">Equipos</a>
+                  <a className="portal-link" href="players.html">Jugadores</a>
                 </div>
                 <div className="portal-nav-group">
-                  <div className="portal-nav-title">Account</div>
-                  <a className="portal-link" href="register.html">Register</a>
-                  <a className="portal-link" href="login.html">Login</a>
-                  <a className="portal-link active" href="profile.html">Profile</a>
+                  <div className="portal-nav-title">Cuenta</div>
+                  <a className="portal-link" href="register.html">Registro</a>
+                  <a className="portal-link" href="login.html">Ingresar</a>
+                  <a className="portal-link active" href="profile.html">Perfil</a>
                 </div>
               </nav>
             </aside>
@@ -115,47 +115,47 @@
                 </div>
 
                 <div className="portal-card">
-                  <h3>Active tournament</h3>
+                  <h3>Torneo activo</h3>
                   <div className="portal-subtitle">
-                    Register to secure your spot in the current competition.
+                    Registro to secure your spot in the current competition.
                   </div>
                   <div className="stat-row">
                     <span className="stat-pill">${activeTournament.name}</span>
                     <span className="stat-pill">
                       Registration closes ${activeTournament.registrationCloses}
                     </span>
-                    <span className="stat-pill">Status: ${activeTournament.status}</span>
+                    <span className="stat-pill">Estado: ${activeTournament.status}</span>
                   </div>
                   <div className="portal-actions">
                     <button className="portal-button">
-                      Register for ${activeTournament.name}
+                      Registro for ${activeTournament.name}
                     </button>
                     <a className="portal-button secondary" href="player-public.html">
-                      View public profile
+                      Ver public profile
                     </a>
                   </div>
                 </div>
 
                 <div className="portal-card">
-                  <h3>General stats</h3>
+                  <h3>Estadisticas generales</h3>
                   <div className="stat-list">
-                    <div className="stat-chip">Goals ${stats.goals}</div>
-                    <div className="stat-chip">Yellow ${stats.yellow}</div>
-                    <div className="stat-chip">Red ${stats.red}</div>
-                    <div className="stat-chip">Blue ${stats.blue}</div>
+                    <div className="stat-chip">Goles ${stats.goals}</div>
+                    <div className="stat-chip">Amarillas ${stats.yellow}</div>
+                    <div className="stat-chip">Rojas ${stats.red}</div>
+                    <div className="stat-chip">Azules ${stats.blue}</div>
                   </div>
                 </div>
 
                 <div className="portal-card">
-                  <h3>Tournaments</h3>
+                  <h3>Torneos</h3>
                   <table className="table">
                     <thead>
                       <tr>
                         <th>Tournament</th>
-                        <th>Goals</th>
-                        <th>Yellow</th>
-                        <th>Red</th>
-                        <th>Blue</th>
+                        <th>Goles</th>
+                        <th>Amarillas</th>
+                        <th>Rojas</th>
+                        <th>Azules</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -183,4 +183,10 @@
     </script>
   </body>
 </html>
+
+
+
+
+
+
 

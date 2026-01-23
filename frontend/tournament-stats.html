@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Papi Futbol Moron - Tournaments</title>
+    <title>Papi Futbol Moron - Torneos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -388,30 +388,30 @@
           Papi Futbol Moron
         </div>
         <nav class="nav">
-          <a href="teams.html">Teams</a>
-          <a href="players.html">Players</a>
-          <a class="active" href="tournament-stats.html">Tournaments</a>
-          <a href="index.html#matches">Matches</a>
-          <a href="index.html#stats">Stats</a>
+          <a href="teams.html">Equipos</a>
+          <a href="players.html">Jugadores</a>
+          <a class="active" href="tournament-stats.html">Torneos</a>
+          <a href="match.html">Partidos</a>
+          <a href="index.html#stats">Estadisticas</a>
         </nav>
         <div class="account">
-          <span class="pill">Account</span>
+          <span class="pill">Cuenta</span>
           <button class="btn secondary theme-toggle" type="button" id="theme-toggle">
-            Light mode
+            Modo claro
           </button>
-          <a class="btn secondary" href="login.html">Log in</a>
-          <a class="btn" href="register.html">Create account</a>
+          <a class="btn secondary" href="login.html">Iniciar sesion</a>
+          <a class="btn" href="register.html">Crear cuenta</a>
         </div>
       </header>
 
       <section class="hero">
         <div class="hero-card reveal">
-          <span class="badge">Active tournament</span>
+          <span class="badge">Torneo activo</span>
           <h1 id="tournament-name">Papi Futbol 2026</h1>
           <p id="tournament-subtitle"></p>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Teams</div>
+              <div class="stat-label">Equipos</div>
               <div class="stat-value" id="tournament-teams">24</div>
             </div>
             <div>
@@ -419,40 +419,40 @@
               <div class="stat-value" id="tournament-zones">2</div>
             </div>
             <div>
-              <div class="stat-label">Matches played</div>
+              <div class="stat-label">Partidos jugados</div>
               <div class="stat-value" id="tournament-matches">36</div>
             </div>
           </div>
         </div>
         <div class="hero-card reveal">
-          <div class="panel-title">Matchday status</div>
+          <div class="panel-title">Fecha status</div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Current matchday</div>
+              <div class="stat-label">Fecha actual</div>
               <div class="stat-value" id="matchday">3</div>
             </div>
             <span class="badge" id="matchday-status">Completed</span>
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Goals scored</div>
+              <div class="stat-label">Goles</div>
               <div class="stat-value" id="matchday-goals">36</div>
             </div>
             <span class="badge">Live stats</span>
           </div>
           <div class="stat-row">
             <div>
-              <div class="stat-label">Next kickoff</div>
-              <div class="stat-value">Matchday 4</div>
+              <div class="stat-label">Siguiente kickoff</div>
+              <div class="stat-value">Fecha 4</div>
             </div>
-            <span class="badge">Upcoming</span>
+            <span class="badge">Proximo</span>
           </div>
         </div>
       </section>
 
       <section class="grid">
         <div class="panel reveal">
-          <div class="panel-title">Standings views</div>
+          <div class="panel-title">Vistas de tabla</div>
           <div class="tab-row" id="standings-tabs"></div>
         </div>
       </section>
@@ -461,17 +461,17 @@
 
       <section class="grid">
         <div class="panel reveal">
-          <div class="panel-title">Matchday 3 results</div>
+          <div class="panel-title">Fecha 3 results</div>
           <div id="matchday-results"></div>
         </div>
       </section>
 
       <section class="cta reveal">
-        <h2>Track your stats across tournaments</h2>
+        <h2>Segui tus estadisticas en torneos</h2>
         <p>Build your account to follow player history and tournament registration.</p>
         <div class="stat-row" style="border-bottom: none;">
-          <a class="btn" href="register.html">Create account</a>
-          <a class="btn secondary" href="login.html">Log in</a>
+          <a class="btn" href="register.html">Crear cuenta</a>
+          <a class="btn secondary" href="login.html">Iniciar sesion</a>
         </div>
       </section>
     </div>
@@ -488,38 +488,38 @@
       if (themeToggle) {
         document.body.dataset.theme = initialTheme;
         themeToggle.textContent =
-          document.body.dataset.theme === "light" ? "Dark mode" : "Light mode";
+          document.body.dataset.theme === "light" ? "Modo oscuro" : "Modo claro";
         themeToggle.addEventListener("click", () => {
           const nextTheme = document.body.dataset.theme === "light" ? "dark" : "light";
           document.body.dataset.theme = nextTheme;
           localStorage.setItem("statline-theme", nextTheme);
-          themeToggle.textContent = nextTheme === "light" ? "Dark mode" : "Light mode";
+          themeToggle.textContent = nextTheme === "light" ? "Modo oscuro" : "Modo claro";
         });
       }
 
       const data = window.StatlineData.tournament;
 
       const subtitle = document.getElementById("tournament-subtitle");
-      const totalMatches = data.matchday * (data.teams.length / 2);
-      const totalGoals = data.results.reduce(
+      const totalPartidos = data.matchday * (data.teams.length / 2);
+      const totalGoles = data.results.reduce(
         (sum, match) => sum + match.homeScore + match.awayScore,
         0
       );
 
-      subtitle.textContent = `${data.zones.length} zones, 12 teams each. Matchday ${data.matchday} already played.`;
+      subtitle.textContent = `${data.zones.length} zonas, 12 equipos por zona. Fecha ${data.matchday} ya jugada.`;
       document.getElementById("tournament-teams").textContent = data.teams.length;
       document.getElementById("tournament-zones").textContent = data.zones.length;
-      document.getElementById("tournament-matches").textContent = totalMatches;
+      document.getElementById("tournament-matches").textContent = totalPartidos;
       document.getElementById("matchday").textContent = data.matchday;
-      document.getElementById("matchday-goals").textContent = totalGoals;
+      document.getElementById("matchday-goals").textContent = totalGoles;
 
       const standingsContent = document.getElementById("standings-content");
       const tabs = document.getElementById("standings-tabs");
       const views = [
-        { id: "teams", label: "Team standing" },
-        { id: "goals", label: "Players by goals" },
-        { id: "cards", label: "Players by cards" },
-        { id: "keepers", label: "Goalkeepers" }
+        { id: "teams", label: "Tabla de equipos" },
+        { id: "goals", label: "Jugadores by goals" },
+        { id: "cards", label: "Jugadores by cards" },
+        { id: "keepers", label: "Arqueros" }
       ];
       const observer = new IntersectionObserver(
         entries => {
@@ -618,20 +618,20 @@
         standingsContent.appendChild(panel);
       }
 
-      function renderGoalkeepers() {
+      function renderArqueros() {
         standingsContent.innerHTML = "";
         const keepers = data.players.filter(player => player.position === "GK");
         const panel = document.createElement("div");
         panel.className = "panel";
         panel.innerHTML = `
-          <div class="panel-title">Goalkeepers standing</div>
+          <div class="panel-title">Arqueros standing</div>
           <table class="table">
             <thead>
               <tr>
                 <th>Goalkeeper</th>
                 <th>Team</th>
                 <th>Apps</th>
-                <th>Cards</th>
+                <th>Tarjetas</th>
               </tr>
             </thead>
             <tbody>
@@ -654,7 +654,7 @@
         standingsContent.appendChild(panel);
       }
 
-      function renderCardsStandings() {
+      function renderTarjetasStandings() {
         standingsContent.innerHTML = "";
         const sorted = [...data.players].sort((a, b) => {
           if (b.stats.cards !== a.stats.cards) {
@@ -665,15 +665,15 @@
         const panel = document.createElement("div");
         panel.className = "panel";
         panel.innerHTML = `
-          <div class="panel-title">Players standing by cards</div>
+          <div class="panel-title">Jugadores standing by cards</div>
           <table class="table">
             <thead>
               <tr>
                 <th>Player</th>
                 <th>Team</th>
-                <th>Yellow</th>
-                <th>Red</th>
-                <th>Blue</th>
+                <th>Amarillas</th>
+                <th>Rojas</th>
+                <th>Azules</th>
               </tr>
             </thead>
             <tbody>
@@ -714,11 +714,11 @@
           if (view.id === "teams") {
             renderTeamStandings();
           } else if (view.id === "goals") {
-            renderPlayerStandings("goals", "Players standing by goals", "Goals");
+            renderPlayerStandings("goals", "Jugadores standing by goals", "Goles");
           } else if (view.id === "cards") {
-            renderCardsStandings();
+            renderTarjetasStandings();
           } else {
-            renderGoalkeepers();
+            renderArqueros();
           }
         });
         tabs.appendChild(button);
@@ -742,7 +742,7 @@
           </div>
           <div>
             <div class="fixture-team">${match.away}</div>
-            <div class="fixture-meta">Matchday ${data.matchday}</div>
+            <div class="fixture-meta">Fecha ${data.matchday}</div>
           </div>
         `;
         results.appendChild(row);
@@ -752,5 +752,10 @@
     </script>
   </body>
 </html>
+
+
+
+
+
 
 
