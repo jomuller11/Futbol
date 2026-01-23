@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Player Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="player-portal.css" />
+  </head>
+  <body class="portal-body">
+    <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+    <script>
+      const { useEffect, useState } = React;
+      const html = htm.bind(React.createElement);
+
+      const THEME_KEY = "statline-theme";
+      const getInitialTheme = () => {
+        const stored = localStorage.getItem(THEME_KEY);
+        if (stored) return stored;
+        const prefersLight =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: light)").matches;
+        return prefersLight ? "light" : "dark";
+      };
+      const applyTheme = theme => {
+        document.body.dataset.theme = theme;
+        localStorage.setItem(THEME_KEY, theme);
+      };
+
+      function App() {
+        const [theme, setTheme] = useState(getInitialTheme());
+        const [avatar, setAvatar] = useState("");
+        const stats = { goals: 12, yellow: 3, red: 1, blue: 0 };
+        const activeTournament = {
+          name: "Torneo 2026",
+          registrationCloses: "2026-05-12",
+          status: "Not registered"
+        };
+        const tournaments = [
+          { name: "Torneo 2024", goals: 5, yellow: 1, red: 0, blue: 0 },
+          { name: "Torneo 2025", goals: 7, yellow: 2, red: 1, blue: 0 }
+        ];
+
+        useEffect(() => {
+          applyTheme(theme);
+        }, [theme]);
+
+        function handleAvatarChange(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => setAvatar(reader.result);
+          reader.readAsDataURL(file);
+        }
+
+        return html`
+          <div className="portal-shell">
+            <aside className="portal-sidebar">
+              <img className="portal-brand" src="img/logo_imagen.png" alt="Papi Futbol Moron logo" />
+              <button
+                className="portal-button secondary portal-theme-toggle"
+                onClick=${() => setTheme(theme === "light" ? "dark" : "light")}
+                type="button"
+              >
+                ${theme === "light" ? "Dark mode" : "Light mode"}
+              </button>
+              <nav className="portal-nav">
+                <div className="portal-nav-group">
+                  <div className="portal-nav-title">Public</div>
+                  <a className="portal-link" href="tournament-stats.html">Tournament Stats</a>
+                  <a className="portal-link" href="teams.html">Teams</a>
+                  <a className="portal-link" href="players.html">Players</a>
+                </div>
+                <div className="portal-nav-group">
+                  <div className="portal-nav-title">Account</div>
+                  <a className="portal-link" href="register.html">Register</a>
+                  <a className="portal-link" href="login.html">Login</a>
+                  <a className="portal-link active" href="profile.html">Profile</a>
+                </div>
+              </nav>
+            </aside>
+
+            <main className="portal-main">
+              <div className="portal-header">
+                <div>
+                  <h1 className="portal-title">Andrea Pirlo</h1>
+                  <div className="portal-subtitle">DNI 12345678 - andrea@email.com</div>
+                </div>
+                <span className="chip">Step 3 of 3</span>
+              </div>
+
+              <div className="portal-grid">
+                <div className="portal-card">
+                  <div className="profile-header">
+                    <img
+                      className="avatar"
+                      src=${avatar ||
+                      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='110' height='110'><rect width='110' height='110' fill='%23ecf6f5'/><text x='50%' y='54%' text-anchor='middle' font-size='28' fill='%238b95a5' font-family='sans-serif'>AP</text></svg>"}
+                      alt="Player avatar"
+                    />
+                    <div>
+                      <div className="chip">Midfielder</div>
+                      <div className="portal-subtitle">Upload a new profile image.</div>
+                      <input type="file" accept="image/*" onChange=${handleAvatarChange} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="portal-card">
+                  <h3>Active tournament</h3>
+                  <div className="portal-subtitle">
+                    Register to secure your spot in the current competition.
+                  </div>
+                  <div className="stat-row">
+                    <span className="stat-pill">${activeTournament.name}</span>
+                    <span className="stat-pill">
+                      Registration closes ${activeTournament.registrationCloses}
+                    </span>
+                    <span className="stat-pill">Status: ${activeTournament.status}</span>
+                  </div>
+                  <div className="portal-actions">
+                    <button className="portal-button">
+                      Register for ${activeTournament.name}
+                    </button>
+                    <a className="portal-button secondary" href="player-public.html">
+                      View public profile
+                    </a>
+                  </div>
+                </div>
+
+                <div className="portal-card">
+                  <h3>General stats</h3>
+                  <div className="stat-list">
+                    <div className="stat-chip">Goals ${stats.goals}</div>
+                    <div className="stat-chip">Yellow ${stats.yellow}</div>
+                    <div className="stat-chip">Red ${stats.red}</div>
+                    <div className="stat-chip">Blue ${stats.blue}</div>
+                  </div>
+                </div>
+
+                <div className="portal-card">
+                  <h3>Tournaments</h3>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Tournament</th>
+                        <th>Goals</th>
+                        <th>Yellow</th>
+                        <th>Red</th>
+                        <th>Blue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${tournaments.map(
+                        item => html`
+                          <tr>
+                            <td>${item.name}</td>
+                            <td>${item.goals}</td>
+                            <td>${item.yellow}</td>
+                            <td>${item.red}</td>
+                            <td>${item.blue}</td>
+                          </tr>
+                        `
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </main>
+          </div>
+        `;
+      }
+
+      ReactDOM.createRoot(document.getElementById("app")).render(html`<${App} />`);
+    </script>
+  </body>
+</html>
+

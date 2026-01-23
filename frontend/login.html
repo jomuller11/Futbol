@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Player Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="player-portal.css" />
+  </head>
+  <body class="portal-body">
+    <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+    <script>
+      const { useEffect, useState } = React;
+      const html = htm.bind(React.createElement);
+
+      const THEME_KEY = "statline-theme";
+      const getInitialTheme = () => {
+        const stored = localStorage.getItem(THEME_KEY);
+        if (stored) return stored;
+        const prefersLight =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: light)").matches;
+        return prefersLight ? "light" : "dark";
+      };
+      const applyTheme = theme => {
+        document.body.dataset.theme = theme;
+        localStorage.setItem(THEME_KEY, theme);
+      };
+
+      function App() {
+        const [theme, setTheme] = useState(getInitialTheme());
+        const [login, setLogin] = useState({ dni: "", email: "" });
+
+        useEffect(() => {
+          applyTheme(theme);
+        }, [theme]);
+
+        return html`
+          <div className="portal-shell">
+            <aside className="portal-sidebar">
+              <img className="portal-brand" src="img/logo_imagen.png" alt="Papi Futbol Moron logo" />
+              <button
+                className="portal-button secondary portal-theme-toggle"
+                onClick=${() => setTheme(theme === "light" ? "dark" : "light")}
+                type="button"
+              >
+                ${theme === "light" ? "Dark mode" : "Light mode"}
+              </button>
+              <nav className="portal-nav">
+                <div className="portal-nav-group">
+                  <div className="portal-nav-title">Public</div>
+                  <a className="portal-link" href="tournament-stats.html">Tournament Stats</a>
+                  <a className="portal-link" href="teams.html">Teams</a>
+                  <a className="portal-link" href="players.html">Players</a>
+                </div>
+                <div className="portal-nav-group">
+                  <div className="portal-nav-title">Account</div>
+                  <a className="portal-link" href="register.html">Register</a>
+                  <a className="portal-link active" href="login.html">Login</a>
+                  <a className="portal-link" href="profile.html">Profile</a>
+                </div>
+              </nav>
+            </aside>
+
+            <main className="portal-main">
+              <div className="portal-header">
+                <div>
+                  <h1 className="portal-title">Welcome Back</h1>
+                  <div className="portal-subtitle">
+                    Log in to reach your profile and the active tournament signup.
+                  </div>
+                </div>
+                <span className="chip">Step 2 of 3</span>
+              </div>
+
+              <div className="portal-grid">
+                <div className="portal-card">
+                  <div className="portal-form">
+                    <div className="row">
+                      <div>
+                        <label>DNI</label>
+                        <input
+                          type="number"
+                          value=${login.dni}
+                          onInput=${e => setLogin({ ...login, dni: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label>Email</label>
+                        <input
+                          value=${login.email}
+                          onInput=${e => setLogin({ ...login, email: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <button className="portal-button">Open profile</button>
+                    <a className="portal-button secondary" href="register.html">
+                      Need an account?
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        `;
+      }
+
+      ReactDOM.createRoot(document.getElementById("app")).render(html`<${App} />`);
+    </script>
+  </body>
+</html>
+

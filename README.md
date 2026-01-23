@@ -26,6 +26,19 @@ To serve the built files locally (optional):
 npm start
 ```
 
+## User journey and access
+
+User journey:
+- Browse public content (Tournament stats, Teams, Fixture, Players, and public player profiles/stats).
+- Register an account.
+- Log in and land on Profile.
+- Register for the active tournament from Profile.
+
+Access rules:
+- Public: Tournament stats, Teams, Fixture, Players, Player public profile/stats.
+- Auth required: Profile.
+- Auth + eligible: Register for active tournament.
+
 ## CI/CD (GitHub Actions)
 
 The workflow is at `.github/workflows/deploy.yml`. It performs these steps on `push` to `main` or via manual dispatch:

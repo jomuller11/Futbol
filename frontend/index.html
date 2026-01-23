@@ -1,30 +1,30 @@
-
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Futbol Admin</title>
+    <title>Papi Futbol Moron</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
         color-scheme: light;
-        --ink: #0b0f17;
-        --muted: #5b6675;
-        --blue: #2b67f6;
-        --blue-strong: #1f4fd6;
-        --orange: #ff8a3d;
-        --orange-strong: #f97316;
-        --surface: #eef3ff;
-        --surface-alt: #ffffff;
-        --border: #dde6fb;
-        --shadow: 0 22px 40px rgba(15, 23, 42, 0.12);
-        --sidebar: #11131b;
+        --bg: #0b0f14;
+        --panel: #141a22;
+        --panel-strong: #1b2430;
+        --edge: #2b3441;
+        --ink: #f5f7fb;
+        --muted: #a4b1c2;
+        --accent: #f97316;
+        --accent-strong: #fb923c;
+        --accent-alt: #22d3ee;
+        --success: #4ade80;
+        --danger: #f87171;
+        --shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
       }
 
       * {
@@ -33,258 +33,263 @@
 
       body {
         margin: 0;
-        font-family: "Space Grotesk", "Segoe UI", sans-serif;
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
         color: var(--ink);
-        background: linear-gradient(135deg, #d8e7ff 0%, #fef3e7 58%, #fff7ed 100%);
+        background:
+          radial-gradient(circle at 12% 10%, rgba(34, 211, 238, 0.18), transparent 48%),
+          radial-gradient(circle at 85% 8%, rgba(249, 115, 22, 0.2), transparent 42%),
+          linear-gradient(160deg, #06080c 0%, #0b0f14 45%, #0f1723 100%);
         min-height: 100vh;
+      }
+
+      body[data-theme="light"] {
+        --panel: #f8fafc;
+        --panel-strong: #ffffff;
+        --edge: #d5deea;
+        --ink: #0b0f14;
+        --muted: #4b5563;
+        --shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+        background: linear-gradient(135deg, #f6f8fb 0%, #ecf1f8 50%, #e7eef7 100%);
+      }
+      body[data-theme="light"] .hero-card {
+        background: #ffffff;
+      }
+
+      body[data-theme="light"] .tab-row {
+        background: #e2e8f0;
+        border-color: #cbd5e1;
+      }
+
+      body[data-theme="light"] .tab.active {
+        background: rgba(249, 115, 22, 0.25);
+      }
+
+      body[data-theme="light"] .badge {
+        background: rgba(14, 116, 144, 0.16);
+        color: #0e7490;
+      }
+
+      body[data-theme="light"] .pill,
+      body[data-theme="light"] .stat-pill,
+      body[data-theme="light"] .pill-mini {
+        background: #e2e8f0;
+        color: #334155;
+      }
+
+      body[data-theme="light"] .fixture,
+      body[data-theme="light"] .team-card {
+        background: #f1f5f9;
+        border-color: #d5deea;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
       }
 
       .shell {
-        display: grid;
-        grid-template-columns: 240px 1fr;
-        min-height: 100vh;
+        max-width: 1200px;
+        margin: 0 auto;
         padding: 24px;
-        gap: 20px;
-      }
-
-      .sidebar {
-        background: var(--sidebar);
-        border-radius: 28px;
-        padding: 22px 18px;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 14px;
-        color: #fff;
-      }
-
-      .logo {
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
-        background: #1b1f2a;
         display: grid;
-        place-items: center;
-        font-weight: 700;
+        gap: 28px;
       }
 
-      .nav-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.12);
+      header {
         display: grid;
-        place-items: center;
-        font-size: 0.75rem;
-      }
-
-      .nav-item {
-        border: 1px solid transparent;
-        background: transparent;
-        color: inherit;
-        padding: 10px 12px;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        text-align: left;
-        cursor: pointer;
-        font: inherit;
-      }
-
-      .nav-item:hover {
-        background: rgba(255, 255, 255, 0.08);
-      }
-
-      .nav-item.active {
-        background: #fff;
-        color: #11131b;
-        box-shadow: 0 12px 20px rgba(15, 23, 42, 0.2);
-      }
-
-      .nav-item.active .nav-icon {
-        background: #11131b;
-        color: #fff;
-      }
-
-      .nav-title {
-        font-weight: 600;
-      }
-
-      .nav-sub {
-        font-size: 0.72rem;
-        color: rgba(255, 255, 255, 0.6);
-      }
-
-      .nav-item.active .nav-sub {
-        color: #4b5563;
-      }
-      }
-
-      .main {
-        background: rgba(255, 255, 255, 0.6);
-        border-radius: 28px;
-        padding: 28px 32px 36px;
-        box-shadow: var(--shadow);
-        backdrop-filter: blur(14px);
+        gap: 18px;
       }
 
       .topbar {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
       }
 
-      .search {
+      .brand {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 10px 16px;
-        border-radius: 999px;
-        background: #f5f7fd;
-        border: 1px solid var(--border);
-        min-width: 220px;
+        gap: 12px;
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.12em;
+        font-size: 1.4rem;
       }
 
-      .search input {
-        border: none;
-        background: transparent;
-        outline: none;
-        width: 100%;
-        font: inherit;
-      }
+      .brand-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: contain;
+  display: block;
+}
 
-      .top-nav {
+      .nav {
         display: flex;
-        gap: 18px;
+        flex-wrap: wrap;
+        gap: 12px;
         color: var(--muted);
         font-weight: 600;
       }
 
-      .top-actions {
+      .nav a {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+      }
+
+      .nav a:hover {
+        border-color: var(--edge);
+        color: var(--ink);
+      }
+
+      .account {
         display: flex;
-        gap: 12px;
+        gap: 10px;
         align-items: center;
       }
 
       .pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--surface);
-        padding: 8px 12px;
+        padding: 8px 14px;
         border-radius: 999px;
-        border: 1px solid var(--border);
+        background: var(--panel);
+        border: 1px solid var(--edge);
         font-size: 0.85rem;
+        color: var(--muted);
       }
 
       .btn {
-        border-radius: 999px;
         padding: 10px 18px;
+        border-radius: 999px;
         font-weight: 600;
         border: none;
         cursor: pointer;
+        background: var(--accent);
+        color: #0b0f14;
+        box-shadow: 0 14px 28px rgba(249, 115, 22, 0.35);
       }
 
-      .btn.primary {
-        background: var(--blue);
-        color: #fff;
-        box-shadow: 0 12px 24px rgba(43, 103, 246, 0.25);
-      }
-
-      .btn.primary:hover {
-        background: var(--blue-strong);
-      }
-
-      .btn.ghost {
-        background: #fff;
-        border: 1px solid var(--border);
+      .btn.secondary {
+        background: transparent;
         color: var(--ink);
+        border: 1px solid var(--edge);
+        box-shadow: none;
+      }
+
+      .theme-toggle {
+        padding: 10px 14px;
       }
 
       .hero {
-        margin-top: 28px;
         display: grid;
-        gap: 16px;
+        grid-template-columns: minmax(280px, 1.1fr) minmax(260px, 0.9fr);
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .hero-card {
+        background: linear-gradient(135deg, rgba(20, 26, 34, 0.96), rgba(16, 22, 30, 0.9));
+        border-radius: 24px;
+        padding: 24px;
+        border: 1px solid var(--edge);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 18px;
       }
 
       .hero h1 {
-        font-family: "Newsreader", serif;
-        font-size: clamp(1.8rem, 3vw, 2.4rem);
         margin: 0;
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(2.8rem, 6vw, 4.6rem);
+        letter-spacing: 0.08em;
       }
 
-      .hero .meta {
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1rem;
+      }
+
+      .hero-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 16px;
-        color: var(--muted);
-      }
-
-      .stat {
-        display: inline-flex;
+        gap: 12px;
         align-items: center;
-        gap: 8px;
-        padding: 6px 12px;
+      }
+
+      .ticker {
+        overflow: hidden;
         border-radius: 999px;
-        background: #f4f8ff;
-        border: 1px solid var(--border);
-        font-size: 0.85rem;
+        border: 1px solid var(--edge);
+        background: rgba(15, 23, 32, 0.75);
+        padding: 8px 0;
       }
 
-      .layout {
+      .ticker-track {
+        display: inline-flex;
+        gap: 28px;
+        white-space: nowrap;
+        animation: ticker 22s linear infinite;
+        padding-left: 100%;
+      }
+
+      .ticker-item {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .ticker-score {
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .grid {
         display: grid;
-        grid-template-columns: minmax(280px, 340px) 1fr;
-        gap: 24px;
-        margin-top: 24px;
-      }
-
-      .layout.single {
-        grid-template-columns: 1fr;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       }
 
       .panel {
-        background: var(--surface-alt);
-        border: 1px solid var(--border);
+        background: var(--panel);
         border-radius: 20px;
-        padding: 20px;
+        padding: 18px;
+        border: 1px solid var(--edge);
         box-shadow: var(--shadow);
+        display: grid;
+        gap: 12px;
       }
 
-      .panel h2 {
-        margin-top: 0;
-        font-size: 1.05rem;
+      .panel-title {
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.08em;
+        font-size: 1.3rem;
       }
 
-      .tabs {
-        display: inline-flex;
-        gap: 8px;
-        background: #f3f6ff;
-        padding: 6px;
-        border-radius: 999px;
-        border: 1px solid var(--border);
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        gap: 12px;
       }
 
-      .tab {
-        border: none;
-        background: transparent;
-        padding: 8px 16px;
-        border-radius: 999px;
-        cursor: pointer;
-        font-weight: 600;
+      .stat-row:last-child {
+        border-bottom: none;
+      }
+
+      .stat-label {
         color: var(--muted);
+        font-size: 0.9rem;
       }
 
-      .tab.active {
-        background: #fff;
+      .stat-value {
+        font-weight: 700;
         color: var(--ink);
-        box-shadow: 0 10px 16px rgba(20, 20, 40, 0.08);
-      }
-
-      .tab:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
       }
 
       .table {
@@ -296,2007 +301,405 @@
       .table th,
       .table td {
         text-align: left;
-        padding: 12px 10px;
-        border-bottom: 1px solid var(--border);
+        padding: 10px 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       }
 
       .table th {
         color: var(--muted);
-        font-weight: 600;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.12em;
       }
 
-      .table tr:hover {
-        background: #f3f6ff;
-      }
-
-      .form-grid {
-        display: grid;
-        gap: 12px;
-      }
-
-      .form-row {
-        display: grid;
-        gap: 12px;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      }
-
-      label {
-        display: block;
-        font-size: 0.85rem;
-        color: var(--muted);
-        margin-bottom: 6px;
-      }
-
-      input,
-      select {
-        width: 100%;
-        font: inherit;
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        background: #fff;
-      }
-
-      input:focus,
-      select:focus {
-        outline: 2px solid rgba(43, 103, 246, 0.2);
-        border-color: var(--blue);
-      }
-
-      .status {
-        margin-top: 16px;
-        padding: 10px 12px;
-        border-radius: 12px;
-        background: #fff4da;
-        border: 1px solid #f1d7a1;
-        font-size: 0.85rem;
-      }
-
-      .tag {
+      .badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
+        padding: 6px 12px;
         border-radius: 999px;
-        padding: 4px 10px;
-        background: rgba(255, 138, 61, 0.18);
-        color: var(--orange-strong);
-        font-size: 0.75rem;
+        background: rgba(34, 211, 238, 0.12);
+        color: var(--accent-alt);
         font-weight: 600;
+        font-size: 0.8rem;
       }
 
-      .empty {
-        color: var(--muted);
-        font-size: 0.9rem;
-        padding: 16px;
-        border: 1px dashed var(--border);
-        border-radius: 14px;
-        text-align: center;
+      .score {
+        font-weight: 700;
+        font-size: 1.1rem;
       }
 
-      .stack {
-        display: grid;
-        gap: 18px;
+      .score.win {
+        color: var(--success);
       }
 
-      .section-tree {
+      .score.loss {
+        color: var(--danger);
+      }
+
+      .fixture-list {
         display: grid;
         gap: 10px;
-        margin: 0;
-        padding: 0;
-        list-style: none;
       }
 
-      .tree-item {
-        display: flex;
+      .fixture {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 16px;
+        background: var(--panel-strong);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .fixture-team {
         font-weight: 600;
       }
 
-      .tree-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 999px;
-        background: var(--blue);
-      }
-
-      .tree-branch {
-        margin-left: 18px;
-        display: grid;
-        gap: 6px;
-      }
-
-      .tree-leaf {
-        font-size: 0.85rem;
+      .fixture-meta {
         color: var(--muted);
+        font-size: 0.8rem;
       }
 
-      .tree-leaf.active {
-        color: var(--ink);
-        font-weight: 600;
-      }
-
-      .split {
+      .cta {
         display: grid;
         gap: 16px;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        background: linear-gradient(140deg, rgba(34, 211, 238, 0.16), rgba(249, 115, 22, 0.18));
+        border-radius: 24px;
+        padding: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
       }
 
-      .panel-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
+      .cta h2 {
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.08em;
+        margin: 0;
+        font-size: 2.4rem;
       }
 
-      .subpanel {
-        border-radius: 16px;
-        padding: 16px;
-        background: #f7faff;
-        border: 1px solid var(--border);
+      .cta p {
+        margin: 0;
+        color: var(--muted);
       }
 
-      .subpanel.players-panel {
-        position: relative;
+      .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition: 0.6s ease;
       }
 
-      .fab {
-        position: absolute;
-        right: 16px;
-        bottom: 16px;
-        width: 46px;
-        height: 46px;
-        border-radius: 50%;
-        border: none;
-        background: var(--orange);
-        color: #fff;
-        font-weight: 700;
-        cursor: pointer;
-        box-shadow: 0 12px 24px rgba(249, 115, 22, 0.3);
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
       }
 
-      .fab:hover {
-        background: var(--orange-strong);
+      @keyframes ticker {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
       }
 
-      .modal-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(11, 15, 23, 0.45);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        z-index: 10;
-      }
-
-      .modal {
-        width: min(760px, 100%);
-        max-height: min(90vh, 900px);
-        overflow: auto;
-        background: #fff;
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: var(--shadow);
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
-      }
-
-      .modal-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-      }
-
-      .modal-actions {
-        display: flex;
-        gap: 10px;
-        justify-content: flex-end;
-      }
-
-      @media (max-width: 1024px) {
-        .shell {
+      @media (max-width: 900px) {
+        .hero {
           grid-template-columns: 1fr;
         }
-
-        .sidebar {
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .nav-item {
-          flex: 1;
-          justify-content: center;
-          padding: 10px;
-        }
-
-        .nav-sub {
-          display: none;
-        }
-
-        .layout {
+        .fixture {
           grid-template-columns: 1fr;
-        }
-
-        .topbar {
-          flex-direction: column;
-          align-items: flex-start;
+          text-align: center;
         }
       }
     </style>
   </head>
   <body>
-    <div id="app"></div>
-    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
-    <script>
-      const { useEffect, useMemo, useState } = React;
-      const html = htm.bind(React.createElement);
-
-      const defaultEndpoint =
-        "https://rvvglboqrfhohh6d66du7xvgeq.appsync-api.us-east-1.amazonaws.com/graphql";
-      const defaultApiKey = "da2-d3ntxmjqvbc3tcgglmkpe5wrcy";
-
-      function App() {
-        const endpoint = defaultEndpoint;
-        const apiKey = defaultApiKey;
-        const [status, setStatus] = useState("");
-        const [loading, setLoading] = useState(false);
-        const [tournaments, setTournaments] = useState([]);
-        const [phases, setPhases] = useState([]);
-        const [groups, setGroups] = useState([]);
-        const [rounds, setRounds] = useState([]);
-        const [teams, setTeams] = useState([]);
-        const [players, setPlayers] = useState([]);
-        const [assignments, setAssignments] = useState([]);
-        const [selectedTournamentId, setSelectedTournamentId] = useState("");
-        const [selectedPhaseId, setSelectedPhaseId] = useState("");
-        const [selectedGroupId, setSelectedGroupId] = useState("");
-        const [selectedRoundId, setSelectedRoundId] = useState("");
-        const [selectedTeamId, setSelectedTeamId] = useState("");
-        const [activeSection, setActiveSection] = useState("tournaments");
-        const [activeTab, setActiveTab] = useState("details");
-        const [isCreatingTournament, setIsCreatingTournament] = useState(false);
-        const [isCreatingPlayer, setIsCreatingPlayer] = useState(false);
-        const [selectedPlayerId, setSelectedPlayerId] = useState("");
-
-        const [tournamentForm, setTournamentForm] = useState({
-          name: "",
-          season: "",
-          startDate: "",
-          endDate: ""
-        });
-        const [tournamentEdit, setTournamentEdit] = useState({
-          id: "",
-          name: "",
-          season: "",
-          startDate: "",
-          endDate: ""
-        });
-        const [phaseForm, setPhaseForm] = useState({
-          name: "",
-          phaseType: "ZONES",
-          phaseOrder: 1
-        });
-        const [phaseEdit, setPhaseEdit] = useState({
-          id: "",
-          tournamentId: "",
-          name: "",
-          phaseType: "ZONES",
-          phaseOrder: 1
-        });
-        const [groupForm, setGroupForm] = useState({
-          name: "",
-          groupOrder: 1
-        });
-        const [groupEdit, setGroupEdit] = useState({
-          id: "",
-          phaseId: "",
-          name: "",
-          groupOrder: 1
-        });
-        const [roundForm, setRoundForm] = useState({
-          name: "",
-          roundOrder: 1
-        });
-        const [roundEdit, setRoundEdit] = useState({
-          id: "",
-          phaseId: "",
-          name: "",
-          roundOrder: 1
-        });
-        const [teamForm, setTeamForm] = useState({
-          name: "",
-          shortName: ""
-        });
-        const [teamEdit, setTeamEdit] = useState({
-          id: "",
-          tournamentId: "",
-          name: "",
-          shortName: ""
-        });
-        const [assignmentForm, setAssignmentForm] = useState({
-          teamId: "",
-          groupId: "",
-          roundId: ""
-        });
-        const [playerEdit, setPlayerEdit] = useState({
-          dni: "",
-          name: "",
-          lastName: "",
-          nickname: "",
-          dateOfBirth: "",
-          cellphone: "",
-          email: "",
-          playedBefore: "no",
-          aptoMedico: "no",
-          position: "",
-          puntaje: "",
-          referencia: "",
-          egresoYear: ""
-        });
-
-        const canQuery = useMemo(
-          () => endpoint.trim() && apiKey.trim(),
-          [endpoint, apiKey]
-        );
-
-        const selectedTournament = useMemo(
-          () => tournaments.find(item => item.id === selectedTournamentId),
-          [tournaments, selectedTournamentId]
-        );
-        const selectedPhase = useMemo(
-          () => phases.find(item => item.id === selectedPhaseId),
-          [phases, selectedPhaseId]
-        );
-        const teamLookup = useMemo(() => {
-          const map = {};
-          teams.forEach(team => {
-            map[team.id] = team;
-          });
-          return map;
-        }, [teams]);
-        const groupLookup = useMemo(() => {
-          const map = {};
-          groups.forEach(group => {
-            map[group.id] = group;
-          });
-          return map;
-        }, [groups]);
-        const roundLookup = useMemo(() => {
-          const map = {};
-          rounds.forEach(round => {
-            map[round.id] = round;
-          });
-          return map;
-        }, [rounds]);
-        const selectedPlayer = useMemo(
-          () => players.find(item => item.id === selectedPlayerId),
-          [players, selectedPlayerId]
-        );
-
-        const showTabs =
-          activeSection === "tournaments" &&
-          (isCreatingTournament || selectedTournamentId);
-        const canOpenSubsections = Boolean(selectedTournamentId);
-
-        function cleanInput(input) {
-          return Object.fromEntries(
-            Object.entries(input).filter(([, value]) => {
-              if (value === undefined || value === null) return false;
-              if (typeof value === "string" && value.trim() === "") return false;
-              return true;
-            })
-          );
-        }
-
-        async function request(query, variables) {
-          if (!canQuery) {
-            throw new Error("Add endpoint and API key first.");
-          }
-          const res = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-api-key": apiKey
-            },
-            body: JSON.stringify({ query, variables })
-          });
-          const json = await res.json();
-          if (json.errors && json.errors.length) {
-            throw new Error(json.errors[0].message || "GraphQL error");
-          }
-          return json.data;
-        }
-
-        async function refreshTournaments() {
-          setLoading(true);
-          try {
-            const data = await request(
-              "query { listTournaments { id name season startDate endDate isActive } }"
-            );
-            setTournaments(data.listTournaments);
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        async function refreshPhases(tournamentId) {
-          if (!tournamentId) return;
-          try {
-            const data = await request(
-              "query ($tournamentId: ID!) { listPhasesByTournament(tournamentId: $tournamentId) { id name phaseType phaseOrder } }",
-              { tournamentId }
-            );
-            setPhases(data.listPhasesByTournament);
-          } catch (err) {
-            setStatus(err.message);
-          }
-        }
-
-        async function refreshGroups(phaseId) {
-          if (!phaseId) return;
-          try {
-            const data = await request(
-              "query ($phaseId: ID!) { listGroupsByPhase(phaseId: $phaseId) { id name groupOrder } }",
-              { phaseId }
-            );
-            setGroups(data.listGroupsByPhase);
-          } catch (err) {
-            setStatus(err.message);
-          }
-        }
-
-        async function refreshRounds(phaseId) {
-          if (!phaseId) return;
-          try {
-            const data = await request(
-              "query ($phaseId: ID!) { listRoundsByPhase(phaseId: $phaseId) { id name roundOrder } }",
-              { phaseId }
-            );
-            setRounds(data.listRoundsByPhase);
-          } catch (err) {
-            setStatus(err.message);
-          }
-        }
-
-        async function refreshTeams(tournamentId) {
-          if (!tournamentId) return;
-          try {
-            const data = await request(
-              "query ($tournamentId: ID!) { listTeamsByTournament(tournamentId: $tournamentId) { id name shortName } }",
-              { tournamentId }
-            );
-            setTeams(data.listTeamsByTournament);
-          } catch (err) {
-            setStatus(err.message);
-          }
-        }
-
-        async function refreshAssignments(phaseId) {
-          if (!phaseId) return;
-          try {
-            const data = await request(
-              "query ($phaseId: ID!) { listAssignmentsByPhase(phaseId: $phaseId) { id teamId groupId roundId } }",
-              { phaseId }
-            );
-            setAssignments(data.listAssignmentsByPhase);
-          } catch (err) {
-            setStatus(err.message);
-          }
-        }
-        async function createTournament() {
-          setLoading(true);
-          setStatus("");
-          try {
-            const data = await request(
-              "mutation ($input: CreateTournamentInput!) { createTournament(input: $input) { id name season startDate endDate isActive } }",
-              { input: cleanInput(tournamentForm) }
-            );
-            setTournaments([data.createTournament, ...tournaments]);
-            setTournamentForm({
-              name: "",
-              season: "",
-              startDate: "",
-              endDate: ""
-            });
-            setStatus("Tournament created.");
-            setSelectedTournamentId(data.createTournament.id);
-            setIsCreatingTournament(false);
-            setActiveTab("details");
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        async function updateTournament() {
-          if (!selectedTournamentId) return;
-          setLoading(true);
-          setStatus("");
-          try {
-            const payload = {
-              ...tournamentEdit,
-              id: selectedTournamentId,
-              isActive: selectedTournament ? selectedTournament.isActive : false
-            };
-            const data = await request(
-              "mutation ($input: UpdateTournamentInput!) { updateTournament(input: $input) { id name season startDate endDate isActive } }",
-              { input: cleanInput(payload) }
-            );
-            setTournaments(
-              tournaments.map(item =>
-                item.id === data.updateTournament.id
-                  ? data.updateTournament
-                  : item
-              )
-            );
-            setStatus("Tournament updated.");
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        async function createPhase() {
-          if (!selectedTournamentId) {
-            setStatus("Select a tournament to add a phase.");
-            return;
-          }
-          setLoading(true);
-          setStatus("");
-          try {
-            const data = await request(
-              "mutation ($input: CreatePhaseInput!) { createPhase(input: $input) { id name phaseType phaseOrder tournamentId } }",
-              {
-                input: {
-                  ...phaseForm,
-                  tournamentId: selectedTournamentId,
-                  phaseOrder: Number(phaseForm.phaseOrder)
-                }
-              }
-            );
-            setPhases([data.createPhase, ...phases]);
-            setPhaseForm({
-              name: "",
-              phaseType: "ZONES",
-              phaseOrder: 1
-            });
-            setStatus("Phase created.");
-            setSelectedPhaseId(data.createPhase.id);
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        async function updatePhase() {
-          if (!selectedPhaseId || !selectedTournamentId) return;
-          setLoading(true);
-          setStatus("");
-          try {
-            const data = await request(
-              "mutation ($input: UpdatePhaseInput!) { updatePhase(input: $input) { id name phaseType phaseOrder tournamentId } }",
-              {
-                input: {
-                  ...phaseEdit,
-                  id: selectedPhaseId,
-                  tournamentId: selectedTournamentId,
-                  phaseOrder: Number(phaseEdit.phaseOrder)
-                }
-              }
-            );
-            setPhases(
-              phases.map(item =>
-                item.id === data.updatePhase.id ? data.updatePhase : item
-              )
-            );
-            setStatus("Phase updated.");
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        async function createGroup() {
-          if (!selectedPhaseId) {
-            setStatus("Select a phase to add a group.");
-            return;
-          }
-          setLoading(true);
-          setStatus("");
-          try {
-            const data = await request(
-              "mutation ($input: CreateGroupInput!) { createGroup(input: $input) { id name groupOrder phaseId } }",
-              {
-                input: {
-                  ...groupForm,
-                  phaseId: selectedPhaseId,
-                  groupOrder: Number(groupForm.groupOrder)
-                }
-              }
-            );
-            setGroups([data.createGroup, ...groups]);
-            setGroupForm({ name: "", groupOrder: 1 });
-            setStatus("Group created.");
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        async function updateGroup() {
-          if (!selectedGroupId || !selectedPhaseId) return;
-          setLoading(true);
-          setStatus("");
-          try {
-            const data = await request(
-              "mutation ($input: UpdateGroupInput!) { updateGroup(input: $input) { id name groupOrder phaseId } }",
-              {
-                input: {
-                  ...groupEdit,
-                  id: selectedGroupId,
-                  phaseId: selectedPhaseId,
-                  groupOrder: Number(groupEdit.groupOrder)
-                }
-              }
-            );
-            setGroups(
-              groups.map(item =>
-                item.id === data.updateGroup.id ? data.updateGroup : item
-              )
-            );
-            setStatus("Group updated.");
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        async function createRound() {
-          if (!selectedPhaseId) {
-            setStatus("Select a phase to add a round.");
-            return;
-          }
-          setLoading(true);
-          setStatus("");
-          try {
-            const data = await request(
-              "mutation ($input: CreateRoundInput!) { createRound(input: $input) { id name roundOrder phaseId } }",
-              {
-                input: {
-                  ...roundForm,
-                  phaseId: selectedPhaseId,
-                  roundOrder: Number(roundForm.roundOrder)
-                }
-              }
-            );
-            setRounds([data.createRound, ...rounds]);
-            setRoundForm({ name: "", roundOrder: 1 });
-            setStatus("Round created.");
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        async function updateRound() {
-          if (!selectedRoundId || !selectedPhaseId) return;
-          setLoading(true);
-          setStatus("");
-          try {
-            const data = await request(
-              "mutation ($input: UpdateRoundInput!) { updateRound(input: $input) { id name roundOrder phaseId } }",
-              {
-                input: {
-                  ...roundEdit,
-                  id: selectedRoundId,
-                  phaseId: selectedPhaseId,
-                  roundOrder: Number(roundEdit.roundOrder)
-                }
-              }
-            );
-            setRounds(
-              rounds.map(item =>
-                item.id === data.updateRound.id ? data.updateRound : item
-              )
-            );
-            setStatus("Round updated.");
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        async function createTeam() {
-          if (!selectedTournamentId) {
-            setStatus("Select a tournament to add a team.");
-            return;
-          }
-          setLoading(true);
-          setStatus("");
-          try {
-            const data = await request(
-              "mutation ($input: CreateTeamInput!) { createTeam(input: $input) { id name shortName tournamentId } }",
-              {
-                input: cleanInput({
-                  ...teamForm,
-                  tournamentId: selectedTournamentId
-                })
-              }
-            );
-            setTeams([data.createTeam, ...teams]);
-            setTeamForm({ name: "", shortName: "" });
-            setStatus("Team created.");
-            setSelectedTeamId(data.createTeam.id);
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        async function updateTeam() {
-          if (!selectedTeamId || !selectedTournamentId) return;
-          setLoading(true);
-          setStatus("");
-          try {
-            const data = await request(
-              "mutation ($input: UpdateTeamInput!) { updateTeam(input: $input) { id name shortName tournamentId } }",
-              {
-                input: cleanInput({
-                  ...teamEdit,
-                  id: selectedTeamId,
-                  tournamentId: selectedTournamentId
-                })
-              }
-            );
-            setTeams(
-              teams.map(item =>
-                item.id === data.updateTeam.id ? data.updateTeam : item
-              )
-            );
-            setStatus("Team updated.");
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-        async function assignTeam() {
-          if (!selectedTournamentId || !selectedPhaseId) return;
-          if (!assignmentForm.teamId) {
-            setStatus("Pick a team to assign.");
-            return;
-          }
-          if (selectedPhase?.phaseType === "ZONES" && !assignmentForm.groupId) {
-            setStatus("Pick a group for this team.");
-            return;
-          }
-          if (
-            selectedPhase?.phaseType === "PLAYOFFS" &&
-            !assignmentForm.roundId
-          ) {
-            setStatus("Pick a round for this team.");
-            return;
-          }
-          setLoading(true);
-          setStatus("");
-          try {
-            await request(
-              "mutation ($input: AssignTeamInput!) { assignTeamToPhase(input: $input) { id teamId groupId roundId } }",
-              {
-                input: cleanInput({
-                  tournamentId: selectedTournamentId,
-                  phaseId: selectedPhaseId,
-                  teamId: assignmentForm.teamId,
-                  groupId: assignmentForm.groupId,
-                  roundId: assignmentForm.roundId
-                })
-              }
-            );
-            setStatus("Team assigned.");
-            setAssignmentForm({
-              teamId: "",
-              groupId: "",
-              roundId: ""
-            });
-            refreshAssignments(selectedPhaseId);
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        function handleCreateTournamentClick() {
-          setActiveSection("tournaments");
-          setIsCreatingTournament(true);
-          setSelectedTournamentId("");
-          setSelectedPhaseId("");
-          setActiveTab("details");
-        }
-
-        function handleOpenTournament(id) {
-          setIsCreatingTournament(false);
-          setSelectedTournamentId(id);
-          setSelectedPhaseId("");
-          setActiveTab("details");
-        }
-
-        async function toggleTournamentActive(id) {
-          const target = tournaments.find(tournament => tournament.id === id);
-          if (!target) return;
-          setLoading(true);
-          setStatus("");
-          const nextActive = !target.isActive;
-          try {
-            const updates = [];
-            const deactivations = nextActive
-              ? tournaments.filter(tournament => tournament.isActive && tournament.id !== id)
-              : [];
-            updates.push(
-              request(
-                "mutation ($input: UpdateTournamentInput!) { updateTournament(input: $input) { id name season startDate endDate isActive } }",
-                {
-                  input: cleanInput({
-                    id: target.id,
-                    name: target.name,
-                    season: target.season,
-                    startDate: target.startDate,
-                    endDate: target.endDate,
-                    isActive: nextActive
-                  })
-                }
-              )
-            );
-            deactivations.forEach(tournament => {
-              updates.push(
-                request(
-                  "mutation ($input: UpdateTournamentInput!) { updateTournament(input: $input) { id name season startDate endDate isActive } }",
-                  {
-                    input: cleanInput({
-                      id: tournament.id,
-                      name: tournament.name,
-                      season: tournament.season,
-                      startDate: tournament.startDate,
-                      endDate: tournament.endDate,
-                      isActive: false
-                    })
-                  }
-                )
-              );
-            });
-            const results = await Promise.all(updates);
-            const updated = results.map(result => result.updateTournament);
-            setTournaments(
-              tournaments.map(tournament => {
-                const match = updated.find(item => item.id === tournament.id);
-                return match ? { ...tournament, ...match } : tournament;
-              })
-            );
-            if (nextActive) {
-              setSelectedTournamentId(target.id);
-            }
-            setStatus("Tournament status updated.");
-          } catch (err) {
-            setStatus(err.message);
-          } finally {
-            setLoading(false);
-          }
-        }
-
-        useEffect(() => {
-          if (canQuery) {
-            refreshTournaments();
-          }
-        }, [canQuery]);
-
-        useEffect(() => {
-          if (!selectedTournamentId) {
-            setPhases([]);
-            setTeams([]);
-            setPlayers([]);
-            setSelectedPhaseId("");
-            setTournamentEdit({
-              id: "",
-              name: "",
-              season: "",
-              startDate: "",
-              endDate: ""
-            });
-            return;
-          }
-          refreshPhases(selectedTournamentId);
-          refreshTeams(selectedTournamentId);
-          if (selectedTournament) {
-            setTournamentEdit({
-              id: selectedTournament.id,
-              name: selectedTournament.name || "",
-              season: selectedTournament.season || "",
-              startDate: selectedTournament.startDate || "",
-              endDate: selectedTournament.endDate || ""
-            });
-          }
-        }, [selectedTournamentId, selectedTournament]);
-
-        useEffect(() => {
-          const activeTournament = tournaments.find(item => item.isActive);
-          if (activeTournament && activeTournament.id !== selectedTournamentId) {
-            setSelectedTournamentId(activeTournament.id);
-          }
-        }, [tournaments, selectedTournamentId]);
-
-        useEffect(() => {
-          setSelectedPlayerId("");
-          setIsCreatingPlayer(false);
-          setPlayerEdit({
-            dni: "",
-            name: "",
-            lastName: "",
-            nickname: "",
-            dateOfBirth: "",
-            cellphone: "",
-            email: "",
-            playedBefore: "no",
-            aptoMedico: "no",
-            position: "",
-            puntaje: "",
-            referencia: "",
-            egresoYear: ""
-          });
-        }, [selectedTournamentId]);
-
-        useEffect(() => {
-          if (!selectedPhaseId) {
-            setGroups([]);
-            setRounds([]);
-            setAssignments([]);
-            setSelectedGroupId("");
-            setSelectedRoundId("");
-            setPhaseEdit({
-              id: "",
-              tournamentId: "",
-              name: "",
-              phaseType: "ZONES",
-              phaseOrder: 1
-            });
-            return;
-          }
-          refreshGroups(selectedPhaseId);
-          refreshRounds(selectedPhaseId);
-          refreshAssignments(selectedPhaseId);
-          if (selectedPhase) {
-            setPhaseEdit({
-              id: selectedPhase.id,
-              tournamentId: selectedTournamentId,
-              name: selectedPhase.name || "",
-              phaseType: selectedPhase.phaseType || "ZONES",
-              phaseOrder: selectedPhase.phaseOrder || 1
-            });
-          }
-        }, [selectedPhaseId, selectedPhase, selectedTournamentId]);
-
-        useEffect(() => {
-          if (!selectedGroupId) {
-            setGroupEdit({
-              id: "",
-              phaseId: selectedPhaseId,
-              name: "",
-              groupOrder: 1
-            });
-            return;
-          }
-          const group = groups.find(item => item.id === selectedGroupId);
-          if (group) {
-            setGroupEdit({
-              id: group.id,
-              phaseId: selectedPhaseId,
-              name: group.name || "",
-              groupOrder: group.groupOrder || 1
-            });
-          }
-        }, [selectedGroupId, groups, selectedPhaseId]);
-
-        useEffect(() => {
-          if (!selectedRoundId) {
-            setRoundEdit({
-              id: "",
-              phaseId: selectedPhaseId,
-              name: "",
-              roundOrder: 1
-            });
-            return;
-          }
-          const round = rounds.find(item => item.id === selectedRoundId);
-          if (round) {
-            setRoundEdit({
-              id: round.id,
-              phaseId: selectedPhaseId,
-              name: round.name || "",
-              roundOrder: round.roundOrder || 1
-            });
-          }
-        }, [selectedRoundId, rounds, selectedPhaseId]);
-
-        useEffect(() => {
-          if (!selectedTeamId) {
-            setTeamEdit({
-              id: "",
-              tournamentId: selectedTournamentId,
-              name: "",
-              shortName: ""
-            });
-            return;
-          }
-          const team = teams.find(item => item.id === selectedTeamId);
-          if (team) {
-            setTeamEdit({
-              id: team.id,
-              tournamentId: selectedTournamentId,
-              name: team.name || "",
-              shortName: team.shortName || ""
-            });
-          }
-        }, [selectedTeamId, teams, selectedTournamentId]);
-        useEffect(() => {
-          if (!selectedPlayerId) return;
-          if (selectedPlayer) {
-            setPlayerEdit({
-              dni: selectedPlayer.dni || "",
-              name: selectedPlayer.name || "",
-              lastName: selectedPlayer.lastName || "",
-              nickname: selectedPlayer.nickname || "",
-              dateOfBirth: selectedPlayer.dateOfBirth || "",
-              cellphone: selectedPlayer.cellphone || "",
-              email: selectedPlayer.email || "",
-              playedBefore: selectedPlayer.playedBefore ? "yes" : "no",
-              aptoMedico: selectedPlayer.aptoMedico ? "yes" : "no",
-              position: selectedPlayer.position ?? "",
-              puntaje: selectedPlayer.puntaje ?? "",
-              referencia: selectedPlayer.referencia || "",
-              egresoYear: selectedPlayer.egresoYear ?? ""
-            });
-          }
-        }, [selectedPlayerId, selectedPlayer]);
-        const isZonesPhase = phaseEdit.phaseType === "ZONES";
-        const zoneLabel = isZonesPhase ? "Zones" : "Rounds";
-        const breadcrumb = useMemo(() => {
-          if (activeSection === "players") {
-            return ["Home", "Tournament List", "Teams", "Players"];
-          }
-          if (activeTab === "phases") {
-            return ["Home", "Tournament List", "Phases", "Zones"];
-          }
-          if (activeTab === "assign") {
-            return ["Home", "Tournament List", "Phases", zoneLabel];
-          }
-          if (activeTab === "teams") {
-            return ["Home", "Tournament List", "Teams", "Players"];
-          }
-          return ["Home", "Tournament List"];
-        }, [activeSection, activeTab, zoneLabel]);
-        const heroTitle =
-          activeSection === "players"
-            ? "Players"
-            : selectedTournament
-            ? selectedTournament.name
-            : "Tournaments";
-        const searchPlaceholder =
-          activeSection === "players" ? "Search players" : "Search tournaments";
-        const highlightPhasesPath =
-          activeSection === "tournaments" &&
-          (activeTab === "phases" || activeTab === "assign");
-        const highlightPlayersPath =
-          activeSection === "players" ||
-          (activeSection === "tournaments" && activeTab === "teams");
-        const showPlayerModal = isCreatingPlayer || selectedPlayerId;
-
-        function startCreatePlayer() {
-          if (!selectedTournamentId) {
-            setStatus("Select a tournament to add players.");
-            return;
-          }
-          setIsCreatingPlayer(true);
-          setSelectedPlayerId("");
-          setPlayerEdit({
-            dni: "",
-            name: "",
-            lastName: "",
-            nickname: "",
-            dateOfBirth: "",
-            cellphone: "",
-            email: "",
-            playedBefore: "no",
-            aptoMedico: "no",
-            position: "",
-            puntaje: "",
-            referencia: "",
-            egresoYear: ""
-          });
-        }
-
-        function updatePlayerProfile() {
-          if (!selectedPlayerId && !isCreatingPlayer) return;
-          if (!selectedTournamentId) return;
-          const payload = {
-            id: selectedPlayerId || `player_${Date.now()}`,
-            tournamentId: selectedTournamentId,
-            dni: playerEdit.dni ? Number(playerEdit.dni) : "",
-            name: playerEdit.name,
-            lastName: playerEdit.lastName,
-            nickname: playerEdit.nickname,
-            dateOfBirth: playerEdit.dateOfBirth,
-            cellphone: playerEdit.cellphone,
-            email: playerEdit.email,
-            playedBefore: playerEdit.playedBefore === "yes",
-            aptoMedico: playerEdit.aptoMedico === "yes",
-            position: playerEdit.position ? Number(playerEdit.position) : "",
-            puntaje: playerEdit.puntaje ? Number(playerEdit.puntaje) : "",
-            referencia: playerEdit.referencia,
-            egresoYear: playerEdit.egresoYear ? Number(playerEdit.egresoYear) : ""
-          };
-          if (isCreatingPlayer) {
-            setPlayers([payload, ...players]);
-            setSelectedPlayerId(payload.id);
-            setIsCreatingPlayer(false);
-            setStatus("Player profile created.");
-            return;
-          }
-          setPlayers(
-            players.map(player =>
-              player.id === selectedPlayerId ? payload : player
-            )
-          );
-          setStatus("Player profile updated.");
-        }
-
-        function closePlayerModal() {
-          setIsCreatingPlayer(false);
-          setSelectedPlayerId("");
-        }
-
-        return html`
-          <div className="shell">
-            <aside className="sidebar">
-              <div className="logo">FA</div>
-              <button
-                className=${`nav-item ${activeSection === "tournaments" ? "active" : ""}`}
-                onClick=${() => setActiveSection("tournaments")}
-              >
-                <div className="nav-icon">TM</div>
-                <div>
-                  <div className="nav-title">Tournaments</div>
-                  <div className="nav-sub">Phases & teams</div>
-                </div>
-              </button>
-              <button
-                className=${`nav-item ${activeSection === "players" ? "active" : ""}`}
-                onClick=${() => setActiveSection("players")}
-              >
-                <div className="nav-icon">PL</div>
-                <div>
-                  <div className="nav-title">Players</div>
-                  <div className="nav-sub">Rosters & squads</div>
-                </div>
-              </button>
-            </aside>
-
-            <main className="main">
-              <div className="topbar">
-                <div className="search">
-                  <span>Q</span>
-                  <input placeholder=${searchPlaceholder} />
-                </div>
-                <div className="top-nav">
-                  ${breadcrumb.map(
-                    (item, index) =>
-                      html`<span>${item}${index < breadcrumb.length - 1 ? " /" : ""}</span>`
-                  )}
-                </div>
-                <div className="top-actions">
-                  <div className="pill">${loading ? "Saving..." : "Ready"}</div>
-                  ${activeSection === "tournaments"
-                    ? html`
-                        <button className="btn primary" onClick=${handleCreateTournamentClick}>
-                          Create tournament
-                        </button>
-                      `
-                    : html`
-                        <button className="btn ghost" onClick=${() => setActiveSection("tournaments")}>
-                          Manage tournaments
-                        </button>
-                      `}
-                </div>
-              </div>
-
-              <div className="hero">
-                <h1>${heroTitle}</h1>
-                <div className="meta">
-                  ${activeSection === "players"
-                    ? html`
-                        <div className="stat">
-                          ${selectedTournament ? selectedTournament.name : "No tournament selected"}
-                        </div>
-                        <div className="stat">${players.length} players</div>
-                        <div className="stat">
-                          ${selectedPlayerId ? "Profile open" : "Select a player"}
-                        </div>
-                      `
-                    : html`
-                        <div className="stat">
-                          ${selectedTournament
-                            ? selectedTournament.season || "Season"
-                            : "All seasons"}
-                        </div>
-                        <div className="stat">${phases.length} phases</div>
-                        <div className="stat">${teams.length} teams</div>
-                      `}
-                </div>
-              </div>
-
-              <div className=${`layout ${activeSection === "players" ? "single" : ""}`}>
-                ${activeSection === "players"
-                  ? ""
-                  : html`
-                      <div className="stack">
-                        <div className="panel">
-                          <h2>Sections</h2>
-                          <ul className="section-tree">
-                            <li>
-                              <div className="tree-item">
-                                <span className="tree-dot"></span>
-                                <span>Home</span>
-                              </div>
-                              <div className="tree-branch">
-                                <div className=${`tree-leaf ${highlightPhasesPath ? "active" : ""}`}>
-                                  Tournament List -> Phases -> Zones
-                                </div>
-                                <div className=${`tree-leaf ${highlightPlayersPath ? "active" : ""}`}>
-                                  Tournament List -> Teams -> Players
-                                </div>
-                              </div>
-                            </li>
-                          </ul>
-                        </div>
-                        <div className="panel">
-                          <h2>Tournaments</h2>
-                          ${tournaments.length
-                            ? html`
-                                <table className="table">
-                                  <thead>
-                                    <tr>
-                                      <th>Name</th>
-                                      <th>Season</th>
-                                      <th>Status</th>
-                                      <th></th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    ${tournaments.map(
-                                      tournament => html`
-                                        <tr>
-                                          <td>${tournament.name}</td>
-                                          <td>${tournament.season || "--"}</td>
-                                          <td>
-                                            ${tournament.isActive
-                                              ? html`<span className="tag">Active</span>`
-                                              : html`<span className="tag">Inactive</span>`}
-                                          </td>
-                                          <td>
-                                            <button
-                                              className="btn ghost"
-                                              onClick=${() => toggleTournamentActive(tournament.id)}
-                                            >
-                                              ${tournament.isActive ? "Deactivate" : "Activate"}
-                                            </button>
-                                            <button
-                                              className="btn ghost"
-                                              onClick=${() => handleOpenTournament(tournament.id)}
-                                            >
-                                              Open
-                                            </button>
-                                          </td>
-                                        </tr>
-                                      `
-                                    )}
-                                  </tbody>
-                                </table>
-                              `
-                            : html`<div className="empty">No tournaments yet.</div>`}
-                        </div>
-                      </div>
-                    `}
-
-                <div className="panel">
-                  ${activeSection === "players"
-                    ? html`
-                        <div className="form-grid" style=${{ marginTop: "16px" }}>
-                          <h2>Players</h2>
-                          ${!selectedTournamentId
-                            ? html`
-                                <div className="empty">
-                                  Select a tournament from the list to access teams and players.
-                                  <div style=${{ marginTop: "12px" }}>
-                                    <button
-                                      className="btn ghost"
-                                      onClick=${() => setActiveSection("tournaments")}
-                                    >
-                                      Go to tournaments
-                                    </button>
-                                  </div>
-                                </div>
-                              `
-                            : html`
-                                <div className="subpanel players-panel">
-                                  <div className="panel-header">
-                                    <h3>Players in tournament</h3>
-                                    <button className="btn ghost" onClick=${startCreatePlayer}>
-                                      Add player
-                                    </button>
-                                  </div>
-                                  ${players.length
-                                    ? html`
-                                        <table className="table">
-                                          <thead>
-                                            <tr>
-                                              <th>DNI</th>
-                                              <th>Name</th>
-                                              <th>Lastname</th>
-                                              <th>Nickname</th>
-                                              <th>Pos.</th>
-                                              <th>Puntaje</th>
-                                              <th></th>
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            ${players.map(
-                                              player => html`
-                                                <tr>
-                                                  <td>${player.dni}</td>
-                                                  <td>${player.name}</td>
-                                                  <td>${player.lastName}</td>
-                                                  <td>${player.nickname || "--"}</td>
-                                                  <td>${player.position ?? "--"}</td>
-                                                  <td>${player.puntaje ?? "--"}</td>
-                                                  <td>
-                                                    <button
-                                                      className="btn ghost"
-                                                      onClick=${() =>
-                                                        (setSelectedPlayerId(player.id),
-                                                        setIsCreatingPlayer(false))}
-                                                    >
-                                                      Open
-                                                    </button>
-                                                  </td>
-                                                </tr>
-                                              `
-                                            )}
-                                          </tbody>
-                                        </table>
-                                      `
-                                    : html`<div className="empty">No players inscribed yet.</div>`}
-                                  <button className="fab" onClick=${startCreatePlayer}>+</button>
-                                </div>
-                              `}
-                        </div>
-                      `
-                    : showTabs
-                    ? html`
-                        <div className="tabs">
-                          <button
-                            className=${`tab ${activeTab === "details" ? "active" : ""}`}
-                            onClick=${() => setActiveTab("details")}
-                          >
-                            Details
-                          </button>
-                          <button
-                            className=${`tab ${activeTab === "phases" ? "active" : ""}`}
-                            onClick=${() => setActiveTab("phases")}
-                            disabled=${!canOpenSubsections}
-                          >
-                            Phases
-                          </button>
-                          <button
-                            className=${`tab ${activeTab === "teams" ? "active" : ""}`}
-                            onClick=${() => setActiveTab("teams")}
-                            disabled=${!canOpenSubsections}
-                          >
-                            Teams
-                          </button>
-                          <button
-                            className=${`tab ${activeTab === "assign" ? "active" : ""}`}
-                            onClick=${() => setActiveTab("assign")}
-                            disabled=${!canOpenSubsections}
-                          >
-                            ${zoneLabel}
-                          </button>
-                        </div>
-
-                        ${activeTab === "details"
-                          ? html`
-                              <div className="form-grid" style=${{ marginTop: "16px" }}>
-                                <h2>${isCreatingTournament ? "Create tournament" : "Tournament settings"}</h2>
-                                <div>
-                                  <label>Name</label>
-                                  <input
-                                    value=${isCreatingTournament ? tournamentForm.name : tournamentEdit.name}
-                                    onInput=${e =>
-                                      isCreatingTournament
-                                        ? setTournamentForm({
-                                            ...tournamentForm,
-                                            name: e.target.value
-                                          })
-                                        : setTournamentEdit({
-                                            ...tournamentEdit,
-                                            name: e.target.value
-                                          })}
-                                  />
-                                </div>
-                                <div className="form-row">
-                                  <div>
-                                    <label>Season</label>
-                                    <input
-                                      value=${isCreatingTournament ? tournamentForm.season : tournamentEdit.season}
-                                      onInput=${e =>
-                                        isCreatingTournament
-                                          ? setTournamentForm({
-                                              ...tournamentForm,
-                                              season: e.target.value
-                                            })
-                                          : setTournamentEdit({
-                                              ...tournamentEdit,
-                                              season: e.target.value
-                                            })}
-                                    />
-                                  </div>
-                                  <div>
-                                    <label>Start date</label>
-                                    <input
-                                      value=${isCreatingTournament ? tournamentForm.startDate : tournamentEdit.startDate}
-                                      onInput=${e =>
-                                        isCreatingTournament
-                                          ? setTournamentForm({
-                                              ...tournamentForm,
-                                              startDate: e.target.value
-                                            })
-                                          : setTournamentEdit({
-                                              ...tournamentEdit,
-                                              startDate: e.target.value
-                                            })}
-                                    />
-                                  </div>
-                                </div>
-                                <div>
-                                  <label>End date</label>
-                                  <input
-                                    value=${isCreatingTournament ? tournamentForm.endDate : tournamentEdit.endDate}
-                                    onInput=${e =>
-                                      isCreatingTournament
-                                        ? setTournamentForm({
-                                            ...tournamentForm,
-                                            endDate: e.target.value
-                                          })
-                                        : setTournamentEdit({
-                                            ...tournamentEdit,
-                                            endDate: e.target.value
-                                          })}
-                                  />
-                                </div>
-                                <button
-                                  className="btn primary"
-                                  onClick=${isCreatingTournament ? createTournament : updateTournament}
-                                >
-                                  ${isCreatingTournament ? "Create" : "Save"}
-                                </button>
-                              </div>
-                            `
-                          : ""}
-
-                        ${activeTab === "phases"
-                          ? html`
-                              <div className="form-grid" style=${{ marginTop: "16px" }}>
-                                <h2>Phases</h2>
-                                ${!selectedTournamentId
-                                  ? html`<div className="empty">Select a tournament.</div>`
-                                  : html`
-                                      <table className="table">
-                                        <thead>
-                                          <tr>
-                                            <th>Name</th>
-                                            <th>Type</th>
-                                            <th>Order</th>
-                                            <th></th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          ${phases.map(
-                                            phase => html`
-                                              <tr>
-                                                <td>${phase.name}</td>
-                                                <td><span className="tag">${phase.phaseType}</span></td>
-                                                <td>${phase.phaseOrder}</td>
-                                                <td>
-                                                  <button
-                                                    className="btn ghost"
-                                                    onClick=${() => setSelectedPhaseId(phase.id)}
-                                                  >
-                                                    Open
-                                                  </button>
-                                                </td>
-                                              </tr>
-                                            `
-                                          )}
-                                        </tbody>
-                                      </table>
-                                      <div className="form-row">
-                                        <div>
-                                          <label>Name</label>
-                                          <input
-                                            value=${phaseForm.name}
-                                            onInput=${e => setPhaseForm({ ...phaseForm, name: e.target.value })}
-                                          />
-                                        </div>
-                                        <div>
-                                          <label>Type</label>
-                                          <select
-                                            value=${phaseForm.phaseType}
-                                            onChange=${e => setPhaseForm({ ...phaseForm, phaseType: e.target.value })}
-                                          >
-                                            <option value="ZONES">Zones</option>
-                                            <option value="PLAYOFFS">Playoffs</option>
-                                          </select>
-                                        </div>
-                                        <div>
-                                          <label>Order</label>
-                                          <input
-                                            type="number"
-                                            min="1"
-                                            value=${phaseForm.phaseOrder}
-                                            onInput=${e => setPhaseForm({ ...phaseForm, phaseOrder: e.target.value })}
-                                          />
-                                        </div>
-                                      </div>
-                                      <button className="btn primary" onClick=${createPhase}>Add phase</button>
-                                      ${selectedPhase
-                                        ? html`
-                                            <div className="form-grid">
-                                              <h3>Edit phase</h3>
-                                              <div className="form-row">
-                                                <div>
-                                                  <label>Name</label>
-                                                  <input
-                                                    value=${phaseEdit.name}
-                                                    onInput=${e => setPhaseEdit({ ...phaseEdit, name: e.target.value })}
-                                                  />
-                                                </div>
-                                                <div>
-                                                  <label>Type</label>
-                                                  <select
-                                                    value=${phaseEdit.phaseType}
-                                                    onChange=${e => setPhaseEdit({ ...phaseEdit, phaseType: e.target.value })}
-                                                  >
-                                                    <option value="ZONES">Zones</option>
-                                                    <option value="PLAYOFFS">Playoffs</option>
-                                                  </select>
-                                                </div>
-                                                <div>
-                                                  <label>Order</label>
-                                                  <input
-                                                    type="number"
-                                                    min="1"
-                                                    value=${phaseEdit.phaseOrder}
-                                                    onInput=${e => setPhaseEdit({ ...phaseEdit, phaseOrder: e.target.value })}
-                                                  />
-                                                </div>
-                                              </div>
-                                              <button className="btn primary" onClick=${updatePhase}>Save phase</button>
-                                            </div>
-                                          `
-                                        : ""}
-                                    `}
-                              </div>
-                            `
-                          : ""}
-
-                        ${activeTab === "teams"
-                          ? html`
-                              <div className="form-grid" style=${{ marginTop: "16px" }}>
-                                <h2>Teams</h2>
-                                ${!selectedTournamentId
-                                  ? html`<div className="empty">Select a tournament.</div>`
-                                  : html`
-                                      <table className="table">
-                                        <thead>
-                                          <tr>
-                                            <th>Name</th>
-                                            <th>Short</th>
-                                            <th></th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          ${teams.map(
-                                            team => html`
-                                              <tr>
-                                                <td>${team.name}</td>
-                                                <td>${team.shortName || "--"}</td>
-                                                <td>
-                                                  <button className="btn ghost" onClick=${() => setSelectedTeamId(team.id)}>
-                                                    Edit
-                                                  </button>
-                                                </td>
-                                              </tr>
-                                            `
-                                          )}
-                                        </tbody>
-                                      </table>
-                                      <div className="form-row">
-                                        <div>
-                                          <label>Name</label>
-                                          <input
-                                            value=${teamForm.name}
-                                            onInput=${e => setTeamForm({ ...teamForm, name: e.target.value })}
-                                          />
-                                        </div>
-                                        <div>
-                                          <label>Short</label>
-                                          <input
-                                            value=${teamForm.shortName}
-                                            onInput=${e => setTeamForm({ ...teamForm, shortName: e.target.value })}
-                                          />
-                                        </div>
-                                      </div>
-                                      <button className="btn primary" onClick=${createTeam}>Add team</button>
-                                      ${selectedTeamId
-                                        ? html`
-                                            <div className="form-row">
-                                              <div>
-                                                <label>Edit name</label>
-                                                <input
-                                                  value=${teamEdit.name}
-                                                  onInput=${e => setTeamEdit({ ...teamEdit, name: e.target.value })}
-                                                />
-                                              </div>
-                                              <div>
-                                                <label>Edit short</label>
-                                                <input
-                                                  value=${teamEdit.shortName}
-                                                  onInput=${e => setTeamEdit({ ...teamEdit, shortName: e.target.value })}
-                                                />
-                                              </div>
-                                              <div>
-                                                <label>&nbsp;</label>
-                                                <button className="btn primary" onClick=${updateTeam}>Save team</button>
-                                              </div>
-                                            </div>
-                                          `
-                                        : ""}
-                                    `}
-                              </div>
-                            `
-                          : ""}
-
-                        ${activeTab === "assign"
-                          ? html`
-                              <div className="form-grid" style=${{ marginTop: "16px" }}>
-                                <h2>${zoneLabel}</h2>
-                                ${!selectedPhase
-                                  ? html`<div className="empty">Open a phase first.</div>`
-                                  : html`
-                                      <div className="form-row">
-                                        <div>
-                                          <label>Team</label>
-                                          <select
-                                            value=${assignmentForm.teamId}
-                                            onChange=${e => setAssignmentForm({ ...assignmentForm, teamId: e.target.value })}
-                                          >
-                                            <option value="">Select team</option>
-                                            ${teams.map(
-                                              team => html`<option value=${team.id}>${team.name}</option>`
-                                            )}
-                                          </select>
-                                        </div>
-                                        ${isZonesPhase
-                                          ? html`
-                                              <div>
-                                                <label>Group</label>
-                                                <select
-                                                  value=${assignmentForm.groupId}
-                                                  onChange=${e => setAssignmentForm({ ...assignmentForm, groupId: e.target.value })}
-                                                >
-                                                  <option value="">Select group</option>
-                                                  ${groups.map(
-                                                    group => html`<option value=${group.id}>${group.name}</option>`
-                                                  )}
-                                                </select>
-                                              </div>
-                                            `
-                                          : html`
-                                              <div>
-                                                <label>Round</label>
-                                                <select
-                                                  value=${assignmentForm.roundId}
-                                                  onChange=${e => setAssignmentForm({ ...assignmentForm, roundId: e.target.value })}
-                                                >
-                                                  <option value="">Select round</option>
-                                                  ${rounds.map(
-                                                    round => html`<option value=${round.id}>${round.name}</option>`
-                                                  )}
-                                                </select>
-                                              </div>
-                                            `}
-                                        <div>
-                                          <label>&nbsp;</label>
-                                          <button className="btn primary" onClick=${assignTeam}>Assign</button>
-                                        </div>
-                                      </div>
-                                      <table className="table">
-                                        <thead>
-                                          <tr>
-                                            <th>Team</th>
-                                            <th>Placement</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          ${assignments.map(assignment => {
-                                            const team = teamLookup[assignment.teamId];
-                                            const group = assignment.groupId
-                                              ? groupLookup[assignment.groupId]
-                                              : null;
-                                            const round = assignment.roundId
-                                              ? roundLookup[assignment.roundId]
-                                              : null;
-                                            const label = group
-                                              ? group.name
-                                              : round
-                                              ? round.name
-                                              : "Unassigned";
-                                            return html`
-                                              <tr>
-                                                <td>${team ? team.name : "Team"}</td>
-                                                <td>${label}</td>
-                                              </tr>
-                                            `;
-                                          })}
-                                        </tbody>
-                                      </table>
-                                    `}
-                              </div>
-                            `
-                          : ""}
-                      `
-                    : html`<div className="empty">Select a tournament to get started.</div>`}
-                </div>
-              </div>
-
-              ${status ? html`<div className="status">${status}</div>` : ""}
-            </main>
+    <div class="shell">
+      <header>
+        <div class="topbar">
+          <div class="brand">
+            <img class="brand-badge" src="img/logo_imagen.png" alt="Papi Futbol Moron logo" />
+            Papi Futbol Moron
           </div>
-          ${activeSection === "players" && showPlayerModal
-            ? html`
-                <div className="modal-backdrop" onClick=${closePlayerModal}>
-                  <div className="modal" onClick=${e => e.stopPropagation()}>
-                    <div className="modal-header">
-                      <div className="modal-title">
-                        ${isCreatingPlayer ? "Create player" : "Player profile"}
-                      </div>
-                      <button className="btn ghost" onClick=${closePlayerModal}>Close</button>
-                    </div>
-                    <div className="form-grid">
-                      <div className="form-row">
-                        <div>
-                          <label>DNI</label>
-                          <input
-                            type="number"
-                            value=${playerEdit.dni}
-                            onInput=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                dni: e.target.value
-                              })}
-                          />
-                        </div>
-                        <div>
-                          <label>Position</label>
-                          <input
-                            type="number"
-                            value=${playerEdit.position}
-                            onInput=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                position: e.target.value
-                              })}
-                          />
-                        </div>
-                        <div>
-                          <label>Puntaje</label>
-                          <input
-                            type="number"
-                            value=${playerEdit.puntaje}
-                            onInput=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                puntaje: e.target.value
-                              })}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-row">
-                        <div>
-                          <label>Name</label>
-                          <input
-                            value=${playerEdit.name}
-                            onInput=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                name: e.target.value
-                              })}
-                          />
-                        </div>
-                        <div>
-                          <label>Lastname</label>
-                          <input
-                            value=${playerEdit.lastName}
-                            onInput=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                lastName: e.target.value
-                              })}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-row">
-                        <div>
-                          <label>Nickname</label>
-                          <input
-                            value=${playerEdit.nickname}
-                            onInput=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                nickname: e.target.value
-                              })}
-                          />
-                        </div>
-                        <div>
-                          <label>Date of birth</label>
-                          <input
-                            value=${playerEdit.dateOfBirth}
-                            onInput=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                dateOfBirth: e.target.value
-                              })}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-row">
-                        <div>
-                          <label>Cellphone</label>
-                          <input
-                            value=${playerEdit.cellphone}
-                            onInput=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                cellphone: e.target.value
-                              })}
-                          />
-                        </div>
-                        <div>
-                          <label>Email</label>
-                          <input
-                            value=${playerEdit.email}
-                            onInput=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                email: e.target.value
-                              })}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-row">
-                        <div>
-                          <label>Played before</label>
-                          <select
-                            value=${playerEdit.playedBefore}
-                            onChange=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                playedBefore: e.target.value
-                              })}
-                          >
-                            <option value="no">No</option>
-                            <option value="yes">Yes</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label>Apto medico</label>
-                          <select
-                            value=${playerEdit.aptoMedico}
-                            onChange=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                aptoMedico: e.target.value
-                              })}
-                          >
-                            <option value="no">No</option>
-                            <option value="yes">Yes</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="form-row">
-                        <div>
-                          <label>Referencia</label>
-                          <select
-                            value=${playerEdit.referencia}
-                            onChange=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                referencia: e.target.value
-                              })}
-                          >
-                            <option value="">Select</option>
-                            <option value="Padre de Alumno">Padre de Alumno</option>
-                            <option value="Padre de ex Alumno">Padre de ex Alumno</option>
-                            <option value="Ex alumno">Ex alumno</option>
-                            <option value="Docente">Docente</option>
-                            <option value="Invitado">Invitado</option>
-                            <option value="Hermano marista">Hermano marista</option>
-                            <option value="Esposo educadora">Esposo educadora</option>
-                            <option value="Abuelo de alumno">Abuelo de alumno</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label>Ano de egreso</label>
-                          <input
-                            type="number"
-                            value=${playerEdit.egresoYear}
-                            onInput=${e =>
-                              setPlayerEdit({
-                                ...playerEdit,
-                                egresoYear: e.target.value
-                              })}
-                          />
-                        </div>
-                      </div>
-                      <div className="modal-actions">
-                        <button className="btn primary" onClick=${updatePlayerProfile}>
-                          ${isCreatingPlayer ? "Create profile" : "Save profile"}
-                        </button>
-                        <button className="btn ghost" onClick=${closePlayerModal}>
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              `
-            : ""}
-        `;
+          <nav class="nav">
+            <a href="teams.html">Teams</a>
+            <a href="players.html">Players</a>
+            <a href="tournament-stats.html">Tournaments</a>
+            <a href="#matches">Matches</a>
+            <a href="#stats">Stats</a>
+          </nav>
+          <div class="account">
+            <span class="pill">Account</span>
+            <button class="btn secondary theme-toggle" type="button" id="theme-toggle">
+              Light mode
+            </button>
+            <a class="btn secondary" href="login.html">Log in</a>
+            <a class="btn" href="register.html">Create account</a>
+          </div>
+        </div>
+        <div class="ticker">
+          <div class="ticker-track">
+            <div class="ticker-item"><span>Atl. Central</span><span class="ticker-score">2</span><span>-</span><span class="ticker-score">1</span><span>Los Tigres</span></div>
+            <div class="ticker-item"><span>Maristas FC</span><span class="ticker-score">0</span><span>-</span><span class="ticker-score">0</span><span>Ciudad Sur</span></div>
+            <div class="ticker-item"><span>Northside</span><span class="ticker-score">3</span><span>-</span><span class="ticker-score">2</span><span>Union</span></div>
+            <div class="ticker-item"><span>Pacifica</span><span class="ticker-score">1</span><span>-</span><span class="ticker-score">2</span><span>Juventus</span></div>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="hero-card reveal">
+          <span class="badge">Live season hub</span>
+          <h1>All the soccer stats you care about</h1>
+          <p>
+            Track teams, players, tournaments, fixtures, and match stats in one
+            scoreboard style experience.
+          </p>
+          <div class="hero-actions">
+            <a class="btn" href="tournament-stats.html">Explore tournaments</a>
+            <a class="btn secondary" href="players.html">Browse players</a>
+          </div>
+        </div>
+        <div class="hero-card reveal">
+          <div class="panel-title">Today board</div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Live matches</div>
+              <div class="stat-value">3</div>
+            </div>
+            <span class="badge">Now</span>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Goals scored</div>
+              <div class="stat-value">14</div>
+            </div>
+            <span class="score win">+6</span>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Cards issued</div>
+              <div class="stat-value">9</div>
+            </div>
+            <span class="score loss">+2</span>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Next kickoff</div>
+              <div class="stat-value">19:30</div>
+            </div>
+            <span class="badge">Main field</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid" id="stats">
+        <div class="panel reveal">
+          <div class="panel-title">Top teams</div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Los Tigres</div>
+              <div class="stat-value">32 pts</div>
+            </div>
+            <span class="badge">Form W W D</span>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Atl. Central</div>
+              <div class="stat-value">29 pts</div>
+            </div>
+            <span class="badge">Form W D W</span>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Maristas FC</div>
+              <div class="stat-value">27 pts</div>
+            </div>
+            <span class="badge">Form W L W</span>
+          </div>
+        </div>
+
+        <div class="panel reveal">
+          <div class="panel-title">Player leaders</div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Team</th>
+                <th>Goals</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Andrea Pirlo</td>
+                <td>Los Tigres</td>
+                <td>8</td>
+              </tr>
+              <tr>
+                <td>Luis Soto</td>
+                <td>Atl. Central</td>
+                <td>6</td>
+              </tr>
+              <tr>
+                <td>Nicolas Perez</td>
+                <td>Maristas FC</td>
+                <td>5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel reveal">
+          <div class="panel-title">Tournament pulse</div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Active tournaments</div>
+              <div class="stat-value">4</div>
+            </div>
+            <span class="badge">Live</span>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Matches played</div>
+              <div class="stat-value">98</div>
+            </div>
+            <span class="badge">Season 2026</span>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Upcoming finals</div>
+              <div class="stat-value">2</div>
+            </div>
+            <span class="badge">Knockout</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid" id="matches">
+        <div class="panel reveal">
+          <div class="panel-title">Featured match</div>
+          <div class="fixture">
+            <div>
+              <div class="fixture-team">Los Tigres</div>
+              <div class="fixture-meta">Home</div>
+            </div>
+            <div>
+              <div class="score win">2 - 1</div>
+              <div class="fixture-meta">Final</div>
+            </div>
+            <div>
+              <div class="fixture-team">Atl. Central</div>
+              <div class="fixture-meta">Away</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">xG</div>
+            <div class="stat-value">1.9 - 1.2</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">Possession</div>
+            <div class="stat-value">57% - 43%</div>
+          </div>
+          <a class="btn secondary" href="tournament-stats.html">Match center</a>
+        </div>
+
+        <div class="panel reveal">
+          <div class="panel-title">Fixture</div>
+          <div class="fixture-list">
+            <div class="fixture">
+              <div>
+                <div class="fixture-team">Maristas FC</div>
+                <div class="fixture-meta">Apr 18</div>
+              </div>
+              <div>
+                <div class="score">19:00</div>
+                <div class="fixture-meta">Main field</div>
+              </div>
+              <div>
+                <div class="fixture-team">Los Tigres</div>
+                <div class="fixture-meta">Round 5</div>
+              </div>
+            </div>
+            <div class="fixture">
+              <div>
+                <div class="fixture-team">Atl. Central</div>
+                <div class="fixture-meta">Apr 20</div>
+              </div>
+              <div>
+                <div class="score">20:30</div>
+                <div class="fixture-meta">North pitch</div>
+              </div>
+              <div>
+                <div class="fixture-team">Ciudad Sur</div>
+                <div class="fixture-meta">Round 5</div>
+              </div>
+            </div>
+            <div class="fixture">
+              <div>
+                <div class="fixture-team">Union</div>
+                <div class="fixture-meta">Apr 22</div>
+              </div>
+              <div>
+                <div class="score">18:15</div>
+                <div class="fixture-meta">Main field</div>
+              </div>
+              <div>
+                <div class="fixture-team">Northside</div>
+                <div class="fixture-meta">Round 5</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta reveal">
+        <h2>Build your account and join the season</h2>
+        <p>
+          Track your stats across tournaments and register for the next active
+          competition from your profile.
+        </p>
+        <div class="hero-actions">
+          <a class="btn" href="register.html">Create account</a>
+          <a class="btn secondary" href="login.html">Log in</a>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const themeToggle = document.getElementById("theme-toggle");
+      const storedTheme = localStorage.getItem("statline-theme");
+      const prefersLight =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: light)").matches;
+      const initialTheme = storedTheme || (prefersLight ? "light" : "dark");
+
+      if (themeToggle) {
+        document.body.dataset.theme = initialTheme;
+        themeToggle.textContent =
+          document.body.dataset.theme === "light" ? "Dark mode" : "Light mode";
+        themeToggle.addEventListener("click", () => {
+          const nextTheme = document.body.dataset.theme === "light" ? "dark" : "light";
+          document.body.dataset.theme = nextTheme;
+          localStorage.setItem("statline-theme", nextTheme);
+          themeToggle.textContent = nextTheme === "light" ? "Dark mode" : "Light mode";
+        });
       }
 
-      ReactDOM.createRoot(document.getElementById("app")).render(
-        html`<${App} />`
+      const revealItems = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+            }
+          });
+        },
+        { threshold: 0.2 }
       );
+      revealItems.forEach(item => observer.observe(item));
     </script>
   </body>
 </html>
+
+

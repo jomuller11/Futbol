@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Papi Futbol Moron - Teams</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #0b0f14;
+        --panel: #141a22;
+        --panel-strong: #1b2430;
+        --edge: #2b3441;
+        --ink: #f5f7fb;
+        --muted: #a4b1c2;
+        --accent: #f97316;
+        --accent-strong: #fb923c;
+        --accent-alt: #22d3ee;
+        --success: #4ade80;
+        --danger: #f87171;
+        --shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 10%, rgba(34, 211, 238, 0.18), transparent 48%),
+          radial-gradient(circle at 85% 8%, rgba(249, 115, 22, 0.2), transparent 42%),
+          linear-gradient(160deg, #06080c 0%, #0b0f14 45%, #0f1723 100%);
+        min-height: 100vh;
+      }
+
+      body[data-theme="light"] {
+        --panel: #f8fafc;
+        --panel-strong: #ffffff;
+        --edge: #d5deea;
+        --ink: #0b0f14;
+        --muted: #4b5563;
+        --shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+        background: linear-gradient(135deg, #f6f8fb 0%, #ecf1f8 50%, #e7eef7 100%);
+      }
+      body[data-theme="light"] .hero-card {
+        background: #ffffff;
+      }
+
+      body[data-theme="light"] .tab-row {
+        background: #e2e8f0;
+        border-color: #cbd5e1;
+      }
+
+      body[data-theme="light"] .tab.active {
+        background: rgba(249, 115, 22, 0.25);
+      }
+
+      body[data-theme="light"] .badge {
+        background: rgba(14, 116, 144, 0.16);
+        color: #0e7490;
+      }
+
+      body[data-theme="light"] .pill,
+      body[data-theme="light"] .stat-pill,
+      body[data-theme="light"] .pill-mini {
+        background: #e2e8f0;
+        color: #334155;
+      }
+
+      body[data-theme="light"] .fixture,
+      body[data-theme="light"] .team-card {
+        background: #f1f5f9;
+        border-color: #d5deea;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .shell {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+        display: grid;
+        gap: 28px;
+      }
+
+      .topbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.12em;
+        font-size: 1.4rem;
+      }
+
+      .brand-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: contain;
+  display: block;
+}
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .nav a {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid transparent;
+      }
+
+      .nav a.active {
+        background: rgba(249, 115, 22, 0.18);
+        border-color: rgba(249, 115, 22, 0.4);
+        color: var(--ink);
+      }
+
+      .nav a:hover {
+        border-color: var(--edge);
+        color: var(--ink);
+      }
+
+      .account {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .pill {
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: var(--panel);
+        border: 1px solid var(--edge);
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .btn {
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        background: var(--accent);
+        color: #0b0f14;
+        box-shadow: 0 14px 28px rgba(249, 115, 22, 0.35);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn.secondary {
+        background: transparent;
+        color: var(--ink);
+        border: 1px solid var(--edge);
+        box-shadow: none;
+      }
+
+      .theme-toggle {
+        padding: 10px 14px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(280px, 1.2fr) minmax(260px, 0.8fr);
+        gap: 24px;
+      }
+
+      .hero-card {
+        background: linear-gradient(135deg, rgba(20, 26, 34, 0.96), rgba(16, 22, 30, 0.9));
+        border-radius: 24px;
+        padding: 24px;
+        border: 1px solid var(--edge);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 16px;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(2.4rem, 5vw, 3.6rem);
+        letter-spacing: 0.08em;
+      }
+
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(34, 211, 238, 0.12);
+        color: var(--accent-alt);
+        font-weight: 600;
+        font-size: 0.8rem;
+      }
+
+      .grid {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+
+      .panel {
+        background: var(--panel);
+        border-radius: 20px;
+        padding: 18px;
+        border: 1px solid var(--edge);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 12px;
+      }
+
+      .panel-title {
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.08em;
+        font-size: 1.3rem;
+      }
+
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        gap: 12px;
+      }
+
+      .stat-row:last-child {
+        border-bottom: none;
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .stat-value {
+        font-weight: 700;
+      }
+
+      .team-card {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: var(--panel-strong);
+      }
+
+      .team-meta {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .stat-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .pill-mini {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      .cta {
+        display: grid;
+        gap: 16px;
+        background: linear-gradient(140deg, rgba(34, 211, 238, 0.16), rgba(249, 115, 22, 0.18));
+        border-radius: 24px;
+        padding: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .cta h2 {
+        font-family: "Bebas Neue", sans-serif;
+        letter-spacing: 0.08em;
+        margin: 0;
+        font-size: 2.2rem;
+      }
+
+      .cta p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition: 0.6s ease;
+      }
+
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 900px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <img class="brand-badge" src="img/logo_imagen.png" alt="Papi Futbol Moron logo" />
+          Papi Futbol Moron
+        </div>
+        <nav class="nav">
+          <a class="active" href="teams.html">Teams</a>
+          <a href="players.html">Players</a>
+          <a href="tournament-stats.html">Tournaments</a>
+          <a href="index.html#matches">Matches</a>
+          <a href="index.html#stats">Stats</a>
+        </nav>
+        <div class="account">
+          <span class="pill">Account</span>
+          <button class="btn secondary theme-toggle" type="button" id="theme-toggle">
+            Light mode
+          </button>
+          <a class="btn secondary" href="login.html">Log in</a>
+          <a class="btn" href="register.html">Create account</a>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="hero-card reveal">
+          <span class="badge">Top performing squads</span>
+          <h1>Teams powering the season</h1>
+          <p>
+            24 teams split into two zones for Papi Futbol 2026. Click a team to
+            open its roster and stats page.
+          </p>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Active teams</div>
+              <div class="stat-value" id="team-count">24</div>
+            </div>
+            <div>
+              <div class="stat-label">Zones</div>
+              <div class="stat-value">2</div>
+            </div>
+            <div>
+              <div class="stat-label">Matchday</div>
+              <div class="stat-value" id="matchday">3</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-card reveal">
+          <div class="panel-title">Zone leaders</div>
+          <div class="stat-row" id="zone-leaders"></div>
+          <div class="stat-row" id="zone-leaders-b"></div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-label">Total goals</div>
+              <div class="stat-value" id="total-goals">0</div>
+            </div>
+            <span class="badge">Matchday 3</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid" id="team-list"></section>
+
+      <section class="cta reveal">
+        <h2>Want your team stats tracked?</h2>
+        <p>Create an account to manage your roster and register for tournaments.</p>
+        <div class="stat-pills">
+          <a class="btn" href="register.html">Create account</a>
+          <a class="btn secondary" href="login.html">Log in</a>
+        </div>
+      </section>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+      const themeToggle = document.getElementById("theme-toggle");
+      const storedTheme = localStorage.getItem("statline-theme");
+      const prefersLight =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: light)").matches;
+      const initialTheme = storedTheme || (prefersLight ? "light" : "dark");
+
+      if (themeToggle) {
+        document.body.dataset.theme = initialTheme;
+        themeToggle.textContent =
+          document.body.dataset.theme === "light" ? "Dark mode" : "Light mode";
+        themeToggle.addEventListener("click", () => {
+          const nextTheme = document.body.dataset.theme === "light" ? "dark" : "light";
+          document.body.dataset.theme = nextTheme;
+          localStorage.setItem("statline-theme", nextTheme);
+          themeToggle.textContent = nextTheme === "light" ? "Dark mode" : "Light mode";
+        });
+      }
+
+      const data = window.StatlineData.tournament;
+      document.getElementById("team-count").textContent = data.teams.length;
+      document.getElementById("matchday").textContent = data.matchday;
+
+      const totalGoals = data.teams.reduce((sum, team) => sum + team.goalsFor, 0);
+      document.getElementById("total-goals").textContent = totalGoals;
+
+      const zoneALeader = data.zones[0].teams[0];
+      const zoneBLeader = data.zones[1].teams[0];
+      document.getElementById("zone-leaders").innerHTML = `
+        <div>
+          <div class="stat-label">Zone A leader</div>
+          <div class="stat-value">${zoneALeader.name} (${zoneALeader.points} pts)</div>
+        </div>
+        <span class="badge">${zoneALeader.wins}W-${zoneALeader.draws}D-${zoneALeader.losses}L</span>
+      `;
+      document.getElementById("zone-leaders-b").innerHTML = `
+        <div>
+          <div class="stat-label">Zone B leader</div>
+          <div class="stat-value">${zoneBLeader.name} (${zoneBLeader.points} pts)</div>
+        </div>
+        <span class="badge">${zoneBLeader.wins}W-${zoneBLeader.draws}D-${zoneBLeader.losses}L</span>
+      `;
+
+      const teamList = document.getElementById("team-list");
+      data.zones.forEach(zone => {
+        const panel = document.createElement("div");
+        panel.className = "panel reveal";
+        panel.innerHTML = `<div class="panel-title">${zone.name}</div>`;
+
+        zone.teams.forEach(team => {
+          const topScorer = window.StatlineData.getTopScorer(team);
+          const card = document.createElement("div");
+          card.className = "team-card";
+          card.innerHTML = `
+            <div>
+              <div class="stat-value">${team.name}</div>
+              <div class="team-meta">${team.points} pts - ${team.goalsFor} GF / ${team.goalsAgainst} GA</div>
+            </div>
+            <div class="stat-pills">
+              <span class="pill-mini">Top scorer: ${topScorer.name}</span>
+              <span class="pill-mini">Record: ${team.wins}W ${team.draws}D ${team.losses}L</span>
+            </div>
+            <a class="btn secondary" href="team.html?team=${team.id}">View team</a>
+          `;
+          panel.appendChild(card);
+        });
+
+        teamList.appendChild(panel);
+      });
+
+      const revealItems = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+      revealItems.forEach(item => observer.observe(item));
+    </script>
+  </body>
+</html>
+
+
